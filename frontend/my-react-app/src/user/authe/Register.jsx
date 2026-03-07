@@ -1,27 +1,136 @@
-
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import "../styles/register.css"
-function Register(){
-    const [form,setform]=useState({
 
-        username:'',
-        Email:'',
-        Password:'',
-        confirmpass:''
-
+function Register() {
+    const [showPassword, setShowPassword] = useState(false)
+    const [form, setForm] = useState({
+        username: '',
+        email: '',
+      
+        password: '',
+        confirmPassword: '',
+        agreeToTerms: false
     })
-    return (
-        <form className="register-container" >
-            <h2 style={{textAlign:'center'}}>Join Skill Swap</h2>
-            <input type="text" name="name" placeholder="username" value={form.username}/>
-            <input type="text" name="Email" placeholder="Email" value={form.Email}/>
-            <input type="text" name="password" placeholder="Password" value={form.Password}/>
-            <input type="text" name="confirm pass" placeholder="Confirm password" value={form.confirmpass}/>
-            <button type="submit">Register</button>
 
-            <div className="login-link">Already have an account? Login</div>
-            </form>
+   
+
+    return (
+        <div className="register-page">
+            <div className="register-container">
+             
+                <div className="register-form-section">
         
+                    <div className="form-header">
+                        <div className="back-wrapper">
+                            <button className="back-btn"></button>
+                            <span className="app-name">SkillSwap</span>
+                        </div>
+                        <button className="globe-btn"></button>
+                    </div>
+
+             
+                    <div className="form-content">
+                        <h2>Create new account</h2>
+
+                        <form>
+                     
+                            <div className="form-group">
+                                <label htmlFor="username">Username</label>
+                                <div className="input-wrapper">
+                                    <span className="input-icon username-icon"></span>
+                                    <input
+                                        type="text"
+                                        id="username"
+                                        name="username"
+                                        placeholder=""
+                                        value={form.username}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+               
+                            <div className="form-group">
+                                <label htmlFor="email">Email address</label>
+                                <div className="input-wrapper">
+                                    <span className="input-icon email-icon"></span>
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        placeholder=""
+                                        value={form.email}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                       
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <div className="input-wrapper">
+                                    <span className="input-icon password-icon"></span>
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        name="password"
+                                        placeholder=""
+                                        value={form.password}
+                                        onChange={handleChange}
+                                    />
+                                    <button 
+                                        type="button" 
+                                        className="toggle-password"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                    </button>
+                                </div>
+                                <p className="password-hint">Your password must be at least 8 characters long</p>
+                            </div>
+
+                    
+
+                       
+                            <button type="submit" className="signup-btn">
+                                Sign Up
+                            </button>
+
+                        
+                            <div className="divider">
+                                <span>Already have an account?</span>
+                            </div>
+
+                    
+                            <Link to="/login" className="login-btn">
+                                Login
+                            </Link>
+
+                       
+                            <p className="terms-text">
+                                By continuing, you agree to{' '}
+                                <a href="/terms">Terms & Conditions</a> &{' '}
+                                <a href="/privacy">Privacy Policy</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+                <div className="register-promo-section">
+                    <div className="promo-card">
+                        <div className="promo-text">
+                            <h1>
+                                Exchange Skills,<br />
+                                <span className="highlight">Build Community</span>
+                            </h1>
+                            <p>Join thousands of learners sharing knowledge and growing together</p>
+                        </div>
+                        <div className="promo-image"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
+
 export default Register
