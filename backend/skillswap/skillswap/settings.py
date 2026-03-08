@@ -54,6 +54,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'skillswap.urls'
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'skillswap',  
+        'USER': 'postgres',          
+        'PASSWORD': '12345',   
+        'HOST': 'localhost',        
+        'PORT': '5432',            
+    }
+}
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -75,14 +87,8 @@ WSGI_APPLICATION = 'skillswap.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
-
+AUTH_USER_MODEL = "authe.Userprofile"
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
