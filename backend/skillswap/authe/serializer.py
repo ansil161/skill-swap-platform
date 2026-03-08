@@ -6,33 +6,41 @@ from .models import Userprofile
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=Userprofile
-        fields=['id','username','password']
+        fields=['id','username','password','email']
         extra_kwargs={
             'password':{'write_only':True}
         }
 
-    def validate_username(self,value):
-        if Userprofile.objects.filter(username=value).exists():
-            raise serializers.ValidationError('username is already exist')
-        if len(value)<4:
-            raise serializers.ValidationError('username at least 4 charctre')
+    def validate_email(self,value):
+        if Userprofile.objects.filter(email=value).exists():
+            raise serializers.ValidationError('email is already exist')
         return value
+  
     
     def validate_password(self,value):
         if len(value)<8:
             raise serializers.ValidationError('the password must be more that 8 characte')
         return value
-    def create(self,validated_data):
-        user=Userprofile.objects.create_user(**validated_data)
+    def create(self, validated_data):
+
+        username = validated_data.get("username")
+        email = validated_data.get("email")
+        password = validated_data.get("password")
+
+        user = Userprofile.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
         return user
     
 
-class LoginSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Userprofile
-        fields=['email','password']
-    
-    def get(self,data):
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self,data):
         
         try:
             user=Userprofile.objects.get(email=data['email'])
