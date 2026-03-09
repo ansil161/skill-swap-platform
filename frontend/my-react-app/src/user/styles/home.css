@@ -1,4 +1,4 @@
-/* Reset and Base Styles */
+
 * {
   margin: 0;
   padding: 0;
@@ -12,7 +12,7 @@ body {
   background-color: #ffffff;
 }
 
-/* Navigation */
+
 .navbar {
   position: fixed;
   top: 0;
@@ -119,7 +119,7 @@ body {
   transition: all 0.3s ease;
 }
 
-/* Hero Section */
+
 .hero-section {
   padding: 8rem 2rem 4rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -224,7 +224,7 @@ body {
   color: #6b7280;
 }
 
-/* Hero Images */
+
 .hero-images {
   position: relative;
   height: 500px;
@@ -318,7 +318,7 @@ body {
   color: #6b7280;
 }
 
-/* Features Section */
+
 .features-section {
   padding: 6rem 2rem;
   background: white;
@@ -384,7 +384,7 @@ body {
   line-height: 1.6;
 }
 
-/* How It Works Section */
+
 .how-it-works-section {
   padding: 6rem 2rem;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
@@ -443,7 +443,7 @@ body {
   line-height: 1.6;
 }
 
-/* Impact Section */
+
 .impact-section {
   padding: 6rem 2rem;
   background: white;
@@ -510,7 +510,7 @@ body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
 }
 
-/* Footer */
+
 .footer {
   background: #1a1a2e;
   color: white;
@@ -580,7 +580,7 @@ body {
   color: #9ca3af;
 }
 
-/* Responsive Design */
+
 @media (max-width: 968px) {
   .nav-menu,
   .nav-buttons {
