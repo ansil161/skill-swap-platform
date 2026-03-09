@@ -2,10 +2,14 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import "../styles/register.css"
 import api from "../../api/axios"
+import { useNavigate } from "react-router-dom"
 
 function Register() {
+   
 
     const [showPassword, setShowPassword] = useState(false)
+    const nav=useNavigate()
+
 
     const [form, setForm] = useState({
         username: "",
@@ -14,7 +18,6 @@ function Register() {
        
         agreeToTerms: false
     })
-
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target
 
@@ -37,7 +40,13 @@ function Register() {
         .then((res) => {
             console.log(res.data)
             alert("User registered successfully")
-            setForm('')
+            setForm({
+    username: "",
+    email: "",
+    password: "",
+    agreeToTerms: false
+})
+            nav('/login')
         })
         .catch((err) => {
             console.log(err.response?.data)

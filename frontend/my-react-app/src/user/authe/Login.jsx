@@ -1,7 +1,36 @@
 import React from 'react';
-import './Login.css'
+import '../styles/login.css'
+import { useState } from 'react';
+import api from '../../api/axios';
 
 function Login() {
+
+const [state, setState] = useState({
+    email: '',
+    password: ''
+})
+
+const handleChange = (e) => {
+    setState({
+        ...state,
+        [e.target.name]: e.target.value
+    })
+}
+
+const handleLogin = (e) => {
+    e.preventDefault()
+
+    api.post('Login/', state)
+    .then((res)=>{
+        console.log(res.data)
+        alert("User registered successfully")
+    })
+    .catch((err)=>{
+        console.log(err.response.data)
+    })
+}
+
+
     return (
         <div className="login-container">
             
@@ -27,9 +56,11 @@ function Login() {
                 </div>
 
                 <div className="left-text-content">
-                    <h2>Permudah interaksi antar <span className="highlight-blue">Donor</span> dan <span className="highlight-purple">Mahasiswa</span> secara online</h2>
-                    <p>Join the community and start swapping skills today.</p>
-                </div>
+    <h2>
+        Facilitate interaction between <span className="highlight-blue">Mentors</span> and <span className="highlight-purple">Students</span> online
+    </h2>
+    <p>Join the community and start swapping skills today.</p>
+</div>
             </div>
 
     
@@ -45,18 +76,18 @@ function Login() {
                     </div>
 
                     <div className="header-text">
-                        <h3>Hai, selamat datang kembali!</h3>
-                        <p>Silakan masuk untuk melanjutkan</p>
-                    </div>
+    <h3>Hi, welcome back!</h3>
+    <p>Please sign in to continue</p>
+</div>
 
-                    <form className="login-form">
+                    <form className="login-form" onSubmit={handleLogin}>
                         <div className="input-group">
-                            <label htmlFor="email">Email Address</label>
+                            <label htmlFor="email" >Email Address</label>
                             <div className="input-field-wrapper">
                                 <span className="input-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>
                                 </span>
-                                <input type="email" id="email" name="email" placeholder="Enter your email" />
+                                <input type="email" id="email" name="email" placeholder="Enter your email" value={state.email} onChange={handleChange} />
                             </div>
                         </div>
 
@@ -66,7 +97,7 @@ function Login() {
                                 <span className="input-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                 </span>
-                                <input type="password" id="password" name="password" placeholder="Enter your password" />
+                                <input type="password" id="password" name="password" placeholder="Enter your password" value={state.password} onChange={handleChange} />
                             </div>
                         </div>
 
@@ -78,7 +109,7 @@ function Login() {
                             <a href="#" className="forgot-link">Forgot password?</a>
                         </div>
 
-                        <button type="submit" className="submit-btn">Masuk</button>
+                        <button type="submit" className="submit-btn" >Sign In</button>
 
                         <div className="divider">
                             <span>Or login with</span>
@@ -99,7 +130,7 @@ function Login() {
                         <div className="footer-text">
                             <p>Don't have an account? <a href="#">Sign up</a></p>
                         </div>
-                    </form>
+                    </form  >
                 </div>
             </div>
         </div>
