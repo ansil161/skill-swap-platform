@@ -1,4 +1,541 @@
-function profile(){
+import React, { useState, useEffect } from "react";
+import api from "../../api/axios";
+import "../styles/profile.css";
 
-}
-export default profile
+const ProfilePage = () => {
+  const id = 1;
+  const [data, setData] = useState(null);
+  const [activeTab, setActiveTab] = useState("schedule");
+  const [scheduleView, setScheduleView] = useState("daily");
+  const [editMode, setEditMode] = useState(false);
+
+  const [formData, setFormData] = useState({
+    bio: "",
+    location: "",
+    experience: "",
+    github_link: "",
+    portfolio_link: "",
+    title: "",
+    skills_offered: [],
+    skills_wanted: [],
+    swap_terms: "1 hour for 1 hour"
+  });
+
+  // Mock schedule data - replace with API call
+  const scheduleData = [
+    { day: "Tue", date: "10", time: "08:00 - 09:00", skill: "React Basics", partners: 3 },
+    { day: "Wed", date: "11", time: "09:00 - 10:30", skill: "Node.js API", partners: 2 },
+    { day: "Wed", date: "12", time: "08:00 - 09:00", skill: "UI/UX Design", partners: 4 },
+    { day: "Wed", date: "13", time: "09:00 - 12:00", skill: "Full Stack Project", partners: 1 },
+    { day: "Wed", date: "14", time: "09:00 - 12:00", skill: "Code Review", partners: 0 },
+  ];
+
+
+  // const reviewsData = [
+  //   {
+  //     id: 1,
+  //     author: "Kathryn Murphy",
+  //     avatar: "https://i.pravatar.cc/150?img=5",
+  //     rating: 5,
+  //     date: "2 days ago",
+  //     skill: "React Development",
+  //     comment: "Absolutely brilliant skill swap! Robert's deep knowledge of React, coupled with his engaging teaching style, made every session a pleasure!",
+  //   },
+  // ];
+
+
+  useEffect(() => {
+    api.get(`profile/${id}/`)
+      .then((res) => {
+        const profile = res.data.message;
+        setData(profile);
+        setFormData({
+          bio: profile.bio || "",
+          location: profile.location || "",
+          experience: profile.experience || "",
+          github_link: profile.github_link || "",
+          portfolio_link: profile.portfolio_link || "",
+          title: profile.title || "",
+          skills_offered: profile.skills_offered || [],
+          skills_wanted: profile.skills_wanted || [],
+          swap_terms: profile.swap_terms || "1 hour for 1 hour"
+        });
+      })
+      .catch((err) => {
+        console.log(err.response?.data);
+      });
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    api.patch(`profile/${id}/`, formData)
+      .then((res) => {
+        alert("Profile updated successfully!");
+        setData({
+          ...data,
+          ...formData
+        });
+        setEditMode(false);
+      })
+      .catch((err) => {
+        console.log(err.response?.data);
+        alert("Error updating profile");
+      });
+  };
+
+  const renderStars = (rating) => {
+    return "★".repeat(Math.floor(rating)) + "☆".repeat(5 - Math.floor(rating));
+  };
+
+  const getRatingPercentage = (rating) => {
+    return (rating / 5) * 100;
+  };
+
+  if (!data) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading Profile...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="profile-page">
+
+      <div className="profile-header-edu">
+        <div className="profile-left">
+          <div className="profile-avatar-container">
+            <img 
+              src={data.profile_picture || "https://i.pravatar.cc/150"} 
+              alt={data.username} 
+              className="profile-avatar-edu" 
+            />
+            <span className="top-swapper-badge">TOP Swapper</span>
+          </div>
+          
+          <div className="profile-info-edu">
+            <div className="name-section">
+              <h1>{data.username}</h1>
+              {data.is_verified && <span className="verified-badge">✓</span>}
+            </div>
+            <p className="profile-title">{formData.title || "Skill Swap Partner"}</p>
+            
+            <div className="profile-stats-grid">
+              <div className="stat-item">
+                <span className="stat-icon">🔄</span>
+                <span>{formData.experience || "0"}+ Years Experience</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-icon">✓</span>
+                <span>232 Swaps Completed</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-icon">📚</span>
+                <span>34 Skills Offered</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-icon">👥</span>
+                <span>250+ Swap Partners</span>
+              </div>
+            </div>
+
+            {editMode && (
+              <button className="edit-profile-btn" onClick={() => setEditMode(!editMode)}>
+                Cancel Edit
+              </button>
+            )}
+          </div>
+        </div>
+
+     
+        <div className="rating-section">
+          <div className="rating-header">
+            <h3>Feedback (236)</h3>
+            <button className="view-all-btn">View All →</button>
+          </div>
+          
+          <div className="overall-rating-edu">
+            <div className="rating-big">
+              <div className="rating-number-large">4.9</div>
+              <div className="stars-large">{renderStars(4.9)}</div>
+              <div className="review-count">236 reviews</div>
+            </div>
+            
+            <div className="rating-breakdown-edu">
+              <div className="rating-bar-item">
+                <span className="rating-label">Expertise</span>
+                <div className="rating-bar-container">
+                  <div className="rating-bar-fill" style={{ width: '98%' }}></div>
+                </div>
+                <span className="rating-value">4.9</span>
+              </div>
+              
+              <div className="rating-bar-item">
+                <span className="rating-label">Communication</span>
+                <div className="rating-bar-container">
+                  <div className="rating-bar-fill" style={{ width: '84%' }}></div>
+                </div>
+                <span className="rating-value">4.2</span>
+              </div>
+              
+              <div className="rating-bar-item">
+                <span className="rating-label">Reliability</span>
+                <div className="rating-bar-container">
+                  <div className="rating-bar-fill purple" style={{ width: '96%' }}></div>
+                </div>
+                <span className="rating-value">4.8</span>
+              </div>
+              
+              <div className="rating-bar-item">
+                <span className="rating-label">Teaching Skill</span>
+                <div className="rating-bar-container">
+                  <div className="rating-bar-fill purple" style={{ width: '98%' }}></div>
+                </div>
+                <span className="rating-value">4.9</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="bio-section-edu">
+        <p>{formData.bio || "Enhance your skills through collaborative learning! I believe in mutual growth through skill sharing. Whether you're a beginner or advanced, I'm here to help you master new technologies while learning from you!"}</p>
+      </div>
+
+   
+      <div className="skills-section-edu">
+        <div className="skills-column">
+          <h4>Skills I Offer</h4>
+          <div className="skill-tags">
+            {["React", "Node.js", "UI/UX Design", "JavaScript", "Python", "MongoDB"].map((skill, index) => (
+              <span key={index} className="skill-tag offered">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="skills-column">
+          <h4>Skills I Want</h4>
+          <div className="skill-tags">
+            {["Digital Marketing", "Data Science", "Business Strategy", "SEO"].map((skill, index) => (
+              <span key={index} className="skill-tag wanted">
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+
+      {editMode && (
+        <div className="edit-modal-overlay">
+          <div className="edit-modal">
+            <h2>Edit Profile</h2>
+            <form onSubmit={handleSubmit} className="edit-form-edu">
+              <div className="form-group">
+                <label>Title</label>
+                <input
+                  name="title"
+                  placeholder="e.g., Full Stack Developer"
+                  value={formData.title}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Location</label>
+                <input
+                  name="location"
+                  placeholder="e.g., London, UK"
+                  value={formData.location}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Years of Experience</label>
+                <input
+                  type="number"
+                  name="experience"
+                  placeholder="5"
+                  value={formData.experience}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Swap Terms</label>
+                <input
+                  name="swap_terms"
+                  placeholder="1 hour for 1 hour"
+                  value={formData.swap_terms}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>GitHub Profile</label>
+                <input
+                  name="github_link"
+                  placeholder="https://github.com/username"
+                  value={formData.github_link}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Portfolio Link</label>
+                <input
+                  name="portfolio_link"
+                  placeholder="https://yourportfolio.com"
+                  value={formData.portfolio_link}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Bio</label>
+                <textarea
+                  name="bio"
+                  placeholder="Tell us about yourself and what skills you want to swap..."
+                  value={formData.bio}
+                  onChange={handleChange}
+                  rows="4"
+                />
+              </div>
+
+              <div className="form-actions">
+                <button type="button" onClick={() => setEditMode(false)} className="cancel-btn">
+                  Cancel
+                </button>
+                <button type="submit" className="save-btn">
+                  Save Profile
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      
+      <div className="tabs-section-edu">
+        <div className="tabs-container">
+          <button 
+            className={`tab-btn ${activeTab === "schedule" ? "active" : ""}`}
+            onClick={() => setActiveTab("schedule")}
+          >
+            Swap Schedule
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === "skills" ? "active" : ""}`}
+            onClick={() => setActiveTab("skills")}
+          >
+            My Skills (34)
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === "feedback" ? "active" : ""}`}
+            onClick={() => setActiveTab("feedback")}
+          >
+            Feedback
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === "sessions" ? "active" : ""}`}
+            onClick={() => setActiveTab("sessions")}
+          >
+            Sessions
+          </button>
+        </div>
+        <button className="add-event-btn" onClick={() => alert("Schedule swap feature coming soon!")}>
+          + Schedule Swap
+        </button>
+      </div>
+
+   
+      <div className="main-content-edu">
+        <div className="content-left">
+          {activeTab === "schedule" && (
+            <>
+              <div className="schedule-header">
+                <h3>Swap Schedule</h3>
+                <div className="schedule-view-tabs">
+                  <button 
+                    className={`view-tab ${scheduleView === "daily" ? "active" : ""}`}
+                    onClick={() => setScheduleView("daily")}
+                  >
+                    Daily
+                  </button>
+                  <button 
+                    className={`view-tab ${scheduleView === "weekly" ? "active" : ""}`}
+                    onClick={() => setScheduleView("weekly")}
+                  >
+                    Weekly
+                  </button>
+                  <button 
+                    className={`view-tab ${scheduleView === "monthly" ? "active" : ""}`}
+                    onClick={() => setScheduleView("monthly")}
+                  >
+                    Monthly
+                  </button>
+                  <button 
+                    className={`view-tab ${scheduleView === "list" ? "active" : ""}`}
+                    onClick={() => setScheduleView("list")}
+                  >
+                    List
+                  </button>
+                </div>
+              </div>
+
+              <div className="schedule-grid">
+                {scheduleData.map((slot, index) => (
+                  <div key={index} className="schedule-card">
+                    <div className="schedule-day">
+                      <span className="day-name">{slot.day}</span>
+                      <span className="day-date">{slot.date}</span>
+                    </div>
+                    <div className="schedule-time">{slot.time}</div>
+                    <div className="schedule-subject">{slot.skill}</div>
+                    {slot.partners > 0 && (
+                      <div className="student-avatars">
+                        {Array.from({ length: Math.min(slot.partners, 3) }).map((_, i) => (
+                          <div key={i} className="mini-avatar"></div>
+                        ))}
+                        {slot.partners > 3 && <span className="more-students">+{slot.partners - 3}</span>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {activeTab === "skills" && (
+            <div className="tab-content-edu">
+              <h3>My Skills Portfolio</h3>
+              <div className="skills-detail-grid">
+                {["React", "Node.js", "UI/UX Design", "JavaScript", "Python", "MongoDB", "PostgreSQL", "Docker"].map((skill, index) => (
+                  <div key={index} className="skill-card-edu">
+                    <h4>{skill}</h4>
+                    <p>Level: Advanced</p>
+                    <p className="availability">Available for swap</p>
+                    <div className="skill-progress">
+                      <div className="progress-bar" style={{ width: '90%' }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeTab === "feedback" && (
+            <div className="feedback-section-edu">
+              <h3>All Feedback</h3>
+              {reviewsData.map((review) => (
+                <div key={review.id} className="feedback-card-edu">
+                  <div className="feedback-header-edu">
+                    <img src={review.avatar} alt={review.author} className="feedback-avatar-edu" />
+                    <div className="feedback-info-edu">
+                      <h4>{review.author}</h4>
+                      <div className="feedback-stars-edu">{renderStars(review.rating)}</div>
+                      <span className="feedback-date-edu">{review.date}</span>
+                      <span className="feedback-skill-tag">{review.skill}</span>
+                    </div>
+                  </div>
+                  <p className="feedback-comment-edu">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {activeTab === "sessions" && (
+            <div className="tab-content-edu">
+              <h3>Swap Session History</h3>
+              <div className="sessions-list">
+                <div className="session-item">
+                  <div className="session-date">March 5, 2026</div>
+                  <div className="session-details">
+                    <h4>React Hooks Deep Dive</h4>
+                    <p>Swapped with: Sarah Johnson</p>
+                    <p>Duration: 1.5 hours</p>
+                  </div>
+                </div>
+                <div className="session-item">
+                  <div className="session-date">March 1, 2026</div>
+                  <div className="session-details">
+                    <h4>Node.js API Development</h4>
+                    <p>Swapped with: Michael Chen</p>
+                    <p>Duration: 2 hours</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+       
+        <div className="content-right">
+   
+          <div className="reviews-sidebar">
+            <h4>Recent Feedback</h4>
+            {reviewsData.map((review) => (
+              <div key={review.id} className="review-card-edu">
+                <div className="review-header-edu">
+                  <img src={review.avatar} alt={review.author} className="review-avatar-edu" />
+                  <div className="review-author-info-edu">
+                    <h4>{review.author}</h4>
+                    <div className="review-stars-edu">{renderStars(review.rating)}</div>
+                    <span className="review-skill-tag-edu">{review.skill}</span>
+                  </div>
+                </div>
+                <p className="review-comment-edu">{review.comment}</p>
+              </div>
+            ))}
+          </div>
+
+
+          <div className="classroom-section">
+            <img 
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800" 
+              alt="Skill Swap Session" 
+              className="classroom-image" 
+            />
+          </div>
+
+  
+          <div className="price-section">
+            <span className="price-label">Swap Terms</span>
+            <span className="price-value">{formData.swap_terms}</span>
+          </div>
+
+          <div className="quick-links-section">
+            <h4>Quick Links</h4>
+            {formData.github_link && (
+              <a href={formData.github_link} target="_blank" rel="noreferrer" className="quick-link">
+                <span>🔗</span> GitHub Profile
+              </a>
+            )}
+            {formData.portfolio_link && (
+              <a href={formData.portfolio_link} target="_blank" rel="noreferrer" className="quick-link">
+                <span>🌐</span> Portfolio
+              </a>
+            )}
+            <button className="quick-link" onClick={() => setEditMode(true)}>
+              <span>✏️</span> Edit Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage;
