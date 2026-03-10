@@ -17,10 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from .views import *
+
 urlpatterns = [
-    path('profile/<int:id>/',profileApi.as_view(),name='profile'),
+    path('skillwant',skillswant.as_view()),
+    path('skilloffer',skillofferes.as_view()),
 
-
-    
     
 ]

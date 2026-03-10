@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('skill/',include('authe.urls')),
     path('skill/',include('userprofile.urls')),
+    path('skill/',include('skills.urls')),
     
     
 ]

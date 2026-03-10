@@ -41,7 +41,7 @@ class profileApi(APIView):
         user=self.get_objects(id)
         if user is None:
             return Response({'message': 'User does not exist'}, status=404)
-        seria=ProfileSerializer(user,data=request.data,partail=True)
+        seria=ProfileSerializer(user,data=request.data,partial=True)
         if seria.is_valid():
            seria.save()
            return Response({'message':'User update succesfully',
@@ -51,8 +51,4 @@ class profileApi(APIView):
     
 
 
-      
-      
-
-        
-
+     
