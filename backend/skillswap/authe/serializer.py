@@ -56,4 +56,4 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 
-    
+

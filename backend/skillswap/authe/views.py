@@ -5,6 +5,7 @@ from .serializer import RegisterSerializer,LoginSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Userprofile
 # Create your views here.
 
 class Register(APIView):
@@ -34,7 +35,8 @@ class Login(APIView):
             return response
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         
-        
+
+    
     
 
 
