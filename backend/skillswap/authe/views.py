@@ -36,11 +36,6 @@ class Login(APIView):
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         
 
-
-class hai(APIView):
-    def get(self,request):
-        a=Userprofile.objects.all()
-        return Response(a)
     
     
 
