@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
 import '../styles/home.css';
 
+import { useNavigate } from "react-router-dom";
+
 const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate=useNavigate()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  function handlelogin(){
+    navigate('/login')
+
+  }
 
   return (
     <div className="homepage">
@@ -27,7 +35,7 @@ const HomePage = () => {
           </div>
 
           <div className="nav-buttons">
-            <button className="btn-login">Log in</button>
+            <button className="btn-login" onClick={handlelogin}>Log in</button>
             <button className="btn-signup">Join Community</button>
           </div>
 
