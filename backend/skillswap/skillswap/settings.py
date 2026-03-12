@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'authe',
     'userprofile',
     'skills',
+    'swap',
     'corsheaders'
 
 ]
