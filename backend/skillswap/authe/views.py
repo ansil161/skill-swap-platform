@@ -30,8 +30,21 @@ class Login(APIView):
             access_token=str(refresh.access_token)
 
             response=Response({'message':'Login succesfull'},status=status.HTTP_200_OK)
-            response.set_cookie(key='access_token',value=access_token,secure=False,samesite="Lax",httponly=True)
-            response.set_cookie(key='refresh',value=str(refresh),secure=False,samesite="Lax",httponly=True)
+            response.set_cookie(
+                key='access_token',
+                value=access_token,
+                httponly=True,
+                secure=False,
+                samesite="Lax"
+            )
+            
+            response.set_cookie(
+                key='refresh',
+                value=str(refresh),
+                httponly=True,
+                secure=False,
+                samesite="Lax"
+            )
             return response
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         

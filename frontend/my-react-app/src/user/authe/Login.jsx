@@ -2,6 +2,8 @@ import React from 'react';
 import '../styles/login.css'
 import { useState } from 'react';
 import api from '../../api/axios';
+import { Link } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
@@ -9,6 +11,7 @@ const [state, setState] = useState({
     email: '',
     password: ''
 })
+const nav=useNavigate()
 
 const handleChange = (e) => {
     setState({
@@ -23,7 +26,9 @@ const handleLogin = (e) => {
     api.post('Login/', state)
     .then((res)=>{
         console.log(res.data)
-        alert("User registered successfully")
+        nav('/profile')
+        alert("User loginsuccessfully")
+        
     })
     .catch((err)=>{
         console.log(err.response.data)
@@ -128,7 +133,7 @@ const handleLogin = (e) => {
                         </div>
 
                         <div className="footer-text">
-                            <p>Don't have an account? <a href="#">Sign up</a></p>
+                            Don't have an account? <Link to='/register'>Sign up</Link>
                         </div>
                     </form  >
                 </div>

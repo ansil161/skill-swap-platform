@@ -3,12 +3,17 @@ import api from "../../api/axios";
 import "../styles/profile.css";
 
 const ProfilePage = () => {
-  const id = 1;
+  
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState("schedule");
   const [scheduleView, setScheduleView] = useState("daily");
   const [editMode, setEditMode] = useState(false);
+  const [skillsOffered, setSkillsOffered] = useState([]);
+const [skillsWanted, setSkillsWanted] = useState([]);
 
+const [newSkillOffered, setNewSkillOffered] = useState("");
+const [newSkillWanted, setNewSkillWanted] = useState("");
+const [profileImage, setProfileImage] = useState(null);
   const [formData, setFormData] = useState({
     bio: "",
     location: "",
@@ -21,7 +26,7 @@ const ProfilePage = () => {
     swap_terms: "1 hour for 1 hour"
   });
 
-  // Mock schedule data - replace with API call
+//mo
   const scheduleData = [
     { day: "Tue", date: "10", time: "08:00 - 09:00", skill: "React Basics", partners: 3 },
     { day: "Wed", date: "11", time: "09:00 - 10:30", skill: "Node.js API", partners: 2 },
@@ -31,23 +36,91 @@ const ProfilePage = () => {
   ];
 
 
-  // const reviewsData = [
-  //   {
-  //     id: 1,
-  //     author: "Kathryn Murphy",
-  //     avatar: "https://i.pravatar.cc/150?img=5",
-  //     rating: 5,
-  //     date: "2 days ago",
-  //     skill: "React Development",
-  //     comment: "Absolutely brilliant skill swap! Robert's deep knowledge of React, coupled with his engaging teaching style, made every session a pleasure!",
-  //   },
-  // ];
+  const reviewsData = [
+    {
+      id: 1,
+      author: "Kathryn Murphy",
+      avatar: "https://i.pravatar.cc/150?img=5",
+      rating: 5,
+      date: "2 days ago",
+      skill: "React Development",
+      comment: "Absolutely brilliant skill swap! Robert's deep knowledge of React, coupled with his engaging teaching style, made every session a pleasure!",
+    },
+  ];
+const addSkillOffered = () => {
+  if (!newSkillOffered.trim()) return;
+
+
+  const tempSkill = {
+    id: Date.now(),        
+    skill_name: newSkillOffered
+  };
+
+
+  setSkillsOffered([...skillsOffered, tempSkill]);
+  setNewSkillOffered("");
+
+  
+  api.post("skilloffer/", {
+   
+    skills: tempSkill.skill_name,
+    experience_level: 1
+  })
+  .then((res) => {
+   
+    setSkillsOffered((prevSkills) =>
+      prevSkills.map((skill) =>
+        skill.id === tempSkill.id ? res.data : skill
+      )
+    );
+  })
+  .catch((err) => {
+    console.log(err.response?.data);
+ 
+    setSkillsOffered((prevSkills) =>
+      prevSkills.filter((skill) => skill.id !== tempSkill.id)
+    );
+    alert("Error adding skill");
+  });
+};
+console.log(data,'hai iama')
+const addSkillWanted = () => {
+  if (!newSkillWanted.trim()) return;
+
+  const tempSkill = {
+    id: Date.now(),
+    skill_name: newSkillWanted
+  };
+
+  setSkillsWanted([...skillsWanted, tempSkill]);
+  setNewSkillWanted("");
+
+  api.post("skillwant/", {
+    
+    name: tempSkill.skill_name,
+   
+  })
+  .then((res) => {
+    setSkillsWanted((prevSkills) =>
+      prevSkills.map((skill) =>
+        skill.id === tempSkill.id ? res.data : skill
+      )
+    );
+  })
+  .catch((err) => {
+    console.log(err.response?.data);
+    setSkillsWanted((prevSkills) =>
+      prevSkills.filter((skill) => skill.id !== tempSkill.id)
+    );
+    alert("Error adding skill");
+  });
+};
 
 
   useEffect(() => {
-    api.get(`profile/${id}/`)
+    api.get(`profile/`)
       .then((res) => {
-        const profile = res.data.message;
+        const profile = res.data;
         setData(profile);
         setFormData({
           bio: profile.bio || "",
@@ -64,6 +137,15 @@ const ProfilePage = () => {
       .catch((err) => {
         console.log(err.response?.data);
       });
+      api.get('skilloffer/')
+.then((res)=>{
+  setSkillsOffered(res.data)
+})
+
+api.get('skillwant/')
+.then((res)=>{
+  setSkillsWanted(res.data)
+})
   }, []);
 
   const handleChange = (e) => {
@@ -73,24 +155,72 @@ const ProfilePage = () => {
       [name]: value
     });
   };
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    api.patch(`profile/${id}/`, formData)
-      .then((res) => {
-        alert("Profile updated successfully!");
-        setData({
-          ...data,
-          ...formData
-        });
-        setEditMode(false);
-      })
-      .catch((err) => {
-        console.log(err.response?.data);
-        alert("Error updating profile");
-      });
-  };
+  const form = new FormData();
 
+  form.append("bio", formData.bio);
+  form.append("location", formData.location);
+  form.append("experience", formData.experience);
+  form.append("github_link", formData.github_link);
+  form.append("portfolio_link", formData.portfolio_link);
+  form.append("title", formData.title);
+  form.append("swap_terms", formData.swap_terms);
+
+  if (profileImage) {
+    form.append("profile_picture", profileImage);
+  }
+
+  api.patch(`profile/`, form, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
+  .then((res) => {
+    alert("Profile updated successfully!");
+    setData(res.data.data);
+    setEditMode(false);
+  })
+  .catch((err) => {
+    console.log(err.response?.data);
+    alert("Error updating profile");
+  });
+};
+
+ const deleteOfferedSkill = (skillId) => {
+
+  api.delete(`skilloffer/${skillId}/`)
+  .then(() => {
+
+    setSkillsOffered((prevSkills) =>
+      prevSkills.filter((skill) => skill.id !== skillId)
+    );
+
+  })
+  .catch((err) => {
+    console.log(err.response?.data);
+    alert("Error deleting offered skill");
+  });
+
+};
+
+const deleteWantedSkill = (skillId) => {
+
+  api.delete(`skillwant/${skillId}/`)
+  .then(() => {
+
+    setSkillsWanted((prevSkills) =>
+      prevSkills.filter((skill) => skill.id !== skillId)
+    );
+
+  })
+  .catch((err) => {
+    console.log(err.response?.data);
+    alert("Error deleting wanted skill");
+  });
+
+};
   const renderStars = (rating) => {
     return "★".repeat(Math.floor(rating)) + "☆".repeat(5 - Math.floor(rating));
   };
@@ -108,17 +238,22 @@ const ProfilePage = () => {
     );
   }
 
+  console.log('hai',skillsOffered)
+  console.log('hi',skillsWanted)
+
   return (
     <div className="profile-page">
 
       <div className="profile-header-edu">
         <div className="profile-left">
           <div className="profile-avatar-container">
-            <img 
-              src={data.profile_picture || "https://i.pravatar.cc/150"} 
-              alt={data.username} 
-              className="profile-avatar-edu" 
-            />
+           {data.profile_picture && (
+  <img 
+    src={`http://localhost:8000${data.profile_picture}`} 
+    alt={data.username} 
+    className="profile-avatar-edu" 
+  />
+)}
             <span className="top-swapper-badge">TOP Swapper</span>
           </div>
           
@@ -213,28 +348,81 @@ const ProfilePage = () => {
       </div>
 
    
-      <div className="skills-section-edu">
-        <div className="skills-column">
-          <h4>Skills I Offer</h4>
-          <div className="skill-tags">
-            {["React", "Node.js", "UI/UX Design", "JavaScript", "Python", "MongoDB"].map((skill, index) => (
-              <span key={index} className="skill-tag offered">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="skills-column">
-          <h4>Skills I Want</h4>
-          <div className="skill-tags">
-            {["Digital Marketing", "Data Science", "Business Strategy", "SEO"].map((skill, index) => (
-              <span key={index} className="skill-tag wanted">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
+<div className="skills-section-edu">
+
+  <div className="skills-column">
+    <h4>Skills I Offer</h4>
+
+    <div className="skill-tags">
+{skillsOffered.map((skill) => (
+  <span key={skill.id} className="skill-tag offered">
+
+    {skill.skills}
+
+    <button
+      onClick={() => deleteOfferedSkill(skill.id)}
+      style={{ marginLeft: "6px" }}
+    >
+      ❌
+    </button>
+
+  </span>
+))}
+
+    </div>
+
+    <input
+    type="text"
+    placeholder="Add skill"
+    value={newSkillOffered}
+    onChange={(e)=>setNewSkillOffered(e.target.value)}
+    />
+
+    <button onClick={addSkillOffered}>
+      Add
+    </button>
+
+  </div>
+
+
+
+  <div className="skills-column">
+
+    <h4>Skills I Want</h4>
+
+    <div className="skill-tags">
+
+{skillsWanted.map((skill) => (
+  <span key={skill.id} className="skill-tag wanted">
+
+    {skill.name}
+
+    <button
+      onClick={() => deleteWantedSkill(skill.id)}
+      style={{ marginLeft: "6px" }}
+    >
+      ❌
+    </button>
+
+  </span>
+))}
+
+    </div>
+
+    <input
+    type="text"
+    placeholder="Add skill"
+    value={newSkillWanted}
+    onChange={(e)=>setNewSkillWanted(e.target.value)}
+    />
+
+    <button onClick={addSkillWanted}>
+      Add
+    </button>
+
+  </div>
+
+</div>
 
 
       {editMode && (
@@ -272,6 +460,14 @@ const ProfilePage = () => {
                   onChange={handleChange}
                 />
               </div>
+              <div className="form-group">
+  <label>Profile Photo</label>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={(e) => setProfileImage(e.target.files[0])}
+  />
+</div>
 
               <div className="form-group">
                 <label>Swap Terms</label>
