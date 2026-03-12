@@ -1,54 +1,83 @@
-from django.shortcuts import render
-from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import SkillCategory,skilloffered,skill_wanted
-from .serializer import skillofferdSeriaizer,skillwantedSerializer
+from rest_framework.response import Response
 from rest_framework import status
-# Create your views here.
-  
+from .models import skill_wanted, skilloffered
+from .serializer import SkillWantedSerializer, SkillOfferedSerializer
+from rest_framework.permissions import IsAuthenticated
 
-        
-class skillswant(APIView):
+class SkillsWanted(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request, id=None):
+        if id:
+            try:
+                skill = skill_wanted.objects.get(id=id,user=request.user)
+                serializer = SkillWantedSerializer(skill)
+                return Response(serializer.data)
+            except skill_wanted.DoesNotExist:
+                return Response({"message": "Skill not found"}, status=status.HTTP_404_NOT_FOUND)
+        skills = skill_wanted.objects.filter(user=request.user)
+        serializer = SkillWantedSerializer(skills, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = SkillWantedSerializer(data=request.data)
     
-    def get_objects(self,id):
-        try:
-            return skill_wanted.objects.get(id=id)
-        except skill_wanted.DoesNotExist:
-            return None
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=201)
+    
+        return Response(serializer.errors, status=400)
+    
+
+    def delete(self, request, id):
+            try:
+                ski = skill_wanted.objects.get(id=id,user=request.user)
+            except skill_wanted.DoesNotExist:
+                return Response(
+                    {"message": "Skill not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         
-    def get(self,request,id):
-        user=self.get_objects(id)
-        if user is None:
-            return  Response({'message':'user id does not exist'},status=status.HTTP_404_NOT_FOUND)
+            ski.delete()
         
-    def post(self,reqeust):
-        a=skillwantedSerializer(reqeust.data)
-        if a.is_valid():
-            return Response(a.data,status=status.HTTP_200_OK)
-        return Response(a.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"message": "Delete success"},
+                status=status.HTTP_200_OK
+            )
 
+class SkillsOffered(APIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request, id=None):
+        if id:
+            try:
+                skill = skilloffered.objects.get(id=id,user=request.user)  
+                serializer = SkillOfferedSerializer(skill)
+                return Response(serializer.data)
+            except skilloffered.DoesNotExist:
+                return Response({"message": "Skill not found"}, status=status.HTTP_404_NOT_FOUND)
+        skills = skilloffered.objects.filter(user=request.user)  
+        serializer = SkillOfferedSerializer(skills, many=True)
+        return Response(serializer.data)
 
-
-
-class skillofferes(APIView):
-     
-    def get_objects(self,id):
-        try:
-            return skilloffered.objects.get(id=id)
-        except skilloffered.DoesNotExist:
-            return None
+    def post(self, request):
+        serializer = SkillOfferedSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, id):
+            try:
+                ski = skilloffered.objects.get(id=id,user=request.user)
+            except skilloffered.DoesNotExist:
+                return Response(
+                    {"message": "Skill not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
         
-    def get(self,request,id):
-        user=self.get_objects(id)
-        if user is None:
-            return  Response({'message':'user id does not exist'},status=status.HTTP_404_NOT_FOUND)
+            ski.delete()
         
-    def post(self,reqeust):
-        a=skillwantedSerializer(reqeust.data)
-        if a.is_valid():
-            return Response(a.data,status=status.HTTP_200_OK)
-        return Response(a.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
+            return Response(
+                {"message": "Delete success"},
+                status=status.HTTP_200_OK
+            )

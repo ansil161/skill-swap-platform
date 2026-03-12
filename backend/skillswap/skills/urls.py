@@ -19,8 +19,13 @@ from django.urls import path,include
 from .views import *
 
 urlpatterns = [
-    path('skillwant',skillswant.as_view()),
-    path('skilloffer',skillofferes.as_view()),
+
+
+    path('skillwant/', SkillsWanted.as_view()),
+    path('skillwant/<int:id>/', SkillsWanted.as_view()),
+    path('skilloffer/', SkillsOffered.as_view()),
+    path('skilloffer/<int:id>/', SkillsOffered.as_view()),
+
 
     
 ]
