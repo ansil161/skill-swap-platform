@@ -20,5 +20,6 @@ from .views import *
 
 
 urlpatterns = [
-    path('matching/',MatchApi.as_view())
+    path('matching/',MatchApi.as_view()),
+    path("swaprequest/", SwaprRequestApi.as_view())
 ]
