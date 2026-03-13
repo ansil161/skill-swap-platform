@@ -34,100 +34,101 @@ class MatchApi(APIView):
           
             if other.exists():
                 datas.append({
-                    'username':macth_user.user.username,
-                    'offers':i.skills.name,
-                    'learn':list(other),
-                    'photo':macth_user.profile_picture.url if macth_user.profile_picture else None
-                    
-                 
-
+                    'id': macth_user.id,
+                    'username': macth_user.user.username,
+                    'offers': i.skills.name,
+                    'skill_id': i.id,
+                    'learn': list(other),
+                    'photo': macth_user.profile_picture.url if macth_user.profile_picture else None
                 })
         return Response(datas)
 
-
-        
-
-
 class SwaprRequestApi(APIView):
-    def post(self,request):
-        requeset_user=profile.objects.get(user=request.user)
-        provider=request.data.get('provider_id')
-        skilll_id=request.data.get('skill_id')
-        if not provider or not skilll_id:
-            return Response({'message': 'provide and skill are required'},status=status.HTTP_400_BAD_REQUEST)
+        
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        request_user = profile.objects.get(user=request.user)
+        provider_id = request.data.get('provider_id')
+        skill_id = request.data.get('skill_id')
+
+        if not provider_id or not skill_id:
+            return Response({'message': 'Provider and skill are required'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            user=profile.objects.get(id=provider)
-            skills=skill.objects.get(id=skilll_id)
+            provider_user = profile.objects.get(id=provider_id)
+            skill_instance = skilloffered.objects.get(id=skill_id)
         except profile.DoesNotExist:
-            return Response({'message':'provider not found'},status=status.HTTP_404_NOT_FOUND)
-        except skill.DoesNotExist:
-            return Response({'message':"skill is not found"},status=status.HTTP_404_NOT_FOUND)
-        
-        if SwapRequest.objects.filter(requester=requeset_user,provider=provider,skill=skills,status='pending').exists():
-            return Response ({'message':'swap request is already sent'},status=status.HTTP_400_BAD_REQUEST)
-        else:
-            SwapRequest.objects.create(
-                requester=requeset_user,
-                provider=provider,
-                skill=skills,
-                
-            )
-            return Response({'message':"swap request sent secefully"},status=status.HTTP_200_OK)
-        
+            return Response({'message': 'Provider not found'}, status=status.HTTP_404_NOT_FOUND)
+        except skilloffered.DoesNotExist:
+            return Response({'message': 'Skill not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        
-    def get(self,request):
-        user=profile.objects.get(user=request.user)
-        request_sent=SwapRequest.objects.filter(requester=user).select_related('provider','skill__skills')
-        request_recieved=SwapRequest.objects.filter(provider=user).select_related('requester','skill__skills')
-
-        sent=[
-            {
-                'request_id':i.id,
-                'provider':i.provider.user.username,
-                'skill':i.skill.skills.name,
-                'status':i.status,
-                'create':i.create
-            
-
-            }
-            for i in request_sent
        
-                
-    
-        ]
+        if SwapRequest.objects.filter(
+            requester=request_user,
+            provider=provider_user,
+            skill=skill_instance,
+            status='Pending'  
+        ).exists():
+            return Response({'message': 'Swap request is already sent'}, status=status.HTTP_400_BAD_REQUEST)
+
         
-        recieve=[
+        SwapRequest.objects.create(
+            requester=request_user,
+            provider=provider_user,
+            skill=skill_instance
+        )
+
+        return Response({'message': 'Swap request sent successfully'}, status=status.HTTP_200_OK)
+
+   
+    def get(self, request):
+        user = profile.objects.get(user=request.user)
+
+        sent_requests = SwapRequest.objects.filter(requester=user).select_related('provider', 'skill__skills')
+        received_requests = SwapRequest.objects.filter(provider=user).select_related('requester', 'skill__skills')
+
+        sent = [
+                {
+                    'request_id': r.id,
+                    'provider': r.provider.user.username,
+                    'provider_id': r.provider.id,
+                    'skill': r.skill.skills.name,
+                    'skill_id': r.skill.id,
+                    'status': r.status,
+                    'created': r.create
+                }
+                for r in sent_requests
+            ]
+
+        received = [
             {
-                'request_id':i.id,
-                'requester':i.requester.user.username,
-                'skill':i.skill.skills.name,
-                'status':i.status,
-                'create':i.create
-
-
+                'request_id': r.id,
+                'requester': r.requester.user.username,
+                'skill': r.skill.skills.name,
+                'status': r.status,
+                'created': r.create
             }
-            for i in request_recieved
+            for r in received_requests
         ]
 
-        return Response({'request':sent,
-                         'recienve':recieve},status=status.HTTP_200_OK)
-    
+        return Response({'sent': sent, 'received': received}, status=status.HTTP_200_OK)
 
-    def put(self,request):
-        request_id=request.data.get('request_id')
-        user=profile.objects.get(user=request.user)
-        new_status=request.data.get('status')
 
-        if new_status not in ['Accepted','Rejected']:
-            return Response({'error':'invalid status'})
+    def put(self, request):
+        request_id = request.data.get('request_id')
+        new_status = request.data.get('status')
+        user = profile.objects.get(user=request.user)
+
+        if new_status not in ['Accepted', 'Rejected']:
+            return Response({'error': 'Invalid status'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
-            swap_req=SwapRequest.objects.get(request=request_id,provider=user)
+            swap_req = SwapRequest.objects.get(id=request_id, provider=user)
         except SwapRequest.DoesNotExist:
-            return Response({"error":"request is doen not found"},status=status.HTTP_404_NOT_FOUND)
-        
-        swap_req.status=new_status
+            return Response({'error': 'Request not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        swap_req.status = new_status
         swap_req.save()
-        return Response({'message':f"swap request {new_status}"},status=status.HTTP_200_OK)
 
-
+        return Response({'message': f'Swap request {new_status}'}, status=status.HTTP_200_OK)
