@@ -32,7 +32,7 @@ function Match() {
   console.log(matches)
 
   function sendSwapRequest(matchedUserId) {
-    api.post("swap-requests/", {
+    api.post("swaprequest/", {
       receiver: matchedUserId,
       message: "I'd like to swap skills with you!"
     })
