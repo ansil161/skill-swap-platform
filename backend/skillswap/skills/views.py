@@ -4,34 +4,39 @@ from rest_framework import status
 from .models import skill_wanted, skilloffered
 from .serializer import SkillWantedSerializer, SkillOfferedSerializer
 from rest_framework.permissions import IsAuthenticated
+from userprofile.models import profile
 
 class SkillsWanted(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request, id=None):
+        user_profile = profile.objects.get(user=request.user)
         if id:
             try:
-                skill = skill_wanted.objects.get(id=id,user=request.user)
+                skill = skill_wanted.objects.get(id=id,user=user_profile)
                 serializer = SkillWantedSerializer(skill)
                 return Response(serializer.data)
             except skill_wanted.DoesNotExist:
                 return Response({"message": "Skill not found"}, status=status.HTTP_404_NOT_FOUND)
-        skills = skill_wanted.objects.filter(user=request.user)
+        skills = skill_wanted.objects.filter(user=user_profile)
         serializer = SkillWantedSerializer(skills, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        user_profile = profile.objects.get(user=request.user)
         serializer = SkillWantedSerializer(data=request.data)
     
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user_profile)
             return Response(serializer.data, status=201)
     
         return Response(serializer.errors, status=400)
     
 
     def delete(self, request, id):
+            user_profile = profile.objects.get(user=request.user)
+          
             try:
-                ski = skill_wanted.objects.get(id=id,user=request.user)
+                ski = skill_wanted.objects.get(id=id,user=user_profile)
             except skill_wanted.DoesNotExist:
                 return Response(
                     {"message": "Skill not found"},
@@ -48,27 +53,30 @@ class SkillsWanted(APIView):
 class SkillsOffered(APIView):
     permission_classes=[IsAuthenticated]
     def get(self, request, id=None):
+        user_profile = profile.objects.get(user=request.user)
         if id:
             try:
-                skill = skilloffered.objects.get(id=id,user=request.user)  
+                skill = skilloffered.objects.get(id=id,user=user_profile)  
                 serializer = SkillOfferedSerializer(skill)
                 return Response(serializer.data)
             except skilloffered.DoesNotExist:
                 return Response({"message": "Skill not found"}, status=status.HTTP_404_NOT_FOUND)
-        skills = skilloffered.objects.filter(user=request.user)  
+        skills = skilloffered.objects.filter(user=user_profile)  
         serializer = SkillOfferedSerializer(skills, many=True)
         return Response(serializer.data)
 
     def post(self, request):
+        user_profile = profile.objects.get(user=request.user)
         serializer = SkillOfferedSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(user=user_profile)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, id):
+            user_profile = profile.objects.get(user=request.user)
             try:
-                ski = skilloffered.objects.get(id=id,user=request.user)
+                ski = skilloffered.objects.get(id=id,user=user_profile)
             except skilloffered.DoesNotExist:
                 return Response(
                     {"message": "Skill not found"},
