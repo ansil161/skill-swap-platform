@@ -2,7 +2,8 @@ import Register from './user/authe/Register'
 import {Route,BrowserRouter,Routes} from 'react-router-dom'
 import Login from './user/authe/Login'
 import Home from './user/pages/Home'
-import ProfilePage from './user/pages/profil'
+import Match from './user/pages/match'
+import ProfilePage from './user/pages/Profil'
 
 function App(){
   return(
@@ -13,6 +14,9 @@ function App(){
     <Route path='/register' element={<Register/>}/>
     <Route path='/login' element={<Login/>}/>
       <Route path='/profile' element={<ProfilePage/>}/>
+       <Route path='/match' element={<Match/>}/>
+      
+
 
   </Routes>
   </BrowserRouter>

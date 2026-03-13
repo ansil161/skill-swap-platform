@@ -75,7 +75,7 @@ const addSkillOffered = () => {
     );
   })
   .catch((err) => {
-    console.log(err.response?.data);
+    console.log(err.response?.data?.message);
  
     setSkillsOffered((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
@@ -83,7 +83,7 @@ const addSkillOffered = () => {
     alert("Error adding skill");
   });
 };
-console.log(data,'hai iama')
+
 const addSkillWanted = () => {
   if (!newSkillWanted.trim()) return;
 
@@ -108,7 +108,7 @@ const addSkillWanted = () => {
     );
   })
   .catch((err) => {
-    console.log(err.response?.data);
+    console.log(err.response?.data?.message);
     setSkillsWanted((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
     );
@@ -238,8 +238,7 @@ const deleteWantedSkill = (skillId) => {
     );
   }
 
-  console.log('hai',skillsOffered)
-  console.log('hi',skillsWanted)
+ 
 
   return (
     <div className="profile-page">
