@@ -34,13 +34,12 @@ class MatchApi(APIView):
           
             if other.exists():
                 datas.append({
-                    'username':macth_user.user.username,
-                    'offers':i.skills.name,
-                    'learn':list(other),
-                    'photo':macth_user.profile_picture.url if macth_user.profile_picture else None
-                    
-                 
-
+                    'id': macth_user.id,
+                    'username': macth_user.user.username,
+                    'offers': i.skills.name,
+                    'skill_id': i.id,
+                    'learn': list(other),
+                    'photo': macth_user.profile_picture.url if macth_user.profile_picture else None
                 })
         return Response(datas)
 
@@ -90,15 +89,17 @@ class SwaprRequestApi(APIView):
         received_requests = SwapRequest.objects.filter(provider=user).select_related('requester', 'skill__skills')
 
         sent = [
-            {
-                'request_id': r.id,
-                'provider': r.provider.user.username,
-                'skill': r.skill.skills.name,
-                'status': r.status,
-                'created': r.create
-            }
-            for r in sent_requests
-        ]
+                {
+                    'request_id': r.id,
+                    'provider': r.provider.user.username,
+                    'provider_id': r.provider.id,
+                    'skill': r.skill.skills.name,
+                    'skill_id': r.skill.id,
+                    'status': r.status,
+                    'created': r.create
+                }
+                for r in sent_requests
+            ]
 
         received = [
             {
