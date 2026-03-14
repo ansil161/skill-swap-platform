@@ -6,6 +6,7 @@ import Match from './user/pages/match'
 import ProfilePage from './user/pages/Profil'
 import Requests from './user/pages/request'
 import Sessionform from './user/pages/sessionfrom'
+import SessionList from './user/pages/sessionlist'
 
 function App(){
   return(
@@ -19,6 +20,7 @@ function App(){
        <Route path='/match' element={<Match/>}/>
        <Route path='/request' element={<Requests/>}/>
         <Route path='/sessionform' element={<Sessionform/>}/>
+        <Route path='/sessionlist' element={<SessionList/>}/>
       
 
 
