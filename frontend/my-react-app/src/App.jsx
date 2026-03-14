@@ -4,6 +4,7 @@ import Login from './user/authe/Login'
 import Home from './user/pages/Home'
 import Match from './user/pages/match'
 import ProfilePage from './user/pages/Profil'
+import Requests from './user/pages/request'
 
 function App(){
   return(
@@ -15,6 +16,7 @@ function App(){
     <Route path='/login' element={<Login/>}/>
       <Route path='/profile' element={<ProfilePage/>}/>
        <Route path='/match' element={<Match/>}/>
+       <Route path='/request' element={<Requests/>}/>
       
 
 

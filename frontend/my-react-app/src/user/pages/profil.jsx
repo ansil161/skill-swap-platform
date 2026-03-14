@@ -25,15 +25,10 @@ const [profileImage, setProfileImage] = useState(null);
     skills_wanted: [],
     swap_terms: "1 hour for 1 hour"
   });
+const [sessions, setSessions] = useState([]);
 
-//mo
-  const scheduleData = [
-    { day: "Tue", date: "10", time: "08:00 - 09:00", skill: "React Basics", partners: 3 },
-    { day: "Wed", date: "11", time: "09:00 - 10:30", skill: "Node.js API", partners: 2 },
-    { day: "Wed", date: "12", time: "08:00 - 09:00", skill: "UI/UX Design", partners: 4 },
-    { day: "Wed", date: "13", time: "09:00 - 12:00", skill: "Full Stack Project", partners: 1 },
-    { day: "Wed", date: "14", time: "09:00 - 12:00", skill: "Code Review", partners: 0 },
-  ];
+
+
 
 
   const reviewsData = [
@@ -145,6 +140,14 @@ const addSkillWanted = () => {
 api.get('skillwant/')
 .then((res)=>{
   setSkillsWanted(res.data)
+})
+
+api.get("session/")
+.then((res)=>{
+  setSessions(res.data)
+})
+.catch((err)=>{
+  console.log(err.response?.data)
 })
   }, []);
 
@@ -590,26 +593,36 @@ const deleteWantedSkill = (skillId) => {
                 </div>
               </div>
 
-              <div className="schedule-grid">
-                {scheduleData.map((slot, index) => (
-                  <div key={index} className="schedule-card">
-                    <div className="schedule-day">
-                      <span className="day-name">{slot.day}</span>
-                      <span className="day-date">{slot.date}</span>
-                    </div>
-                    <div className="schedule-time">{slot.time}</div>
-                    <div className="schedule-subject">{slot.skill}</div>
-                    {slot.partners > 0 && (
-                      <div className="student-avatars">
-                        {Array.from({ length: Math.min(slot.partners, 3) }).map((_, i) => (
-                          <div key={i} className="mini-avatar"></div>
-                        ))}
-                        {slot.partners > 3 && <span className="more-students">+{slot.partners - 3}</span>}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+             <div className="schedule-grid">
+  {sessions.length === 0 && <p>No scheduled swaps yet</p>}
+  {sessions.map((session, index) => {
+    const sessionDate = new Date(session.date); // assuming your backend returns ISO string
+    const day = sessionDate.toLocaleDateString("en-US", { weekday: "short" });
+    const date = sessionDate.toLocaleDateString();
+    const time = sessionDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const partners = session.partners_count || 0; // replace with actual field from backend
+    const skill = session.skill_name || "Skill Swap"; // replace with actual field
+
+    return (
+      <div key={index} className="schedule-card">
+        <div className="schedule-day">
+          <span className="day-name">{day}</span>
+          <span className="day-date">{date}</span>
+        </div>
+        <div className="schedule-time">{time}</div>
+        <div className="schedule-subject">{skill}</div>
+        {partners > 0 && (
+          <div className="student-avatars">
+            {Array.from({ length: Math.min(partners, 3) }).map((_, i) => (
+              <div key={i} className="mini-avatar"></div>
+            ))}
+            {partners > 3 && <span className="more-students">+{partners - 3}</span>}
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
             </>
           )}
 
@@ -651,29 +664,42 @@ const deleteWantedSkill = (skillId) => {
             </div>
           )}
 
-          {activeTab === "sessions" && (
-            <div className="tab-content-edu">
-              <h3>Swap Session History</h3>
-              <div className="sessions-list">
-                <div className="session-item">
-                  <div className="session-date">March 5, 2026</div>
-                  <div className="session-details">
-                    <h4>React Hooks Deep Dive</h4>
-                    <p>Swapped with: Sarah Johnson</p>
-                    <p>Duration: 1.5 hours</p>
-                  </div>
-                </div>
-                <div className="session-item">
-                  <div className="session-date">March 1, 2026</div>
-                  <div className="session-details">
-                    <h4>Node.js API Development</h4>
-                    <p>Swapped with: Michael Chen</p>
-                    <p>Duration: 2 hours</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        {activeTab === "sessions" && (
+  <div className="tab-content-edu">
+    <h3>Swap Session History</h3>
+
+    <div className="sessions-list">
+
+      {sessions.length === 0 && (
+        <p>No sessions yet</p>
+      )}
+
+      {sessions.map((session) => (
+        <div key={session.id} className="session-item">
+
+          <div className="session-date">
+            {session.date}
+          </div>
+
+          <div className="session-details">
+            <h4>Skill Swap Session</h4>
+
+            <p>
+              Duration: {session.duration} minutes
+            </p>
+
+            <p>
+              Status: {session.status}
+            </p>
+
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+)}
         </div>
 
        

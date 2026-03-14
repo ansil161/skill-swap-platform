@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'userprofile',
     'skills',
     'swapsystem',
+    'sessionbooking',
+
     'corsheaders'
 
 ]

@@ -11,9 +11,9 @@ class SwapRequest(models.Model):
     skill=models.ForeignKey(skilloffered,on_delete=models.CASCADE)
 
     status_choice=[
-        ('Pending','Pending'),
-        ('Accepted','Accepted'),
-        ('Rejected','Rejected')
+        ('Pending','pending'),
+        ('Accepted','accepted'),
+        ('Rejected','rejected')
     ]
 
     status=models.CharField(max_length=10,choices=status_choice,default='Pending')
