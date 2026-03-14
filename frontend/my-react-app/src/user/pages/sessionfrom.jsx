@@ -1,7 +1,7 @@
 
 import { useState } from "react"
 import api from "../../api/axios"
-import "./Sessionform.css" 
+import "../styles/session.css" 
 
 function Sessionform({ swapid }) {
     const [date, setdate] = useState('')

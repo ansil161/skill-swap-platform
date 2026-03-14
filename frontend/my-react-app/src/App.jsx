@@ -18,7 +18,7 @@ function App(){
       <Route path='/profile' element={<ProfilePage/>}/>
        <Route path='/match' element={<Match/>}/>
        <Route path='/request' element={<Requests/>}/>
-        <Route path='/sessiofrom' element={<Sessionform/>}/>
+        <Route path='/sessionform' element={<Sessionform/>}/>
       
 
 
