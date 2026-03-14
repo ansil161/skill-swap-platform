@@ -36,8 +36,8 @@ class SessionApi(APIView):
         
         session=Session.objects.create(
             swap_request=swap,
-            mentor=swap.requester,
-            learner=swap.provider,
+            mentor=swap.provider,
+            learner=swap.requester,
             date=request.data.get('date'),
             time=request.data.get('time'),
             duration=request.data.get('duration')
@@ -57,6 +57,8 @@ class SessionApi(APIView):
         
         status_new=request.data.get('status')
         session.status=status_new
+        if status_new not in ['scheduled','completed','canceled']:
+                return Response({"error":"invalid status"},status=status.HTTP_400_BAD_REQUEST)
         session.save()
         seri=SessionSerializer(session)
         return Response(seri.data)

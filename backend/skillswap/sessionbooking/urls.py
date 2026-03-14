@@ -20,7 +20,7 @@ from .views import *
 
 urlpatterns = [
 
-    path('session',SessionApi.as_view()),
+    path('session/',SessionApi.as_view()),
     path('session_update/<int:id>/',SessionApi.as_view())
 
    
