@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';  // ✅ Import React Router hooks
+import { useNavigate, useLocation } from 'react-router-dom';  
 import '../styles/navbar.css';
 import api from '../../api/axios';
 
@@ -78,8 +78,8 @@ const Navbar = () => {
       <ul className="nav-menu">
         <li>
           <div 
-            className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`} 
-            onClick={() => navigate('/dashboard')}
+            className={`nav-item ${isActive('/dash') ? 'active' : ''}`} 
+            onClick={() => navigate('/dash')}
           >
             <FontAwesomeIcon icon={faThLarge} />
             <span>Dashboard</span>
@@ -87,7 +87,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/explore') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/match') ? 'active' : ''}`} 
             onClick={() => navigate('/match')}
           >
             <FontAwesomeIcon icon={faSearch} />
@@ -96,7 +96,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/requests') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/request') ? 'active' : ''}`} 
             onClick={() => navigate('/request')}
           >
             <FontAwesomeIcon icon={faExchangeAlt} />
@@ -105,7 +105,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/sessions') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/sessionlist') ? 'active' : ''}`} 
             onClick={() => navigate('/sessionlist')}
           >
             <FontAwesomeIcon icon={faCalendar} />
@@ -114,11 +114,11 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/ai-tools') ? 'active' : ''}`} 
-            onClick={() => navigate('/ai-tools')}
+            className={`nav-item ${isActive('/hai') ? 'active' : ''}`} 
+            onClick={() => navigate('/hai')}
           >
             <FontAwesomeIcon icon={faMagic} />
-            <span>AI Tools</span>
+            <span>features</span>
           </div>
         </li>
       </ul>
@@ -126,14 +126,12 @@ const Navbar = () => {
     
       <div className="navbar-right">
       
-        <button className="icon-btn" aria-label="Toggle Theme">
-          <FontAwesomeIcon icon={faSun} />
-        </button>
+        
 
         
         <button className="icon-btn" aria-label="Notifications" onClick={() => navigate('/notifications')}>
           <FontAwesomeIcon icon={faBell} />
-          <span className="notification-badge">3</span>
+          <span className="notification-badge">0</span>
         </button>
 
         <div className="user-dropdown-wrapper" ref={dropdownRef}>

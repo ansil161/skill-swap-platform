@@ -28,6 +28,9 @@ urlpatterns = [
      path('auth/', include('dj_rest_auth.urls')),
     path('auth/', include('dj_rest_auth.registration.urls')),
     path('accounts/', include('allauth.urls')),
+     path("google-login/",GoogleLogin.as_view()),
+     path('password-reset/',passwordrequest.as_view()),
+     path('password-reset-confirm/<int:uid>/<str:token>/',passwordreset.as_view())
 
    
 ]

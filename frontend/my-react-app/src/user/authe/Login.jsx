@@ -40,15 +40,16 @@ const handleLogin = (e) => {
 
 const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
+
         api.post("google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
+
             console.log(response.data);
-            nav("/profile");
+            nav("/dash");
+
         });
-    },
-    onError: () => {
-        console.log("Google Login Failed");
+
     }
 });
 
@@ -128,7 +129,7 @@ const googleLogin = useGoogleLogin({
                                 <input type="checkbox" name="remember" />
                                 <span>Remember me</span>
                             </label>
-                            <a href="#" className="forgot-link">Forgot password?</a>
+                            <a href="/forgote" className="forgot-link">Forgot password?</a>
                         </div>
 
                         <button type="submit" className="submit-btn" >Sign In</button>
