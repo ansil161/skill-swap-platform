@@ -28,6 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+ASGI_APPLICATION = "skillswap.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'authe.authentication.CookieJWTAuthentication',
@@ -51,7 +62,9 @@ INSTALLED_APPS = [
     'swapsystem',
     'sessionbooking',
     'chatapp',
+
     'rest_framework.authtoken',
+    "channels",
 
 
     'django.contrib.sites',
