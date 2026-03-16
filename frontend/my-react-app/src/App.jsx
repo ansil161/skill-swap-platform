@@ -30,7 +30,8 @@ function App(){
           <Route path='/dash' element={<Dashboard/>}/>
             <Route path='/hai' element={<Hai/>}/>
              <Route path='/forgote' element={<ForgotPassword/>}/>
-             <Route path='/resetpass' element={<ResetPassword/>}/>
+       
+            <Route path="/reset-password/:uid/:token" element={<ResetPassword/>} />
              
             
 

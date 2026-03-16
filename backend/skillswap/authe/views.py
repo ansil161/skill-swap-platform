@@ -10,6 +10,7 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated
 
 
+
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
@@ -19,13 +20,21 @@ from django.conf import settings
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
-from django.contrib.auth.tokens import default_token_generator
+
 
 from django.urls import reverse
 
 import requests
 
 from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+
+
 
 User = get_user_model()
 # Create your views here.
@@ -220,35 +229,39 @@ class passwordrequest(APIView):
         if not email:
             return Response({"error":"Email is required"},status=status.HTTP_400_BAD_REQUEST)
         try:
-            user=Userprofile.objects.get(emai=email)
+            user=Userprofile.objects.get(email=email)
         except Userprofile.DoesNotExist:
             return Response({'error':"user email is not found"},status=status.HTTP_404_NOT_FOUND)
-        token=default_token_generator.make_token(user)
-        reset_url=reset_url = request.build_absolute_uri(
-            reverse('password-reset-confirm', kwargs={'uid': user.id, 'token': token})
-        )
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        
+   
+        frontend_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
         send_mail(
             'SkillSwap Password Reset',
-            f'Click the link to reset your password: {reset_url}',
+            f'Click the link to reset your password: {frontend_url}',
             'no-reply@skillswap.com',
             [email],
         )
         return Response({"message": "Password reset link sent to your email"}, status=status.HTTP_200_OK)
-    
-
 
 class passwordreset(APIView):
-    def post(self,request,uid,token):
-        password=request.data.get('password')
+    def post(self, request, uid, token):
+        password = request.data.get("password")
+        print('hai',password)
         if not password:
-            return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
-        try :
-            user=User.objects.get(ud=uid)
-        except User.DoesNotExist:
-            return Response({"error": "Invalid user"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Password is required"}, status=400)
+        
+        try:
+            
+            uid_decoded = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid_decoded)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            return Response({"error": "Invalid user"}, status=404)
+        
         if default_token_generator.check_token(user, token):
             user.set_password(password)
             user.save()
-            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+            return Response({"message": "Password reset successfully"}, status=200)
         else:
-            return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Invalid or expired token"}, status=400)

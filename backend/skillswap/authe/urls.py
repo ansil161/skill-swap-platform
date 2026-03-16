@@ -30,7 +30,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
      path("google-login/",GoogleLogin.as_view()),
      path('password-reset/',passwordrequest.as_view()),
-     path('password-reset-confirm/<int:uid>/<str:token>/',passwordreset.as_view())
+   path('password-reset-confirm/<str:uid>/<str:token>/', passwordreset.as_view(), name='password-reset-confirm')
 
    
 ]
