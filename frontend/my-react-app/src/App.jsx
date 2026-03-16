@@ -7,12 +7,14 @@ import ProfilePage from './user/pages/Profil'
 import Requests from './user/pages/request'
 import Sessionform from './user/pages/sessionfrom'
 import SessionList from './user/pages/sessionlist'
+import Navbar from './user/component/navbar'
+import Dashboard from './user/pages/dashboard'
 
 function App(){
   return(
     <>
       <BrowserRouter>
-  <Routes>
+  <Routes>  
         <Route path='/' element={<Home/>}/>
     <Route path='/register' element={<Register/>}/>
     <Route path='/login' element={<Login/>}/>
@@ -21,6 +23,9 @@ function App(){
        <Route path='/request' element={<Requests/>}/>
         <Route path='/sessionform' element={<Sessionform/>}/>
         <Route path='/sessionlist' element={<SessionList/>}/>
+          <Route path='/nav' element={<Navbar/>}/>
+          <Route path='/dash' element={<Dashboard/>}/>
+
       
 
 

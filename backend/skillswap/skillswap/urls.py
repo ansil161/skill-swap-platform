@@ -26,6 +26,8 @@ urlpatterns = [
     path('skill/',include('skills.urls')),
     path('skill/',include('swapsystem.urls')),
     path('skill/',include('sessionbooking.urls')),
+
+
     
     
 ]

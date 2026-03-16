@@ -15,6 +15,7 @@ class SwapRequest(models.Model):
         ('Accepted','accepted'),
         ('Rejected','rejected')
     ]
+    
 
     status=models.CharField(max_length=10,choices=status_choice,default='Pending')
     create=models.DateTimeField(auto_now_add=True)

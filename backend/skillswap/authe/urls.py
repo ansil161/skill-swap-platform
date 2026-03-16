@@ -20,6 +20,14 @@ from .views import *
 
 urlpatterns = [
     path('Register/',Register.as_view(),name='register'),
-    path('Login/',Login.as_view(),name='login')
+    path('Login/',Login.as_view(),name='login'),
+    path("refresh/", RefreshAccessToken.as_view(), name="refresh-token"),
+    path("activate/<int:user_id>/<str:token>/", Activationapi.as_view(), ),
+    path('logout/',LogoutAPI.as_view()),
+    
+     path('auth/', include('dj_rest_auth.urls')),
+    path('auth/', include('dj_rest_auth.registration.urls')),
+    path('accounts/', include('allauth.urls')),
+
    
 ]

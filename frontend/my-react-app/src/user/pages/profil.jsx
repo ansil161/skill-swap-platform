@@ -596,12 +596,12 @@ const deleteWantedSkill = (skillId) => {
              <div className="schedule-grid">
   {sessions.length === 0 && <p>No scheduled swaps yet</p>}
   {sessions.map((session, index) => {
-    const sessionDate = new Date(session.date); // assuming your backend returns ISO string
+    const sessionDate = new Date(session.date); 
     const day = sessionDate.toLocaleDateString("en-US", { weekday: "short" });
     const date = sessionDate.toLocaleDateString();
     const time = sessionDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const partners = session.partners_count || 0; // replace with actual field from backend
-    const skill = session.skill_name || "Skill Swap"; // replace with actual field
+    const partners = session.partners_count || 0; 
+    const skill = session.skill_name || "Skill Swap"; 
 
     return (
       <div key={index} className="schedule-card">

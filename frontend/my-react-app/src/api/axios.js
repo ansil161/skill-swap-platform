@@ -15,14 +15,23 @@ api.interceptors.request.use(
 
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
+  (response) => response,
+  async (error) => {
 
-    if (error.response && error.response.status === 401) {
-      console.log("Unauthorized - redirect to login");
-      window.location.href = "/login";
+    const originalRequest = error.config;
+
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+
+      originalRequest._retry = true;
+
+      try {
+        await api.post("refresh/"); 
+
+        return api(originalRequest); 
+
+      } catch (err) {
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);
