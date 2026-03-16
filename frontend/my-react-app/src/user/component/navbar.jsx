@@ -61,9 +61,16 @@ const Navbar = () => {
 
   
   const handleLogout = () => {
+    api.post('logout/')
+    .then((res)=>{
+      alert('user is log out')
+      navigate('/login')
+    })
+    .catch(err=>{
+      alert('there is a error')
+    })
     
-    localStorage.removeItem('token');
-    navigate('/login');
+    
   };
 
   return (
