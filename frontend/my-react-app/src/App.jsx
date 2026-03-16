@@ -9,6 +9,9 @@ import Sessionform from './user/pages/sessionfrom'
 import SessionList from './user/pages/sessionlist'
 import Navbar from './user/component/navbar'
 import Dashboard from './user/pages/dashboard'
+import Hai from './user/pages/new'
+import ForgotPassword from './user/authe/forgot'
+import ResetPassword from './user/authe/resetpassword'
 
 function App(){
   return(
@@ -25,6 +28,12 @@ function App(){
         <Route path='/sessionlist' element={<SessionList/>}/>
           <Route path='/nav' element={<Navbar/>}/>
           <Route path='/dash' element={<Dashboard/>}/>
+            <Route path='/hai' element={<Hai/>}/>
+             <Route path='/forgote' element={<ForgotPassword/>}/>
+       
+            <Route path="/reset-password/:uid/:token" element={<ResetPassword/>} />
+             
+            
 
       
 

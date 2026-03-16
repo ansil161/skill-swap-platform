@@ -10,15 +10,33 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated
 
 
+
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from django.contrib.auth import get_user_model
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.core.mail import send_mail
+
+
+from django.urls import reverse
+
+import requests
+
+from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+
+
+
+User = get_user_model()
 # Create your views here.
 activation_token=PasswordResetTokenGenerator()
    
@@ -113,37 +131,55 @@ class RefreshAccessToken(APIView):
 
 
 
-User = get_user_model()
+
+
 
 class GoogleLogin(APIView):
 
     def post(self, request):
-        token = request.data.get("token")
 
-        idinfo = id_token.verify_oauth2_token(
-            token,
-            requests.Request(),
-            "119100010798-8d3klnbangb69ac2gpaorq1ndkpip9cb.apps.googleusercontent.com"
+        access_token = request.data.get("token")
+
+        response = requests.get(
+            "https://www.googleapis.com/oauth2/v3/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"}
         )
 
-        email = idinfo['email']
-        name = idinfo.get('name')
+        data = response.json()
+
+        email = data.get("email")
+
+        if not email:
+            return Response({"error": "Invalid Google token"}, status=400)
+
+        name = email.split("@")[0]
 
         user, created = User.objects.get_or_create(
-    email=email,
-    defaults={
-        "username": email.split("@")[0],
-        "is_active": True
-    }
-)
+            email=email,
+            defaults={"username": name}
+        )
 
         refresh = RefreshToken.for_user(user)
 
-        return Response({
-            "access": str(refresh.access_token),
-            "refresh": str(refresh)
-        })
-    
+        res = Response({"message": "Login successful"})
+
+        res.set_cookie(
+            key="access_token",
+            value=str(refresh.access_token),
+            httponly=True,
+            secure=False,  
+            samesite="Lax"
+        )
+
+        res.set_cookie(
+            key="refresh_token",
+            value=str(refresh),
+            httponly=True,
+            secure=False,
+            samesite="Lax"
+        )
+
+        return res
 
 
 class Activationapi(APIView):
@@ -184,3 +220,48 @@ class LogoutAPI(APIView):
         response.delete_cookie("access_token")
         response.delete_cookie("refresh")
         return response
+
+
+class passwordrequest(APIView):
+
+    def post(self,request):
+        email=request.data.get('email')
+        if not email:
+            return Response({"error":"Email is required"},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user=Userprofile.objects.get(email=email)
+        except Userprofile.DoesNotExist:
+            return Response({'error':"user email is not found"},status=status.HTTP_404_NOT_FOUND)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        
+   
+        frontend_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
+        send_mail(
+            'SkillSwap Password Reset',
+            f'Click the link to reset your password: {frontend_url}',
+            'no-reply@skillswap.com',
+            [email],
+        )
+        return Response({"message": "Password reset link sent to your email"}, status=status.HTTP_200_OK)
+
+class passwordreset(APIView):
+    def post(self, request, uid, token):
+        password = request.data.get("password")
+        print('hai',password)
+        if not password:
+            return Response({"error": "Password is required"}, status=400)
+        
+        try:
+            
+            uid_decoded = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid_decoded)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            return Response({"error": "Invalid user"}, status=404)
+        
+        if default_token_generator.check_token(user, token):
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password reset successfully"}, status=200)
+        else:
+            return Response({"error": "Invalid or expired token"}, status=400)

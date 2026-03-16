@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
 import Navbar from '../component/navbar';
 import api from '../../api/axios';
+import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -39,6 +40,7 @@ const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const navigate=useNavigate
 
   useEffect(()=>{
        api.get('profile/')
@@ -151,14 +153,14 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="header-actions">
-            <button className="btn btn-secondary">
+            <button className="btn btn-secondary" onClick={()=>nav}>
               <i className="fas fa-user-plus"></i>
               <span>Find Partners</span>
             </button>
             <button className="btn btn-primary">
               <i className="fas fa-exchange-alt"></i>
               <span>Requests</span>
-              <span className="notification-badge">2</span>
+              <span className="notification-badge">0</span>
             </button>
           </div>
         </div>
@@ -172,10 +174,10 @@ const Dashboard = () => {
               <p className="progress-label">Level Progress</p>
               <h2 className="progress-title">Practitioner → Specialist</h2>
             </div>
-            <div className="progress-stats">
+            {/* <div className="progress-stats">
               <p className="progress-current">420 / 500 pts</p>
               <p className="progress-remaining">80 pts to next level</p>
-            </div>
+            </div> */}
           </div>
           <div className="progress-bar-container">
             <div className="progress-bar" style={{ width: '84%' }}></div>
@@ -209,7 +211,7 @@ const Dashboard = () => {
               <i className="fas fa-clock"></i>
             </div>
             <div className="stat-content">
-              <span className="stat-value">2</span>
+              <span className="stat-value">0</span>
               <span className="stat-label">Pending Requests</span>
             </div>
           </div>
@@ -392,7 +394,7 @@ const Dashboard = () => {
   </div>
 </div>
 
-            <div className="dual-grid">
+            {/* <div className="dual-grid">
               <div className="card">
                 <h3 className="card-title">
                   <i className="fas fa-chart-line"></i>
@@ -412,7 +414,7 @@ const Dashboard = () => {
                   <Bar data={activityChartData} options={chartOptions} />
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="content-right">

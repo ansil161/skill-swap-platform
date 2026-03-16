@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';  // ✅ Import React Router hooks
+import { useNavigate, useLocation } from 'react-router-dom';  
 import '../styles/navbar.css';
 import api from '../../api/axios';
 
@@ -32,6 +32,7 @@ const Navbar = () => {
     })
     .catch(err=>{
       console.log(err?.response?.data)
+      setuser(null)
     })
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -60,9 +61,16 @@ const Navbar = () => {
 
   
   const handleLogout = () => {
+    api.post('logout/')
+    .then((res)=>{
+      alert('user is log out')
+      navigate('/login')
+    })
+    .catch(err=>{
+      alert('there is a error')
+    })
     
-    localStorage.removeItem('token');
-    navigate('/login');
+    
   };
 
   return (
@@ -78,8 +86,8 @@ const Navbar = () => {
       <ul className="nav-menu">
         <li>
           <div 
-            className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`} 
-            onClick={() => navigate('/dashboard')}
+            className={`nav-item ${isActive('/dash') ? 'active' : ''}`} 
+            onClick={() => navigate('/dash')}
           >
             <FontAwesomeIcon icon={faThLarge} />
             <span>Dashboard</span>
@@ -87,7 +95,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/explore') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/match') ? 'active' : ''}`} 
             onClick={() => navigate('/match')}
           >
             <FontAwesomeIcon icon={faSearch} />
@@ -96,7 +104,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/requests') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/request') ? 'active' : ''}`} 
             onClick={() => navigate('/request')}
           >
             <FontAwesomeIcon icon={faExchangeAlt} />
@@ -105,7 +113,7 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/sessions') ? 'active' : ''}`} 
+            className={`nav-item ${isActive('/sessionlist') ? 'active' : ''}`} 
             onClick={() => navigate('/sessionlist')}
           >
             <FontAwesomeIcon icon={faCalendar} />
@@ -114,73 +122,55 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/ai-tools') ? 'active' : ''}`} 
-            onClick={() => navigate('/ai-tools')}
+            className={`nav-item ${isActive('/hai') ? 'active' : ''}`} 
+            onClick={() => navigate('/hai')}
           >
             <FontAwesomeIcon icon={faMagic} />
-            <span>AI Tools</span>
+            <span>features</span>
           </div>
         </li>
       </ul>
 
     
-      <div className="navbar-right">
-      
-        <button className="icon-btn" aria-label="Toggle Theme">
-          <FontAwesomeIcon icon={faSun} />
-        </button>
+  <div className="navbar-right">
+  {user ? (
+    <div className="user-dropdown-wrapper" ref={dropdownRef}>
+      <div className="user-trigger" onClick={toggleDropdown}>
+        <img 
+          src={`http://127.0.0.1:8000${user?.profile_picture || '/media/default-avatar.png'}`}
+          alt={user?.username} 
+          className="user-avatar" 
+        />
+        <span className="user-name">{user?.username}</span>
+        <FontAwesomeIcon 
+          icon={faChevronDown} 
+          className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} 
+        />
+      </div>
 
-        
-        <button className="icon-btn" aria-label="Notifications" onClick={() => navigate('/notifications')}>
-          <FontAwesomeIcon icon={faBell} />
-          <span className="notification-badge">3</span>
-        </button>
+      <div className={`dropdown-menu ${isDropdownOpen ? 'active' : ''}`}>
+        <div className="dropdown-header">
+          <div className="dropdown-user-name">{user?.username}</div>
+          <div className="dropdown-user-email">{user?.email}</div>
+        </div>
 
-        <div className="user-dropdown-wrapper" ref={dropdownRef}>
-          <div className="user-trigger" onClick={toggleDropdown}>
-            <img 
-              src={`http://127.0.0.1:8000${user?.profile_picture}`}
-              alt={user?.username} 
-              className="user-avatar" 
-            />
-            <span className="user-name">{user?.username}</span>
-            <FontAwesomeIcon 
-              icon={faChevronDown} 
-              className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`} 
-            />
-          </div>
+        <div className="dropdown-item" onClick={() => handleNavigate('/profile')}>
+          <FontAwesomeIcon icon={faUser} />
+          <span>My Profile</span>
+        </div>
 
-          <div className={`dropdown-menu ${isDropdownOpen ? 'active' : ''}`}>
-            <div className="dropdown-header">
-              <div className="dropdown-user-name">{user?.username}</div>
-              <div className="dropdown-user-email">{user?.email}</div>
-            </div>
-            
-            <div className="dropdown-item" onClick={() => handleNavigate('/profile')}>
-              <FontAwesomeIcon icon={faUser} />
-              <span>My Profile</span>
-            </div>
-            
-            <div className="dropdown-item" onClick={() => handleNavigate('/dashboard')}>
-              <FontAwesomeIcon icon={faThLarge} />
-              <span>Dashboard</span>
-            </div>
-            
-            <div className="dropdown-item" onClick={() => handleNavigate('/notifications')}>
-              <FontAwesomeIcon icon={faBell} />
-              <span>Notifications</span>
-              <span className="badge">3</span>
-            </div>
-            
-            <hr className="dropdown-divider" />
-            
-            <div className="dropdown-item sign-out" onClick={handleLogout}>
-              <FontAwesomeIcon icon={faSignOutAlt} />
-              <span>Sign Out</span>
-            </div>
-          </div>
+        <div className="dropdown-item sign-out" onClick={handleLogout}>
+          <FontAwesomeIcon icon={faSignOutAlt} />
+          <span>Sign Out</span>
         </div>
       </div>
+    </div>
+  ) : (
+    <button className="login-btn" onClick={() => navigate('/login')}>
+      Login
+    </button>
+  )}
+</div>
     </nav>
   );
 };
