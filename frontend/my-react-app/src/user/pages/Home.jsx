@@ -1,51 +1,27 @@
 import React, { useState } from 'react';
 import '../styles/home.css';
-
 import { useNavigate } from "react-router-dom";
+import Navbar from '../component/navbar';
 
 const HomePage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   function handlelogin(){
-    navigate('/login')
-
+    navigate('/login');
   }
 
   return (
     <div className="homepage">
-      {/* Navigation */}
-      <nav className="navbar">
-        <div className="nav-container">
-          <div className="nav-logo">
-            <span className="logo-icon">◆</span>
-            <span className="logo-text">SkillSwap</span>
-          </div>
-          
-          <div className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-            <a href="#home" className="nav-link">Home</a>
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#community" className="nav-link">Community</a>
-            <a href="#how-it-works" className="nav-link">How It Works</a>
-            <a href="#contact" className="nav-link">Contact</a>
-          </div>
+      
 
-          <div className="nav-buttons">
-            <button className="btn-login" onClick={handlelogin}>Log in</button>
-            <button className="btn-signup">Join Community</button>
-          </div>
+      <Navbar />
 
-          <button className="menu-toggle" onClick={toggleMenu}>
-            <span className="hamburger"></span>
-          </button>
-        </div>
-      </nav>
 
-      {/* Hero Section */}
       <section className="hero-section" id="home">
         <div className="hero-container">
           <div className="hero-content">
@@ -117,7 +93,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Community Features Section */}
       <section className="features-section" id="community">
         <div className="features-container">
           <div className="section-header">
@@ -179,7 +154,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* How It Works Section */}
+    
       <section className="how-it-works-section" id="how-it-works">
         <div className="how-it-works-container">
           <div className="section-header">
@@ -217,7 +192,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Community Impact Section */}
+  
       <section className="impact-section">
         <div className="impact-container">
           <div className="impact-content">
@@ -241,7 +216,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-brand">

@@ -20,7 +20,8 @@ class MatchApi(APIView):
     
         skill_offer=skilloffered.objects.filter(user=user_prf).values_list('skills',flat=True)
         matchesone=skilloffered.objects.filter(skills__in=skil_want).exclude(user=user_prf).select_related('user')
-        
+        print("User wants:", list(skil_want))
+        print("User offers:", list(skill_offer))
 
         datas=[]
         for i in matchesone:
@@ -31,7 +32,8 @@ class MatchApi(APIView):
             
             ).values_list('name__name',flat=True)
             
-          
+            print("Checking user:", macth_user)
+            print("Other wants:", list(other))
             if other.exists():
                 datas.append({
                     'id': macth_user.id,

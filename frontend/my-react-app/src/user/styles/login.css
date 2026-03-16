@@ -1,4 +1,4 @@
-/* Reset & Base Styles */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -13,7 +13,6 @@
     background-color: #ffffff;
 }
 
-/* --- Left Panel (Illustration) --- */
 .login-left-panel {
     flex: 1;
     background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #f9f0ff 100%);
@@ -32,7 +31,6 @@
     margin-bottom: 40px;
 }
 
-/* The Chat Card */
 .floating-card {
     background: white;
     padding: 25px;
@@ -392,5 +390,87 @@
     
     .login-right-panel {
         width: 100%;
+    }
+}
+
+.social-login {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.social-btn {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    padding: 0;
+}
+
+.social-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.social-btn:hover {
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.social-btn.google svg {
+    width: 22px;
+    height: 22px;
+}
+
+.social-btn.facebook svg {
+    width: 24px;
+    height: 24px;
+}
+
+.social-btn.apple svg {
+    width: 22px;
+    height: 22px;
+    color: #000000;
+}
+
+.google-oauth-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.google-oauth-hidden div,
+.google-oauth-hidden button,
+.google-oauth-hidden iframe {
+    display: none !important;
+}
+
+@media (max-width: 480px) {
+    .social-btn {
+        width: 46px;
+        height: 46px;
+    }
+    
+    .social-btn svg {
+        width: 20px;
+        height: 20px;
     }
 }

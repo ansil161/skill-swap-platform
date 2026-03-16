@@ -7,6 +7,7 @@ function Match() {
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState(null)
   const [swapRequests, setSwapRequests] = useState({ sent: [], received: [] })
+  const [apiMessage, setApiMessage] = useState(null)
 
   useEffect(() => {
     getMatches()
@@ -36,10 +37,12 @@ function Match() {
     api.get("matching/")
       .then((res) => {
         setMatches(res.data)
+        console.log(res.data)
         setLoading(false)
       })
       .catch((err) => {
         console.log(err.response?.data)
+        setApiMessage(err.response?.data?.message || "Failed to load matches")
         setLoading(false)
       })
   }
@@ -49,13 +52,14 @@ function Match() {
       provider_id: providerId,
       skill_id: skillId
     })
-    .then(() => {
-      alert("Swap request sent successfully!")
+    .then((res) => {
+      setApiMessage(res.data.message || "Swap request sent successfully!")
       getSwapRequests()
+      setTimeout(() => setApiMessage(null), 3000)
     })
     .catch(err => {
-      console.log(err.response?.data)
-      alert("Failed to send request")
+      setApiMessage(err.response?.data?.message || "Failed to send request")
+      setTimeout(() => setApiMessage(null), 3000)
     })
   }
 
@@ -78,7 +82,7 @@ function Match() {
     return Math.min(score, 100)
   }
 
-  const renderSkills = (skills, type) => {
+  const renderSkillTags = (skills, type) => {
     if (!skills) return null
     const skillArray = Array.isArray(skills) ? skills : [skills]
     
@@ -98,90 +102,150 @@ function Match() {
   }
 
   return (
-    <div className="match-container">
-      <div className="match-header">
-        <h2>🎯 Recommended Skill Partners</h2>
-        <p>Based on your skills and learning goals</p>
+    <div className="explore-container">
+      <div className="explore-header">
+        <h1 className="explore-title">Explore</h1>
+        <p className="explore-subtitle">Find skilled people to swap knowledge with</p>
       </div>
 
-      {!matches || matches.length === 0 ? (
+
+      {apiMessage && (
+        <div className={`api-message ${apiMessage.includes('success') || apiMessage.includes('sent') ? 'success' : 'error'}`}>
+          {apiMessage}
+        </div>
+      )}
+
+     
+      <div className="search-filters">
+        <div className="search-bar">
+          <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search by name, skill, or bio..."
+            className="search-input"
+          />
+        </div>
+        
+        <div className="filter-dropdowns">
+          <select className="filter-select">
+            <option>All Categories</option>
+          </select>
+          
+          <select className="filter-select">
+            <option>Top Rated</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="results-count">
+        {matches.length} people found
+      </div>
+
+      {matches.length === 0 ? (
         <div className="no-matches">
-          <h3>😕 No matches found yet</h3>
+          <h3>😕 No matches found</h3>
           <p>Try adding more skills to your profile to find better matches!</p>
-          <button className="btn-secondary" onClick={() => window.location.href='/profile'}>
-            ✏️ Edit Profile
-          </button>
         </div>
       ) : (
-        <div className="matches-grid">
+        <div className="matches-grid-explore">
           {matches.map((item, index) => {
             const compatibility = getCompatibility(item)
             
             return (
-              <div key={item.id || index} className="match-card">
-                <div className="match-header-section">
-                  <div className="user-info">
+              <div key={item.id || index} className="match-card-explore">
+                <div className="card-header">
+                  <div className="user-info-header">
                     <img 
                       src={item.photo ? `http://localhost:8000${item.photo}` : '/default-avatar.png'} 
                       alt={item.username} 
-                      className="profile-avatar-edu" 
+                      className="profile-avatar-explore" 
                       onError={(e) => { e.target.src = '/default-avatar.png' }}
                     />
-                    <div>
-                      <h3>{item.username}</h3>
-                     <span className={`match-badge ${
-  compatibility >= 80 ? 'high' : compatibility >= 50 ? 'medium' : ''
-}`}>
-  {compatibility}% Match
-</span>
+                    <div className="user-details">
+                      <h3 className="user-name">{item.username}</h3>
+                      <span className={`match-percentage ${
+                        compatibility >= 80 ? 'high' : compatibility >= 50 ? 'medium' : 'low'
+                      }`}>
+                        {compatibility}% match
+                      </span>
                     </div>
                   </div>
                   
-                  {item.rating && (
-                    <div className="user-rating">
-                      <span className="stars">⭐</span>
-                      <span className="rating-score">{item.rating}</span>
-                      <span className="rating-count">({item.review_count || 0})</span>
+             
+                  {item.location && (
+                    <div className="user-location">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      <span>{item.location}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="match-skills">
-                  <div className="skill-section">
-                    <h4>📚 Offers to Teach:</h4>
-                    <div className="skills-list">
-                      {renderSkills(item.offers, 'offer')}
+                {item.rating && (
+                  <div className="user-rating-explore">
+                    <div className="stars-container">
+                      {Array(Math.floor(item.rating)).fill().map((_, i) => (
+                        <span key={i} className="star">⭐</span>
+                      ))}
+                      {Array(5 - Math.floor(item.rating)).fill().map((_, i) => (
+                        <span key={`empty-${i}`} className="star empty">☆</span>
+                      ))}
+                    </div>
+                    <span className="rating-count">({item.review_count || 0})</span>
+                  </div>
+                )}
+
+                {item.bio && (
+                  <p className="user-bio">{item.bio}</p>
+                )}
+
+                <div className="skills-section">
+                  <div className="skill-category">
+                    <h4 className="category-title">OFFERS</h4>
+                    <div className="skills-list-explore">
+                      {renderSkillTags(item.offers, 'offer')}
                     </div>
                   </div>
 
-                  <div className="skill-section">
-                    <h4>🎓 Wants to Learn:</h4>
-                    <div className="skills-list">
-                      {renderSkills(item.learn, 'want')}
+                  <div className="skill-category">
+                    <h4 className="category-title">WANTS</h4>
+                    <div className="skills-list-explore">
+                      {renderSkillTags(item.learn, 'want')}
                     </div>
                   </div>
                 </div>
 
-                {item.experience && (
-                  <div className="user-stats">
-                    <span>💼 {item.experience} years exp.</span>
+                <div className="card-footer">
+                  <div className="user-stats-explore">
+                    {item.experience && (
+                      <span className={`level-badge ${
+                        item.experience >= 10 ? 'expert' : item.experience >= 5 ? 'specialist' : 'beginner'
+                      }`}>
+                        {item.experience >= 10 ? `Lv.${Math.floor(item.experience/2)} Expert` : 
+                         item.experience >= 5 ? `Lv.${Math.floor(item.experience/2)} Specialist` : 
+                         'Lv.1 Beginner'}
+                      </span>
+                    )}
                     {item.completed_swaps && (
-                      <span>✅ {item.completed_swaps} swaps</span>
+                      <span className="sessions-count">{item.completed_swaps} sessions</span>
                     )}
                   </div>
-                )}
-
-                <div className="match-actions">
+                  
                   {isRequestSent(item.id, item.skill_id) ? (
-                    <button className="btn-disabled" disabled>
-                      ✅ Request Sent
+                    <button className="btn-request-sent" disabled>
+                      ✓ Request Sent
                     </button>
                   ) : (
                     <button 
-                      className="btn-primary"
+                      className="btn-request-swap"
                       onClick={() => sendSwapRequest(item.id, item.skill_id)}
                     >
-                      🤝 Send Swap Request
+                      Request Swap
                     </button>
                   )}
                 </div>

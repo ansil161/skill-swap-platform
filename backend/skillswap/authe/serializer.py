@@ -3,6 +3,7 @@
 from rest_framework import serializers
 from .models import Userprofile
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model=Userprofile
@@ -30,7 +31,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = Userprofile.objects.create_user(
             username=username,
             email=email,
-            password=password
+            password=password,
+            is_active=False,
+            
         )
 
         return user
@@ -45,7 +48,7 @@ class LoginSerializer(serializers.Serializer):
         try:
             user=Userprofile.objects.get(email=data['email'])
         except Userprofile.DoesNotExist:
-            raise serializers.ValidationError('Invalid email or password')
+            raise serializers.ValidationError('Invalid email or user does not exist')
         
         if not user.check_password(data['password']):
             raise serializers.ValidationError('invalid password or email')
