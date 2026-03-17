@@ -12,8 +12,11 @@ import Dashboard from './user/pages/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
+import Chat from './user/component/chat'
 
 function App(){
+    const conversationId = 2;
+  const userId = 1;
   return(
     <>
       <BrowserRouter>
@@ -32,6 +35,8 @@ function App(){
              <Route path='/forgote' element={<ForgotPassword/>}/>
        
             <Route path="/reset-password/:uid/:token" element={<ResetPassword/>} />
+        <Route path='/chat' element={<Chat conversationId={conversationId} userId={userId} />} />
+             
              
             
 
