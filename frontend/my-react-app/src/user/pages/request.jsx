@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react"
 import api from "../../api/axios"
 import '../styles/request.css'
+import Chat from "../component/chat"
 
 function Requests() {
+  const [activeChat, setActiveChat] = useState(null)
   const [requests, setRequests] = useState({
     sent: [],
     received: []
   })
   const [activeTab, setActiveTab] = useState('received')
   const [loading, setLoading] = useState(true)
+  const[userId,setUserId]=useState(null)
 
   
 
   useEffect(() => {
     getRequests()
+     api.get("profile/").then(res => {
+    setUserId(res.data.id)
+  })
   }, [])
 
   const pendingCount = requests.received.filter(r => r.status === 'Pending').length
@@ -185,6 +191,15 @@ function Requests() {
                       </div>
                     </div>
                   )}
+                    {req.status === "Accepted" && (
+    <button
+      className="btn-chat"
+      onClick={() => setActiveChat(req.conversation_id)}
+    >
+      💬 Chat
+    </button>
+  )}
+
                 </div>
               ))}
             </div>
@@ -241,7 +256,13 @@ function Requests() {
           )}
         </div>
       )}
+      {activeChat && (
+  <div className="chat-popup">
+   <Chat conversationId={activeChat} userId={userId} />
+  </div>
+)}
     </div>
+    
   )
 }
 

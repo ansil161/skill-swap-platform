@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import api from "../../api/axios";
 
 export default function Chat({ conversationId, userId }) {
   const [messages, setMessages] = useState([]);
@@ -7,14 +9,25 @@ export default function Chat({ conversationId, userId }) {
   const chatBoxRef = useRef(null);
 
   useEffect(() => {
+    api.get(`/chat/${conversationId}/message/`).then(res => {
+      setMessages(res.data.map(msg => ({
+        message: msg.message,
+        sender: msg.sender_id
+      })));
+      scrollToBottom();
+    });
+  }, [conversationId]);
+
+ 
+  useEffect(() => {
     socketRef.current = new WebSocket(
-  `ws://127.0.0.1:8000/ws/chat/${conversationId}/`
-);
+      `ws://127.0.0.1:8000/ws/chat/${conversationId}/`
+    );
 
     socketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
       setMessages((prev) => [...prev, data]);
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+      scrollToBottom();
     };
 
     socketRef.current.onopen = () => console.log("WebSocket connected!");
@@ -23,15 +36,18 @@ export default function Chat({ conversationId, userId }) {
     return () => socketRef.current.close();
   }, [conversationId]);
 
+  const scrollToBottom = () => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  };
+
   const sendMessage = () => {
     if (input.trim() === "") return;
-
-    socketRef.current.send(
-      JSON.stringify({
-        message: input,
-        sender: userId,
-      })
-    );
+    socketRef.current.send(JSON.stringify({
+      message: input,
+      sender: userId
+    }));
     setInput("");
   };
 

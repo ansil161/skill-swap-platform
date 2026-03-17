@@ -19,6 +19,7 @@ from django.urls import path,include
 from .views import *
 
 urlpatterns = [
+     path('chat/<int:conversation_id>/message/', MessageApi.as_view()),
     
 
 ]

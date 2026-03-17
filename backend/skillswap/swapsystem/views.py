@@ -9,6 +9,7 @@ from rest_framework import status
 from userprofile.models import profile
 from skills.models import skill
 from .models import SwapRequest
+from chatapp.models import Conversation
 # Create your views here.
 
 class MatchApi(APIView):
@@ -81,6 +82,7 @@ class SwaprRequestApi(APIView):
             skill=skill_instance
         )
 
+
         return Response({'message': 'Swap request sent successfully'}, status=status.HTTP_200_OK)
 
    
@@ -89,30 +91,37 @@ class SwaprRequestApi(APIView):
 
         sent_requests = SwapRequest.objects.filter(requester=user).select_related('provider', 'skill__skills')
         received_requests = SwapRequest.objects.filter(provider=user).select_related('requester', 'skill__skills')
+        
 
-        sent = [
-                {
-                    'request_id': r.id,
-                    'provider': r.provider.user.username,
-                    'provider_id': r.provider.id,
-                    'skill': r.skill.skills.name,
-                    'skill_id': r.skill.id,
-                    'status': r.status,
-                    'created': r.create
-                }
-                for r in sent_requests
-            ]
+        sent = []
 
-        received = [
-            {
+        for r in sent_requests:
+            conversation = Conversation.objects.filter(swap_request=r).first()
+
+            sent.append({
+                'request_id': r.id,
+                'provider': r.provider.user.username,
+                'provider_id': r.provider.id,
+                'skill': r.skill.skills.name,
+                'skill_id': r.skill.id,
+                'status': r.status,
+                'created': r.create,
+                'conversation_id': conversation.id if conversation else None
+            })
+        
+        received = []
+
+        for r in received_requests:
+            conversation = Conversation.objects.filter(swap_request=r).first()
+
+            received.append({
                 'request_id': r.id,
                 'requester': r.requester.user.username,
                 'skill': r.skill.skills.name,
                 'status': r.status,
-                'created': r.create
-            }
-            for r in received_requests
-        ]
+                'created': r.create,
+                'conversation_id': conversation.id if conversation else None
+            })
 
         return Response({'sent': sent, 'received': received}, status=status.HTTP_200_OK)
 
@@ -132,5 +141,9 @@ class SwaprRequestApi(APIView):
 
         swap_req.status = new_status
         swap_req.save()
+        if new_status == "Accepted":
+            Conversation.objects.get_or_create(
+                swap_request=swap_req
+            )
 
         return Response({'message': f'Swap request {new_status}'}, status=status.HTTP_200_OK)

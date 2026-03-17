@@ -7,6 +7,8 @@ from swapsystem.models import SwapRequest
 class Conversation(models.Model):
     swap_request=models.OneToOneField(SwapRequest,on_delete=models.CASCADE)
     create_at=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"Conversation for Swap {self.swap_request.id}"
 
 
 class chatMessage(models.Model):
@@ -15,3 +17,8 @@ class chatMessage(models.Model):
     message=models.TextField()
     is_read=models.BooleanField(default=False)
     create_at=models.DateTimeField(auto_now_add=True)
+    
+    
+
+    def __str__(self):
+        return f"{self.sender} -> {self.message[:20]}"
