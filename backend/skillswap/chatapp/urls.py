@@ -16,21 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from django.conf import settings
-from django.conf.urls.static import static
+from .views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('skill/',include('authe.urls')),
-    path('skill/',include('userprofile.urls')),
-    path('skill/',include('skills.urls')),
-    path('skill/',include('swapsystem.urls')),
-    path('skill/',include('sessionbooking.urls')),
-    path('skill/',include('chatapp.urls')),
-
-
+     path('chat/<int:conversation_id>/message/', MessageApi.as_view()),
     
-    
+
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

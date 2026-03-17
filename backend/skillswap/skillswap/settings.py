@@ -28,6 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+ASGI_APPLICATION = "skillswap.asgi.application"
+
+CHANNEL_LAYERS = {
+ "default": {
+  "BACKEND": "channels_redis.core.RedisChannelLayer",
+  "CONFIG": {
+   "hosts": [("127.0.0.1", 6379)],
+  },
+ },
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'authe.authentication.CookieJWTAuthentication',
@@ -50,7 +61,10 @@ INSTALLED_APPS = [
     'skills',
     'swapsystem',
     'sessionbooking',
+    'chatapp',
+
     'rest_framework.authtoken',
+    "channels",
 
 
     'django.contrib.sites',
@@ -76,6 +90,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -133,6 +148,7 @@ WSGI_APPLICATION = 'skillswap.wsgi.application'
 
 
 AUTH_USER_MODEL = "authe.Userprofile"
+
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
