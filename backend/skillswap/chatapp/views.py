@@ -1,32 +1,31 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework import serializers
-from rest_framework.permissions import IsAuthenticated
-from .models import Conversation
-from rest_framework.response import Response
-from rest_framework import status
-from userprofile.models import profile
 
 
+from rest_framework import generics, permissions
+from .models import Conversation, ChatMessage
+from .serializer import ConversationSerializer, ChatMessageSerializer
+from django.db.models import Q
 
-# Create your views here.
+class ConversationListView(generics.ListAPIView):
+    serializer_class = ConversationSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
+    from django.db.models import Q
 
-class MessageApi(APIView):
-    permission_classes=[IsAuthenticated]
-
-    def get(self,request,conversation_id):
-        try:
-            conversation = Conversation.objects.get(id=conversation_id)
-
-        except Conversation.DoesNotExist:
-            return Response({'error:conversation is not found'},status=status.HT)
-        
-        user=profile.objects.get(user=request.user)
-        if user not in [conversation.swap_request.requester,conversation.swap_request.provider]:
-            return Response({'error':"not authorised"},status=status.HTTP_400_BAD_REQUEST)
-        
-        message=conversation.message.order_by('create_at').values('sender_id','message','create_at')
-        return Response(list(message),status=status.HTTP_200_OK)
+    def get_queryset(self):
+        user_profile = self.request.user.profile
+    
+        return Conversation.objects.filter(
+            Q(swap_request__requester=user_profile) |
+            Q(swap_request__provider=user_profile)
+        )
 
 
+class ChatMessageListView(generics.ListAPIView):
+    serializer_class = ChatMessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        conversation_id = self.kwargs['conversation_id']
+        return ChatMessage.objects.filter(
+            conversation_id=conversation_id
+        ).order_by('created_at')

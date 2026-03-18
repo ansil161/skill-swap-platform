@@ -12,7 +12,7 @@ import Dashboard from './user/pages/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
-import Chat from './user/component/chat'
+import Chat from './user/component/chatlist'
 
 function App(){
     const conversationId = 2;
@@ -35,7 +35,7 @@ function App(){
              <Route path='/forgote' element={<ForgotPassword/>}/>
        
             <Route path="/reset-password/:uid/:token" element={<ResetPassword/>} />
-        <Route path='/chat' element={<Chat conversationId={conversationId} userId={userId} />} />
+       <Route path='/chat' element={<Chat/>}/>
              
              
             

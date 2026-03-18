@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import api from "../../api/axios"
 import '../styles/request.css'
-import Chat from "../component/chat"
+import Chat from "../component/chathome"
 
 function Requests() {
   const [activeChat, setActiveChat] = useState(null)
