@@ -1,31 +1,41 @@
-
-
-from rest_framework import generics, permissions
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import Conversation, ChatMessage
-from .serializer import ConversationSerializer, ChatMessageSerializer
-from django.db.models import Q
+from .serializer import ChatMessageSerializer, ConversationSerializer
 
-class ConversationListView(generics.ListAPIView):
-    serializer_class = ConversationSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-    from django.db.models import Q
 
-    def get_queryset(self):
-        user_profile = self.request.user.profile
-    
-        return Conversation.objects.filter(
-            Q(swap_request__requester=user_profile) |
-            Q(swap_request__provider=user_profile)
+from userprofile.models import profile
+
+
+class ConversationListView(APIView):
+    def get(self, request):
+       
+        try:
+            user_profile = profile.objects.get(user=request.user)
+        except profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=404)
+
+        conversations = Conversation.objects.filter(
+            swap_request__requester=user_profile
+        ) | Conversation.objects.filter(
+            swap_request__provider=user_profile
         )
 
+        conversations = conversations.distinct().order_by('-create_at')  
 
-class ChatMessageListView(generics.ListAPIView):
-    serializer_class = ChatMessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        serializer = ConversationSerializer(conversations, many=True)
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        conversation_id = self.kwargs['conversation_id']
-        return ChatMessage.objects.filter(
-            conversation_id=conversation_id
-        ).order_by('created_at')
+
+class ChatMessageListView(APIView):
+    def get(self, request, conversation_id):
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+        except Conversation.DoesNotExist:
+            return Response({"error": "Conversation not found"}, status=404)
+
+        messages = ChatMessage.objects.filter(conversation=conversation).order_by('created_at')
+        serializer = ChatMessageSerializer(messages, many=True)
+        return Response(serializer.data)
