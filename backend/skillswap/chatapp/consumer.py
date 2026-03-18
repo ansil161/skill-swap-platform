@@ -1,37 +1,15 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
+from .models import ChatMessage, Conversation
 from userprofile.models import profile
-from .models import Conversation, ChatMessage
-
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.conversation_id = self.scope['url_route']['kwargs']['conversation_id']
-        self.room_group_name = f'chat_{self.conversation_id}'
+        self.room_group_name = f"chat_{self.conversation_id}"
 
-        user = self.scope["user"]
-
-        if user is None or user.is_anonymous:
-            await self.close()
-            return
-
-        try:
-            conversation = await sync_to_async(Conversation.objects.get)(id=self.conversation_id)
-            user_profile = await sync_to_async(profile.objects.get)(user=user)
-        except:
-            await self.close()
-            return
-
-        if user_profile not in [
-            conversation.swap_request.requester,
-            conversation.swap_request.provider
-        ]:
-            await self.close()
-            return
-
-   
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -40,45 +18,59 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-  
-        await self.channel_layer.group_discard(
-            self.room_group_name,
-            self.channel_name
-        )
+        if hasattr(self, "room_group_name"):
+            await self.channel_layer.group_discard(
+                self.room_group_name,
+                self.channel_name
+            )
 
     async def receive(self, text_data):
+        print("🔥 RECEIVE CALLED")
+    
         data = json.loads(text_data)
-        message = data.get('message')
-        sender_id = data.get('sender')
-
-        if not message:
-            return
-
-        await self.save_message(sender_id, message)
-
+        message = data.get("message")
+    
+        print("MESSAGE:", message)
+    
+        user = self.scope["user"]
+        print("USER:", user)
+    
+        saved_message = await self.save_message(user, message)
+    
+        print("✅ SAVED:", saved_message)
+    
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
-                "message": message,
-                "sender": sender_id
+                "message": saved_message["content"],
+                "sender": saved_message["sender"], 
             }
         )
-
     async def chat_message(self, event):
-     
         await self.send(text_data=json.dumps({
             "message": event["message"],
-            "sender": event["sender"]
+            "sender": event["sender"],
+            "current_user": self.scope["user"].username
         }))
 
-    @sync_to_async
-    def save_message(self, sender_id, message):
+    
+    @database_sync_to_async
+    def save_message(self, user, message):
         conversation = Conversation.objects.get(id=self.conversation_id)
-        sender = profile.objects.get(id=sender_id)
-
-        ChatMessage.objects.create(
-            sender=sender,
-            communication=conversation,
-            message=message
+    
+        if user.is_anonymous:
+            raise Exception("User not authenticated")
+    
+        sender_profile = profile.objects.select_related("user").get(user=user)
+    
+        msg = ChatMessage.objects.create(
+            conversation=conversation,
+            sender=sender_profile,
+            content=message
         )
+    
+        return {
+            "content": msg.content,
+            "sender": sender_profile.user.username   
+        }
