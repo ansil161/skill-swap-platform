@@ -31,6 +31,11 @@ class ConversationListView(APIView):
 
 class ChatMessageListView(APIView):
     def get(self, request, conversation_id):
-        messages = ChatMessage.objects.filter(conversation_id=conversation_id).order_by("timestamp")
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+        except Conversation.DoesNotExist:
+            return Response({"error": "Conversation not found"}, status=404)
+
+        messages = ChatMessage.objects.filter(conversation=conversation).order_by('created_at')
         serializer = ChatMessageSerializer(messages, many=True)
         return Response(serializer.data)
