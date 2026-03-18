@@ -5,6 +5,9 @@ from .models import Conversation, ChatMessage
 
 class ChatMessageSerializer(serializers.ModelSerializer):
     current_user = serializers.SerializerMethodField()
+    conversation=serializers.CharField(source='conversation.swap_request.requester.user.username')
+    sender=serializers.CharField(source='sender.user.username')
+    
 
     class Meta:
         model = ChatMessage
