@@ -3,23 +3,29 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Conversation, ChatMessage
 from .serializer import ChatMessageSerializer, ConversationSerializer
-# views.py
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import Conversation
+
+
+
+from userprofile.models import profile
+
 
 class ConversationListView(APIView):
     def get(self, request):
-        user = request.user
-        
+       
+        try:
+            user_profile = profile.objects.get(user=request.user)
+        except profile.DoesNotExist:
+            return Response({"error": "Profile not found"}, status=404)
+
         conversations = Conversation.objects.filter(
-            swap_request__requester=user
+            swap_request__requester=user_profile
         ) | Conversation.objects.filter(
-            swap_request__receiver=user
+            swap_request__provider=user_profile
         )
 
-     
-        serializer = ConversationSerializer(conversations.distinct(), many=True)
+        conversations = conversations.distinct().order_by('-create_at')  
+
+        serializer = ConversationSerializer(conversations, many=True)
         return Response(serializer.data)
 
 
