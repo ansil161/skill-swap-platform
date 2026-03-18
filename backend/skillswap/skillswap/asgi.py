@@ -1,12 +1,8 @@
 import os
 import django
-
 from django.core.asgi import get_asgi_application
 
-# VERY IMPORTANT: set settings first
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "skillswap.settings")
-
-# Setup Django
 django.setup()
 
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -22,5 +18,3 @@ application = ProtocolTypeRouter({
         )
     ),
 })
-
-print(">>> ASGI server loaded <<<")

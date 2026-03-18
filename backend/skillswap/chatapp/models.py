@@ -11,7 +11,7 @@ class Conversation(models.Model):
         return f"Conversation for Swap {self.swap_request.id}"
 
 
-class chatMessage(models.Model):
+class ChatMessage(models.Model):
     sender=models.ForeignKey(profile,on_delete=models.CASCADE)
     communication=models.ForeignKey(Conversation,on_delete=models.CASCADE)
     message=models.TextField()

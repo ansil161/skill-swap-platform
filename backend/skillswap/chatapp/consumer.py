@@ -2,31 +2,57 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from userprofile.models import profile
-from .models import Conversation, chatMessage
+from .models import Conversation, ChatMessage
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.conversation_id = self.scope['url_route']['kwargs']['conversation_id']
-        self.room_group_name = f'chat_swap_{self.conversation_id}'
+        self.room_group_name = f'chat_{self.conversation_id}'
 
-        # Permission: only participants can connect
-        conversation = await sync_to_async(Conversation.objects.get)(id=self.conversation_id)
-        user_profile = self.scope["user"].profile
+        user = self.scope["user"]
 
-        if user_profile not in [conversation.swap_request.requester, conversation.swap_request.provider]:
+        if user is None or user.is_anonymous:
             await self.close()
             return
 
+        try:
+            conversation = await sync_to_async(Conversation.objects.get)(id=self.conversation_id)
+            user_profile = await sync_to_async(profile.objects.get)(user=user)
+        except:
+            await self.close()
+            return
+
+        if user_profile not in [
+            conversation.swap_request.requester,
+            conversation.swap_request.provider
+        ]:
+            await self.close()
+            return
+
+   
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
+
         await self.accept()
+
+    async def disconnect(self, close_code):
+  
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        message = data['message']
-        sender_id = data['sender']
+        message = data.get('message')
+        sender_id = data.get('sender')
+
+        if not message:
+            return
 
         await self.save_message(sender_id, message)
 
@@ -40,6 +66,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
+     
         await self.send(text_data=json.dumps({
             "message": event["message"],
             "sender": event["sender"]
@@ -49,7 +76,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_message(self, sender_id, message):
         conversation = Conversation.objects.get(id=self.conversation_id)
         sender = profile.objects.get(id=sender_id)
-        chatMessage.objects.create(
+
+        ChatMessage.objects.create(
             sender=sender,
             communication=conversation,
             message=message
