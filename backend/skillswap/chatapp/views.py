@@ -26,7 +26,7 @@ class ConversationListView(APIView):
 
         conversations = conversations.distinct().order_by('-create_at')  
 
-        serializer = ConversationSerializer(conversations, many=True)
+        serializer = ConversationSerializer(conversations, many=True, context={'request': request})
         return Response(serializer.data)
 
 
