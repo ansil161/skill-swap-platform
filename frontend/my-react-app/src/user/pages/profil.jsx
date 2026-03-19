@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
 import "../styles/profile.css";
+import { useNavigate } from "react-router-dom";
 
 const ProfilePage = () => {
   
@@ -14,6 +15,8 @@ const [skillsWanted, setSkillsWanted] = useState([]);
 const [newSkillOffered, setNewSkillOffered] = useState("");
 const [newSkillWanted, setNewSkillWanted] = useState("");
 const [profileImage, setProfileImage] = useState(null);
+const [acceptedSwapRequests, setAcceptedSwapRequests] = useState([]);
+const [selectedSwapRequestId, setSelectedSwapRequestId] = useState("");
   const [formData, setFormData] = useState({
     bio: "",
     location: "",
@@ -26,6 +29,7 @@ const [profileImage, setProfileImage] = useState(null);
     swap_terms: "1 hour for 1 hour"
   });
 const [sessions, setSessions] = useState([]);
+const navigate = useNavigate();
 
 
 
@@ -111,6 +115,11 @@ const addSkillWanted = () => {
   });
 };
 
+useEffect(() => {
+  api.get("sessionswap-requests/?status=accepted") 
+    .then((res) => setAcceptedSwapRequests(res.data))
+    .catch((err) => console.log(err.response?.data));
+}, []);
 
   useEffect(() => {
     api.get(`profile/`)
@@ -142,7 +151,7 @@ api.get('skillwant/')
   setSkillsWanted(res.data)
 })
 
-api.get("session/")
+api.get("sessions/")
 .then((res)=>{
   setSessions(res.data)
 })
@@ -553,9 +562,33 @@ const deleteWantedSkill = (skillId) => {
             Sessions
           </button>
         </div>
-        <button className="add-event-btn" onClick={() => alert("Schedule swap feature coming soon!")}>
-          + Schedule Swap
-        </button>
+       <div className="schedule-session-dropdown">
+  {acceptedSwapRequests.length === 0 ? (
+    <p>No accepted swap requests to schedule.</p>
+  ) : (
+    <>
+      <select
+        value={selectedSwapRequestId}
+        onChange={(e) => setSelectedSwapRequestId(e.target.value)}
+      >
+        <option value="">Select a swap request</option>
+        {acceptedSwapRequests.map((sr) => (
+          <option key={sr.id} value={sr.id}>
+            {sr.partner.user.username} - {sr.skill_name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        className="add-event-btn"
+        disabled={!selectedSwapRequestId}
+        onClick={() => navigate(`/schedule/${selectedSwapRequestId}`)}
+      >
+        + Schedule Session
+      </button>
+    </>
+  )}
+</div>
       </div>
 
    

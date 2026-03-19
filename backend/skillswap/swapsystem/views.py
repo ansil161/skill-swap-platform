@@ -143,7 +143,7 @@ class SwaprRequestApi(APIView):
         swap_req.save()
         if new_status == "Accepted":
             Conversation.objects.get_or_create(
-                swap_request_=swap_req
+                swap_request=swap_req
             )
 
         return Response({'message': f'Swap request {new_status}'}, status=status.HTTP_200_OK)
