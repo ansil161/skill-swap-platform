@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
 import ChatWindow from "../component/chathome";
 import "../styles/chat.css";
+import { getCurrentUser } from "../../utils/cookies";
 
 const getInitials = (name = "") =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
@@ -10,20 +11,20 @@ const ChatList = () => {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [search, setSearch] = useState("");
-
+  const currentUser = getCurrentUser()
   useEffect(() => {
     api
       .get("conversations/")
       .then((res) => {
         setConversations(res.data);
-        console.log(res.data);
+        console.log('hai',res.data);
       })
       .catch((err) => console.error(err));
   }, []);
 
   const activeConv = conversations.find((c) => c.id === activeConversation);
 
-  const getPartnerName = (conv) => conv.user2_name || conv.user1_name || "Partner";
+ const getPartnerName = (conv) => conv.partner_name;
 
   const filtered = conversations.filter((conv) =>
     getPartnerName(conv).toLowerCase().includes(search.toLowerCase())
@@ -31,7 +32,7 @@ const ChatList = () => {
 
   return (
     <div className="ss-root">
-      {/* ── Sidebar ── */}
+  
       <div className="ss-sidebar">
         <div className="ss-sb-head">
           <div className="ss-sb-title">
@@ -83,13 +84,13 @@ const ChatList = () => {
         </div>
       </div>
 
-      {/* ── Main area ── */}
       <div className="ss-main">
         {activeConversation && activeConv ? (
-          <ChatWindow
+           <ChatWindow
             key={activeConversation}
             conversationId={activeConversation}
             partnerName={getPartnerName(activeConv)}
+            currentUser={currentUser}
           />
         ) : (
           <div className="ss-empty">
