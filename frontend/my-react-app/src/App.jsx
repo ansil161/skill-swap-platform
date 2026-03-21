@@ -5,14 +5,14 @@ import Home from './user/pages/Home'
 import Match from './user/pages/match'
 import ProfilePage from './user/pages/Profil'
 import Requests from './user/pages/request'
-import Sessionform from './user/pages/sessionfrom'
-import SessionList from './user/pages/sessionlist'
 import Navbar from './user/component/navbar'
 import Dashboard from './user/pages/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
 import Chat from './user/component/chatlist'
+import SessionList from './user/pages/sessionlist'
+import SessionScheduler from './user/pages/sessionfrom'
 
 function App(){
     const conversationId = 2;
@@ -27,8 +27,6 @@ function App(){
       <Route path='/profile' element={<ProfilePage/>}/>
        <Route path='/match' element={<Match/>}/>
        <Route path='/request' element={<Requests/>}/>
-        <Route path='/sessionform' element={<Sessionform/>}/>
-        <Route path='/sessionlist' element={<SessionList/>}/>
           <Route path='/nav' element={<Navbar/>}/>
           <Route path='/dash' element={<Dashboard/>}/>
             <Route path='/hai' element={<Hai/>}/>
@@ -36,6 +34,8 @@ function App(){
        
             <Route path="/reset-password/:uid/:token" element={<ResetPassword/>} />
        <Route path='/chat' element={<Chat/>}/>
+       <Route path="/sessions" element={<SessionList />} />
+        <Route path="/schedule/:swapRequestId" element={<SessionScheduler />} />
              
              
             

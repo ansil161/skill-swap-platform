@@ -31,7 +31,7 @@ function Register() {
         e.preventDefault()
  
 
-        api.post("Register/", {
+        api.post("auth/Register/", {
             username: form.username,
             email: form.email,
             password: form.password,

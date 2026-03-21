@@ -23,7 +23,7 @@ export default function ResetPassword() {
     }
 
     try {
-      await api.post(`password-reset-confirm/${uid}/${token}/`, { 
+      await api.post(`auth/password-reset-confirm/${uid}/${token}/`, { 
         password 
       });
       

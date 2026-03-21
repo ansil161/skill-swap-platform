@@ -43,7 +43,7 @@ const Dashboard = () => {
   const navigate=useNavigate
 
   useEffect(()=>{
-       api.get('profile/')
+       api.get('user/profile/')
     .then((res)=>{
       setuser(res.data)
       
@@ -53,7 +53,7 @@ const Dashboard = () => {
       console.log(err?.response?.data)
     })
 
-          api.get('skillwant/')
+          api.get('skills/skillwant/')
     .then((res)=>{
       setskillwa(res.data)
     
@@ -62,7 +62,7 @@ const Dashboard = () => {
     .catch(err=>{
       console.log(err?.response?.data)
     })
-              api.get('skilloffer/')
+              api.get('skills/skilloffer/')
     .then((res)=>{
       setskilloff(res.data)
       
@@ -73,7 +73,7 @@ const Dashboard = () => {
     })
 
     
-           api.get('matching/')
+           api.get('swaps/matching/')
     .then((res)=>{
       setmatch(res.data)
       console.log('matck',res.data)

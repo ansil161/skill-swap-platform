@@ -60,8 +60,9 @@ INSTALLED_APPS = [
     'userprofile',
     'skills',
     'swapsystem',
-    'sessionbooking',
     'chatapp',
+    'videochat',
+    'session',
 
     'rest_framework.authtoken',
     "channels",

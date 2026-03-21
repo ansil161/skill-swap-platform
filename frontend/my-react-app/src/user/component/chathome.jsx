@@ -22,7 +22,7 @@ const ChatWindow = ({ conversationId, partnerName, currentUser }) => {
     if (!conversationId) return;
     const fetchMessages = async () => {
       try {
-        const res = await api.get(`chat/${conversationId}/messages/`);
+        const res = await api.get(`chats/chat/${conversationId}/messages/`);
         setMessages(res.data);
       } catch (err) {
         console.error("Failed to fetch previous messages:", err);

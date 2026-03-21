@@ -17,7 +17,7 @@ function Requests() {
 
   useEffect(() => {
     getRequests()
-     api.get("profile/").then(res => {
+     api.get("user/profile/").then(res => {
     setUserId(res.data.id)
   })
   }, [])
@@ -25,7 +25,7 @@ function Requests() {
   const pendingCount = requests.received.filter(r => r.status === 'Pending').length
 
   function getRequests() {
-    api.get("swaprequest/")
+    api.get("swaps/waprequest/")
       .then(res => {
         console.log(res.data)
         setRequests(res.data)
@@ -38,7 +38,7 @@ function Requests() {
   }
 
   function updateStatus(requestId, status) {
-    api.put("swaprequest/", {
+    api.put("swaps/swaprequest/", {
       request_id: requestId,
       status: status
     })
