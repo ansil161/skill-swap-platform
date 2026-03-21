@@ -17,6 +17,8 @@ const [newSkillWanted, setNewSkillWanted] = useState("");
 const [profileImage, setProfileImage] = useState(null);
 const [acceptedSwapRequests, setAcceptedSwapRequests] = useState([]);
 const [selectedSwapRequestId, setSelectedSwapRequestId] = useState("");
+
+
   const [formData, setFormData] = useState({
     bio: "",
     location: "",
@@ -30,7 +32,7 @@ const [selectedSwapRequestId, setSelectedSwapRequestId] = useState("");
   });
 const [sessions, setSessions] = useState([]);
 const navigate = useNavigate();
-
+console.log('requestid',selectedSwapRequestId)
 
 
 
