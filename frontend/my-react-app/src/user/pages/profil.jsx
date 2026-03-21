@@ -60,7 +60,7 @@ const addSkillOffered = () => {
   setNewSkillOffered("");
 
   
-  api.post("skilloffer/", {
+  api.post("skills/skilloffer/", {
    
     skills: tempSkill.skill_name,
     experience_level: 1
@@ -94,7 +94,7 @@ const addSkillWanted = () => {
   setSkillsWanted([...skillsWanted, tempSkill]);
   setNewSkillWanted("");
 
-  api.post("skillwant/", {
+  api.post("skills/skillwant/", {
     
     name: tempSkill.skill_name,
    
@@ -116,13 +116,13 @@ const addSkillWanted = () => {
 };
 
 useEffect(() => {
-  api.get("sessionswap-requests/?status=accepted") 
+  api.get("session/sessionswap-requests/?status=accepted") 
     .then((res) => setAcceptedSwapRequests(res.data))
     .catch((err) => console.log(err.response?.data));
 }, []);
 
   useEffect(() => {
-    api.get(`profile/`)
+    api.get(`user/profile/`)
       .then((res) => {
         const profile = res.data;
         setData(profile);
@@ -141,17 +141,17 @@ useEffect(() => {
       .catch((err) => {
         console.log(err.response?.data);
       });
-      api.get('skilloffer/')
+      api.get('skills/skilloffer/')
 .then((res)=>{
   setSkillsOffered(res.data)
 })
 
-api.get('skillwant/')
+api.get('skills/skillwant/')
 .then((res)=>{
   setSkillsWanted(res.data)
 })
 
-api.get("sessions/")
+api.get("session/sessions/")
 .then((res)=>{
   setSessions(res.data)
 })
@@ -184,7 +184,7 @@ const handleSubmit = (e) => {
     form.append("profile_picture", profileImage);
   }
 
-  api.patch(`profile/`, form, {
+  api.patch(`user/profile/`, form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -202,7 +202,7 @@ const handleSubmit = (e) => {
 
  const deleteOfferedSkill = (skillId) => {
 
-  api.delete(`skilloffer/${skillId}/`)
+  api.delete(`skills/skilloffer/${skillId}/`)
   .then(() => {
 
     setSkillsOffered((prevSkills) =>
@@ -219,7 +219,7 @@ const handleSubmit = (e) => {
 
 const deleteWantedSkill = (skillId) => {
 
-  api.delete(`skillwant/${skillId}/`)
+  api.delete(`skills/skillwant/${skillId}/`)
   .then(() => {
 
     setSkillsWanted((prevSkills) =>

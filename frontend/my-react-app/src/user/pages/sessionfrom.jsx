@@ -3,12 +3,14 @@ import { useState } from "react";
 import api from "../../api/axios";
 
 export default function SessionScheduler({ swapRequestId }) {
+  console.log('hello',swapRequestId)
   const [scheduledTime, setScheduledTime] = useState("");
   const [videoType, setVideoType] = useState("internal"); 
   const [googleLink, setGoogleLink] = useState("");
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const data = {
       swap_request: swapRequestId,
       scheduled_time: scheduledTime,
@@ -17,7 +19,8 @@ export default function SessionScheduler({ swapRequestId }) {
     };
 
     try {
-      const res = await api.post("/sessions/", data);
+      const res = await api.post("session/sessions/", data);
+      
       alert("Session scheduled!");
       console.log(res.data);
     } catch (err) {
@@ -25,6 +28,7 @@ export default function SessionScheduler({ swapRequestId }) {
       alert("Error scheduling session");
     }
   };
+ 
 
   return (
     <form onSubmit={handleSubmit}>

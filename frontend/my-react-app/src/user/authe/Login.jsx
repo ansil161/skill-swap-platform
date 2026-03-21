@@ -25,7 +25,7 @@ const handleChange = (e) => {
 const handleLogin = (e) => {
     e.preventDefault()
 
-    api.post('Login/', state)
+    api.post('auth/Login/', state)
     .then((res)=>{
         console.log(res.data)
         nav('/dash')
@@ -41,7 +41,7 @@ const handleLogin = (e) => {
 const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
 
-        api.post("google-login/", {
+        api.post("auth/google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
 

@@ -7,8 +7,11 @@ export default function SessionList() {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    api.get("/sessions/")
-      .then((res) => setSessions(res.data))
+    api.get("session/sessions/")
+      .then((res) => {setSessions(res.data)
+        
+      }
+    )
       .catch((err) => console.error(err));
   }, []);
 

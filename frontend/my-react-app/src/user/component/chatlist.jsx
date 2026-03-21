@@ -14,7 +14,7 @@ const ChatList = () => {
   const currentUser = getCurrentUser()
   useEffect(() => {
     api
-      .get("conversations/")
+      .get("chats/conversations/")
       .then((res) => {
         setConversations(res.data);
         console.log('hai',res.data);

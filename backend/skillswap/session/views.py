@@ -22,10 +22,11 @@ class SessionListCreateAPIView(APIView):
 
     def post(self, request):
         swap_request_id = request.data.get("swap_request")
+        print("hello",swap_request_id)
         try:
             swap_request = SwapRequest.objects.get(id=swap_request_id)
         except SwapRequest.DoesNotExist:
-            return Response({"detail": "SwapRequest not found"}, status=404)
+            return Response({"detail": "SwapRequest not found"}, status=status.HTTP_404_NOT_FOUND)
     
        
         mentor = swap_request.provider

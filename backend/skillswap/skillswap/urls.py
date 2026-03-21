@@ -20,14 +20,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('skill/',include('authe.urls')),
-    path('skill/',include('userprofile.urls')),
-    path('skill/',include('skills.urls')),
-    path('skill/',include('swapsystem.urls')),
-    path('skill/',include('session.urls')),
-    path('skill/',include('chatapp.urls')),
-     path('skill/',include('videochat.urls')),
+     path('admin/', admin.site.urls),
+    path('skill/auth/', include('authe.urls')),
+    path('skill/user/', include('userprofile.urls')),
+    path('skill/skills/', include('skills.urls')),
+    path('skill/swaps/', include('swapsystem.urls')),
+    path('skill/chats/', include('chatapp.urls')),
+    path('skill/videochat/', include('videochat.urls')),
+    path('skill/session/',include('session.urls') ),
 
 
     
@@ -35,3 +35,7 @@ urlpatterns = [
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+      

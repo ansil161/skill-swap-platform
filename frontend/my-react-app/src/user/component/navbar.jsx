@@ -24,7 +24,7 @@ const Navbar = () => {
   
   useEffect(() => {
 
-    api.get('profile/')
+    api.get('user/profile/')
     .then((res)=>{
       setuser(res.data)
       console.log(res.data)
@@ -61,7 +61,7 @@ const Navbar = () => {
 
   
   const handleLogout = () => {
-    api.post('logout/')
+    api.post('user/logout/')
     .then((res)=>{
       alert('user is log out')
       navigate('/login')

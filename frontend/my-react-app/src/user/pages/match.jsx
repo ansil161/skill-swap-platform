@@ -22,19 +22,19 @@ function Match() {
   }
 
   function getSwapRequests() {
-    api.get("swaprequest/")
+    api.get("swaps/swaprequest/")
       .then(res => setSwapRequests(res.data))
       .catch(err => console.log(err))
   }
 
   function getCurrentUser() {
-    api.get("profile/")
+    api.get("user/profile/")
       .then((res) => setCurrentUser(res.data))
       .catch((err) => console.log(err))
   }
 
   function getMatches() {
-    api.get("matching/")
+    api.get("swaps/matching/")
       .then((res) => {
         setMatches(res.data)
         console.log(res.data)
@@ -48,7 +48,7 @@ function Match() {
   }
 
   function sendSwapRequest(providerId, skillId) {
-    api.post("swaprequest/", {
+    api.post("swaps/swaprequest/", {
       provider_id: providerId,
       skill_id: skillId
     })
