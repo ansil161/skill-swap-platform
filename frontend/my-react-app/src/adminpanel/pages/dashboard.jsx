@@ -1,35 +1,40 @@
-
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import "../styles/dashboard.css";
+
+
 
 export default function Dashboard() {
   const [stats, setStats] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.get("admin/dashboard/")
-      .then(res => setStats(res.data))
-      .catch(err => console.error(err));
+      .then(res => { setStats(res.data); setLoading(false);
+        console.log(res.data)
+       })
+      .catch(err => { console.error(err); setLoading(false); });
   }, []);
 
   return (
     <div>
-      <h1>Dashboard</h1>
-
-      <div style={{ display: "flex", gap: "20px" }}>
-        <Card title="Users" value={stats.total_users} />
-        <Card title="Swaps" value={stats.total_swaps} />
-        <Card title="Accepted" value={stats.accepted_swaps} />
-        <Card title="Sessions" value={stats.total_sessions} />
+      <div className="dashboard__header">
+        <h1 className="dashboard__title">Dashboard</h1>
+        <p className="dashboard__subtitle">Welcome back — here's what's happening on SkillSwap.</p>
       </div>
-    </div>
-  );
-}
 
-function Card({ title, value }) {
-  return (
-    <div style={{ padding: "20px", background: "#eee", borderRadius: "10px" }}>
-      <h3>{title}</h3>
-      <p>{value}</p>
+    <div className="stats-grid">
+  {loading ? (
+    <p>Loading...</p>
+  ) : (
+    Object.entries(stats).map(([key, value]) => (
+      <div className="stat-card" key={key}>
+        <p>{key.replace(/_/g, " ").toUpperCase()}</p>
+        <h2>{value}</h2>
+      </div>
+    ))
+  )}
+</div>
     </div>
   );
 }

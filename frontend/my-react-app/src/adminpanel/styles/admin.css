@@ -1,0 +1,66 @@
+/* ─── Admin Design Tokens ─────────────────────────────────────── */
+:root {
+  --sidebar-bg: #0f1117;
+  --sidebar-text: #a8afc4;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #4f6ef7;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-active-bg: rgba(79, 110, 247, 0.15);
+  --sidebar-border: rgba(255, 255, 255, 0.07);
+  --sidebar-width: 220px;
+
+  --content-bg: #f5f6fa;
+  --card-bg: #ffffff;
+  --card-border: #e8eaf0;
+  --card-radius: 12px;
+
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --accent: #4f6ef7;
+  --accent-light: #eef1fe;
+  --success: #16a34a;
+  --success-light: #dcfce7;
+  --warning: #d97706;
+  --warning-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+
+  --font: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+
+  --transition: 0.18s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--content-bg);
+  color: var(--text-primary);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Layout ──────────────────────────────────────────────────── */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--content-bg);
+}
+
+.admin-content {
+  padding: 24px 28px;
+  flex: 1;
+}

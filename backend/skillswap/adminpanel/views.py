@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .permission import IsAdminUserCustom
 
-from userprofile.models import Profile
+from userprofile.models import profile
 from swapsystem.models import SwapRequest
 from session.models import Session
 
@@ -14,7 +14,7 @@ class AdminDashboardView(APIView):
 
     def get(self, request):
         data = {
-            "total_users": Profile.objects.count(),
+            "total_users": profile.objects.count(),
             "total_swaps": SwapRequest.objects.count(),
             "accepted_swaps": SwapRequest.objects.filter(status='accepted').count(),
             "total_sessions": Session.objects.count(),
@@ -25,7 +25,7 @@ class AdminUserListView(APIView):
     permission_classes = [IsAdminUserCustom]
 
     def get(self, request):
-        users = Profile.objects.select_related('user').all()
+        users = profile.objects.select_related('user').all()
 
         data = [
             {

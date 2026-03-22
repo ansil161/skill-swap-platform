@@ -17,13 +17,12 @@ import VideoCallPage from './user/pages/videohome'
 
 import AdminLayout from './adminpanel/pages/adminlayout'
 import Dashboardad from './adminpanel/pages/dashboard'
-// import Users from './adminpanel/pages/userpage'
-import Swaps from './adminpanel/pages/swap'
-import Sessions from './adminpanel/pages/session'
+import Users from './adminpanel/pages/userpage'
+import Swaps from './adminpanel/pages/swappage'
+import Sessions from './adminpanel/pages/sessionpage'
 
 function App(){
-    const conversationId = 2;
-  const userId = 1;
+
   return(
     <>
       <BrowserRouter>
@@ -48,7 +47,7 @@ function App(){
              
             
         <Route path="/admin" element={<AdminLayout><Dashboardad /></AdminLayout>} />
-        {/* <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} /> */}
+        <Route path="/admin/users" element={<AdminLayout><Users /></AdminLayout>} />
         <Route path="/admin/swaps" element={<AdminLayout><Swaps /></AdminLayout>} />
         <Route path="/admin/sessions" element={<AdminLayout><Sessions /></AdminLayout>} />
 

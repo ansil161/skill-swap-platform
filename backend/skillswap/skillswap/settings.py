@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'chatapp',
     'videochat',
     'session',
+    'adminpanel',
 
     'rest_framework.authtoken',
     "channels",

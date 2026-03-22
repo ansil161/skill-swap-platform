@@ -61,13 +61,14 @@ const Navbar = () => {
 
   
   const handleLogout = () => {
-    api.post('user/logout/')
+    api.post('auth/logout/')
     .then((res)=>{
       alert('user is log out')
       navigate('/login')
     })
     .catch(err=>{
       alert('there is a error')
+      console.log(err?.response?.message?.data)
     })
     
     
