@@ -1,8 +1,11 @@
 
 import { useState } from "react";
 import api from "../../api/axios";
+import { useParams } from "react-router-dom";
 
-export default function SessionScheduler({ swapRequestId }) {
+export default function SessionScheduler() {
+   const { swapRequestId } = useParams()
+
   console.log('hello',swapRequestId)
   const [scheduledTime, setScheduledTime] = useState("");
   const [videoType, setVideoType] = useState("internal"); 

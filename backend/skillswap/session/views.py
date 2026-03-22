@@ -7,6 +7,8 @@ from .models import Session, SessionFeedback
 from .serializer import SessionSerializer, SessionFeedbackSerializer,SwapRequestSerializer
 from    swapsystem.models import SwapRequest
 from django.db.models import Q
+
+import uuid
 # Create your views here.
 
 
@@ -28,9 +30,17 @@ class SessionListCreateAPIView(APIView):
         except SwapRequest.DoesNotExist:
             return Response({"detail": "SwapRequest not found"}, status=status.HTTP_404_NOT_FOUND)
     
-       
+         
         mentor = swap_request.provider
         learner = swap_request.requester
+        
+
+        video_type = request.data.get("video_call_type")
+
+        internal_room_id = None
+
+        if video_type == "internal":
+            internal_room_id = str(uuid.uuid4())
     
         session = Session(
             swap_request=swap_request,
@@ -39,6 +49,7 @@ class SessionListCreateAPIView(APIView):
             scheduled_time=request.data.get("scheduled_time"),
             video_call_type=request.data.get("video_call_type"),
             google_meet_link=request.data.get("google_meet_link"),
+            internal_room_id=internal_room_id
         )
         session.save()
         serializer = SessionSerializer(session)
