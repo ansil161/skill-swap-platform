@@ -63,7 +63,6 @@
   flex-shrink: 0;
 }
 
-/* Notification bell */
 .navbar__bell {
   width: 34px;
   height: 34px;
@@ -83,7 +82,7 @@
   border-color: #d1d5db;
 }
 
-/* Avatar */
+
 .navbar__avatar {
   width: 32px;
   height: 32px;
