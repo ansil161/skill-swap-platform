@@ -113,8 +113,8 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/sessionlist') ? 'active' : ''}`} 
-            onClick={() => navigate('/sessionlist')}
+            className={`nav-item ${isActive("/sessions" ) ? 'active' : ''}`} 
+            onClick={() => navigate("/sessions" )}
           >
             <FontAwesomeIcon icon={faCalendar} />
             <span>Sessions</span>

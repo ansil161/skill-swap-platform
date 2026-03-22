@@ -11,6 +11,8 @@ class SessionSerializer(serializers.ModelSerializer):
         model = Session
         fields = '__all__'
 
+        
+
 class SessionFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = SessionFeedback

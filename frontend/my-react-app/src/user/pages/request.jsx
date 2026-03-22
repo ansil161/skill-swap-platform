@@ -25,9 +25,9 @@ function Requests() {
   const pendingCount = requests.received.filter(r => r.status === 'Pending').length
 
   function getRequests() {
-    api.get("swaps/waprequest/")
+    api.get("swaps/swaprequest/")
       .then(res => {
-        console.log(res.data)
+        console.log('hai iam',res.data)
         setRequests(res.data)
         setLoading(false)
       })

@@ -13,6 +13,7 @@ import ResetPassword from './user/authe/resetpassword'
 import Chat from './user/component/chatlist'
 import SessionList from './user/pages/sessionlist'
 import SessionScheduler from './user/pages/sessionfrom'
+import VideoCallPage from './user/pages/videohome'
 
 function App(){
     const conversationId = 2;
@@ -36,6 +37,7 @@ function App(){
        <Route path='/chat' element={<Chat/>}/>
        <Route path="/sessions" element={<SessionList />} />
         <Route path="/schedule/:swapRequestId" element={<SessionScheduler />} />
+         <Route path="/video/:roomId" element={<VideoCallPage />} />
              
              
             
