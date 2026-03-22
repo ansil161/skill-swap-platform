@@ -46,7 +46,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Layout ──────────────────────────────────────────────────── */
 .admin-layout {
   display: flex;
   min-height: 100vh;
