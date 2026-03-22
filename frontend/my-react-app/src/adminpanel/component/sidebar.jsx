@@ -49,7 +49,7 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   return (
     <aside className="sidebar">
-      {/* Brand */}
+ 
       <div className="sidebar__brand">
         <div className="sidebar__logo">S</div>
         <div>
@@ -58,7 +58,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Nav */}
+    
       <p className="sidebar__section-label">Menu</p>
       <nav className="sidebar__nav">
         {NAV_ITEMS.map(({ to, end, label, icon }) => (
@@ -76,7 +76,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer user */}
+   
       <div className="sidebar__footer">
         <div className="sidebar__footer-user">
           <div className="sidebar__avatar">A</div>
