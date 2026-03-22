@@ -1,10 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import "../styles/videocall.css";
 
 export default function VideoCall({ roomId }) {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
   const [status, setStatus] = useState("connecting");
+  const [micOn, setMicOn] = useState(true);
+  const [camOn, setCamOn] = useState(true);
+
+  const localStreamRef = useRef(null);
 
   useEffect(() => {
     let ws;
@@ -19,89 +24,58 @@ export default function VideoCall({ roomId }) {
         ws.onopen = async () => {
           setStatus("connected");
 
-          // 🎥 get camera
           localStream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true,
           });
 
+          localStreamRef.current = localStream;
           localVideoRef.current.srcObject = localStream;
 
-          // 🔗 peer connection
           peerConnection = new RTCPeerConnection({
             iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
           });
 
-          // send local tracks
           localStream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, localStream);
           });
 
-          // receive remote stream
           peerConnection.ontrack = (event) => {
-            console.log("Remote stream received");
             remoteVideoRef.current.srcObject = event.streams[0];
           };
 
-          // ICE candidates
           peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
-              ws.send(JSON.stringify({
-                type: "candidate",
-                candidate: event.candidate,
-              }));
+              ws.send(JSON.stringify({ type: "candidate", candidate: event.candidate }));
             }
           };
 
           peerConnection.onconnectionstatechange = () => {
-            console.log("STATE:", peerConnection.connectionState);
             setStatus(peerConnection.connectionState);
           };
         };
 
         ws.onmessage = async (event) => {
           const data = JSON.parse(event.data);
-          console.log("WS:", data);
-
           if (!peerConnection) return;
 
-          // ✅ ROLE (IMPORTANT FIX)
-          if (data.type === "role") {
-            if (data.initiator) {
-              console.log("I am initiator → creating offer");
-
-              const offer = await peerConnection.createOffer();
-              await peerConnection.setLocalDescription(offer);
-
-              ws.send(JSON.stringify({
-                type: "offer",
-                offer: offer,
-              }));
-            }
+          if (data.type === "role" && data.initiator) {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            ws.send(JSON.stringify({ type: "offer", offer }));
           }
 
-          // 📩 OFFER
           if (data.type === "offer") {
-            console.log("Received offer");
-
             await peerConnection.setRemoteDescription(data.offer);
-
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(answer);
-
-            ws.send(JSON.stringify({
-              type: "answer",
-              answer: answer,
-            }));
+            ws.send(JSON.stringify({ type: "answer", answer }));
           }
 
-          // 📩 ANSWER
           if (data.type === "answer") {
-            console.log("Received answer");
             await peerConnection.setRemoteDescription(data.answer);
           }
 
-          // 📩 ICE
           if (data.type === "candidate") {
             try {
               await peerConnection.addIceCandidate(data.candidate);
@@ -113,7 +87,6 @@ export default function VideoCall({ roomId }) {
 
         ws.onerror = () => setStatus("error");
         ws.onclose = () => setStatus("disconnected");
-
       } catch (err) {
         console.error(err);
         setStatus("failed");
@@ -125,33 +98,141 @@ export default function VideoCall({ roomId }) {
     return () => {
       if (ws) ws.close();
       if (peerConnection) peerConnection.close();
-      if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-      }
+      if (localStream) localStream.getTracks().forEach((t) => t.stop());
     };
-
   }, [roomId]);
 
+  const toggleMic = () => {
+    const stream = localStreamRef.current;
+    if (!stream) return;
+    stream.getAudioTracks().forEach((t) => (t.enabled = !t.enabled));
+    setMicOn((v) => !v);
+  };
+
+  const toggleCam = () => {
+    const stream = localStreamRef.current;
+    if (!stream) return;
+    stream.getVideoTracks().forEach((t) => (t.enabled = !t.enabled));
+    setCamOn((v) => !v);
+  };
+
+  const STATUS_COLOR = {
+    connected: "vc-status--connected",
+    connecting: "vc-status--connecting",
+    disconnected: "vc-status--muted",
+    error: "vc-status--error",
+    failed: "vc-status--error",
+  };
+
   return (
-    <div>
-      <h3>Status: {status}</h3>
+    <div className="vc-wrap">
+      {/* Header */}
+      <div className="vc-header">
+        <span className="vc-room">Room · {roomId}</span>
+        <div className={`vc-status ${STATUS_COLOR[status] ?? ""}`}>
+          <span className="vc-status-dot" />
+          <span className="vc-status-text">{status}</span>
+        </div>
+      </div>
 
-      <div style={{ display: "flex", gap: "20px" }}>
-        <video
-          ref={localVideoRef}
-          autoPlay
-          playsInline
-          muted
-          style={{ width: 300, border: "2px solid black" }}
-        />
+      {/* Video feeds */}
+      <div className="vc-feeds">
+        <div className="vc-feed">
+          <video
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+            muted
+            className="vc-video"
+          />
+          <span className="vc-feed-label">You</span>
+          {!micOn && (
+            <span className="vc-feed-muted" title="Mic off">
+              <MicOffIcon />
+            </span>
+          )}
+        </div>
 
-        <video
-          ref={remoteVideoRef}
-          autoPlay
-          playsInline
-          style={{ width: 300, border: "2px solid black" }}
-        />
+        <div className="vc-feed">
+          <video
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
+            className="vc-video"
+          />
+          <span className="vc-feed-label">Remote</span>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="vc-controls">
+        <button
+          className={`vc-btn ${!micOn ? "vc-btn--off" : ""}`}
+          onClick={toggleMic}
+          title={micOn ? "Mute mic" : "Unmute mic"}
+        >
+          {micOn ? <MicIcon /> : <MicOffIcon />}
+        </button>
+
+        <button
+          className={`vc-btn ${!camOn ? "vc-btn--off" : ""}`}
+          onClick={toggleCam}
+          title={camOn ? "Turn off camera" : "Turn on camera"}
+        >
+          {camOn ? <CamIcon /> : <CamOffIcon />}
+        </button>
+
+        <button className="vc-btn vc-btn--end" title="End call">
+          <EndCallIcon />
+        </button>
+
+        <button className="vc-btn" title="Share screen">
+          <ScreenIcon />
+        </button>
       </div>
     </div>
   );
 }
+
+
+const MicIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1a3 3 0 0 1 3 3v4a3 3 0 0 1-6 0V4a3 3 0 0 1 3-3z" stroke="currentColor" strokeWidth="1.4"/>
+    <path d="M3 8a5 5 0 0 0 10 0M8 13v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+  </svg>
+);
+
+const MicOffIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1a3 3 0 0 1 3 3v2M5 5v3a3 3 0 0 0 5.12 2.12M3 8a5 5 0 0 0 8.54 3.54M8 13v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+  </svg>
+);
+
+const CamIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="1" y="4" width="10" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
+    <path d="M11 7l4-2v6l-4-2V7z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+  </svg>
+);
+
+const CamOffIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M1 4.5A1.5 1.5 0 0 1 2.5 3H7M11 7l4-2v6l-3-1.5M2 13h8.5A1.5 1.5 0 0 0 12 11.5V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+    <line x1="2" y1="2" x2="14" y2="14" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+  </svg>
+);
+
+const EndCallIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="23" y1="1" x2="1" y2="23" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
+const ScreenIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <rect x="1" y="2" width="14" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.4"/>
+    <path d="M6 14h4M8 12v2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+  </svg>
+);

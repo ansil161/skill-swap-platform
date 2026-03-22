@@ -1,6 +1,6 @@
 
-import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
+import Sidebar from "../component/sidebar";
+import Navbar from "../component/navbarad";
 
 export default function AdminLayout({ children }) {
   return (

@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-     path('admin/', admin.site.urls),
+    
     path('skill/auth/', include('authe.urls')),
     path('skill/user/', include('userprofile.urls')),
     path('skill/skills/', include('skills.urls')),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('skill/chats/', include('chatapp.urls')),
     path('skill/videochat/', include('videochat.urls')),
     path('skill/session/',include('session.urls') ),
+    path('skill/admin/',include('adminpanel.urls')),
 
 
     
