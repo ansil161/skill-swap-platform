@@ -1,6 +1,5 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.contrib.auth.models import AnonymousUser
 from asgiref.sync import sync_to_async
 from session.models import Session
 
@@ -9,8 +8,7 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.user = self.scope["user"]
-
-        print("USER:", self.user) 
+        print("USER:", self.user)
 
         if self.user is None or self.user.is_anonymous:
             await self.close()
@@ -19,13 +17,12 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope["url_route"]["kwargs"]["room_id"]
         self.room_group_name = f"video_{self.room_name}"
 
-    
         if not await self.is_user_allowed():
             print("❌ Not allowed")
             await self.close()
             return
 
-        
+        # ⚠️ temp in-memory tracking (OK for dev)
         if not hasattr(self.channel_layer, "rooms"):
             self.channel_layer.rooms = {}
 
@@ -43,7 +40,7 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
 
         users = self.channel_layer.rooms[self.room_group_name]
 
-     
+        # ✅ SEND ROLE (IMPORTANT)
         await self.send(text_data=json.dumps({
             "type": "role",
             "initiator": len(users) == 1
@@ -73,13 +70,12 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
         )
 
     async def signal_message(self, event):
-    
+        # ❌ don't send back to sender
         if self.channel_name == event["sender"]:
             return
 
         await self.send(text_data=json.dumps(event["message"]))
 
-  
     @sync_to_async
     def is_user_allowed(self):
         try:

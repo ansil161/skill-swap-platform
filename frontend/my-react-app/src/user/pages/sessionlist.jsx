@@ -28,9 +28,9 @@ export default function SessionList() {
               Join Google Meet
             </a>
           ) : (
-            <Link to={`/internal-room/${session.internal_room_id}`}>
-              Join Internal Call
-            </Link>
+        <Link to={`/video/${session.internal_room_id}`}>
+  Join Internal Call
+</Link>
           )}
         </div>
       ))}

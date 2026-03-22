@@ -13,7 +13,6 @@ export default function VideoCall({ roomId }) {
 
     const start = async () => {
       try {
-        // ✅ dynamic ws protocol
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
         ws = new WebSocket(`${wsProtocol}://localhost:8000/ws/video/${roomId}/`);
 
@@ -30,18 +29,17 @@ export default function VideoCall({ roomId }) {
 
           // 🔗 peer connection
           peerConnection = new RTCPeerConnection({
-            iceServers: [
-              { urls: "stun:stun.l.google.com:19302" }
-            ],
+            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
           });
 
-          // send tracks
-          localStream.getTracks().forEach(track => {
+          // send local tracks
+          localStream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, localStream);
           });
 
-          // receive remote
+          // receive remote stream
           peerConnection.ontrack = (event) => {
+            console.log("Remote stream received");
             remoteVideoRef.current.srcObject = event.streams[0];
           };
 
@@ -55,32 +53,37 @@ export default function VideoCall({ roomId }) {
             }
           };
 
-          // ✅ ONLY FIRST USER CREATES OFFER
-          const isInitiator = window.location.search.includes("creator=true");
-
-          if (isInitiator) {
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-
-            ws.send(JSON.stringify({
-              type: "offer",
-              offer: offer,
-            }));
-          }
-
-          // connection status
           peerConnection.onconnectionstatechange = () => {
+            console.log("STATE:", peerConnection.connectionState);
             setStatus(peerConnection.connectionState);
           };
         };
 
         ws.onmessage = async (event) => {
           const data = JSON.parse(event.data);
+          console.log("WS:", data);
 
           if (!peerConnection) return;
 
-          // 📩 OFFER RECEIVED
+          // ✅ ROLE (IMPORTANT FIX)
+          if (data.type === "role") {
+            if (data.initiator) {
+              console.log("I am initiator → creating offer");
+
+              const offer = await peerConnection.createOffer();
+              await peerConnection.setLocalDescription(offer);
+
+              ws.send(JSON.stringify({
+                type: "offer",
+                offer: offer,
+              }));
+            }
+          }
+
+          // 📩 OFFER
           if (data.type === "offer") {
+            console.log("Received offer");
+
             await peerConnection.setRemoteDescription(data.offer);
 
             const answer = await peerConnection.createAnswer();
@@ -92,8 +95,9 @@ export default function VideoCall({ roomId }) {
             }));
           }
 
-          // 📩 ANSWER RECEIVED
+          // 📩 ANSWER
           if (data.type === "answer") {
+            console.log("Received answer");
             await peerConnection.setRemoteDescription(data.answer);
           }
 
@@ -102,7 +106,7 @@ export default function VideoCall({ roomId }) {
             try {
               await peerConnection.addIceCandidate(data.candidate);
             } catch (err) {
-              console.error(err);
+              console.error("ICE error:", err);
             }
           }
         };
@@ -118,7 +122,6 @@ export default function VideoCall({ roomId }) {
 
     start();
 
-    // ✅ CLEANUP
     return () => {
       if (ws) ws.close();
       if (peerConnection) peerConnection.close();
