@@ -1,4 +1,3 @@
-/* ─── Sidebar ─────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
 
 .sidebar {
@@ -15,7 +14,7 @@
   border-right: 1px solid var(--sidebar-border);
 }
 
-/* Brand */
+
 .sidebar__brand {
   display: flex;
   align-items: center;

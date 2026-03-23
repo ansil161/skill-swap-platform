@@ -1,6 +1,4 @@
-/* ─── Shared Page Styles ──────────────────────────────────────── */
 
-/* Page Header */
 .page-header {
   display: flex;
   align-items: flex-start;
@@ -23,7 +21,6 @@
   margin-top: 3px;
 }
 
-/* Card wrapper */
 .data-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -32,7 +29,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* Search / filter bar */
 .data-card__toolbar {
   display: flex;
   align-items: center;
@@ -68,7 +64,6 @@
 
 .search-input input::placeholder { color: var(--text-muted); }
 
-/* ─── Table ───────────────────────────────────────────────────── */
 .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -106,7 +101,6 @@
   vertical-align: middle;
 }
 
-/* User avatar cell */
 .user-cell {
   display: flex;
   align-items: center;
@@ -138,7 +132,6 @@
   color: var(--text-muted);
 }
 
-/* ─── Badges / Status ─────────────────────────────────────────── */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -173,7 +166,6 @@
 .badge--info     { background: var(--accent-light);   color: var(--accent);   }
 .badge--info::before     { background: var(--accent); }
 
-/* Rating stars */
 .rating {
   display: flex;
   align-items: center;
@@ -183,7 +175,6 @@
   font-weight: 500;
 }
 
-/* ─── Session / Swap List Cards ───────────────────────────────── */
 .item-list {
   display: flex;
   flex-direction: column;
@@ -244,7 +235,6 @@
   flex-shrink: 0;
 }
 
-/* ─── Empty state ─────────────────────────────────────────────── */
 .empty-state {
   padding: 48px 20px;
   text-align: center;
@@ -260,7 +250,6 @@
   font-size: 14px;
 }
 
-/* ─── Pagination / footer ─────────────────────────────────────── */
 .data-card__footer {
   display: flex;
   align-items: center;
