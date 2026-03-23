@@ -5,7 +5,7 @@ import api from "../../api/axios";
 import '../styles/apply.css'
 
 export default function ApplyJob() {
-  const { id } = useParams(); // job id from URL
+  const { id } = useParams(); 
   const [coverLetter, setCoverLetter] = useState("");
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ export default function ApplyJob() {
     formData.append("resume", resume);
     formData.append("job", id); 
     if (coverLetter.trim()) {
-      formData.append("cover_letter", coverLetter); // only add if not empty
+      formData.append("cover_letter", coverLetter); 
     }
 
     try {
