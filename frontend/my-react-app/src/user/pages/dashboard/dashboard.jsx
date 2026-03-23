@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
-import Navbar from '../component/navbar';
-import api from '../../api/axios';
+import Navbar from '../../component/navbar';
+import api from '../../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import {
   Chart as ChartJS,
@@ -15,7 +15,7 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import '../styles/dashboard.css';
+import '../../styles/dashboard.css';
 
 
 ChartJS.register(

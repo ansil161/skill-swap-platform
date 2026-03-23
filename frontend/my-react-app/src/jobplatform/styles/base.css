@@ -1,0 +1,72 @@
+
+:root {
+
+  --ss-primary: #6366f1;
+  --ss-primary-hover: #4f46e5;
+  --ss-secondary: #64748b;
+  --ss-success: #22c55e;
+  --ss-warning: #f59e0b;
+  --ss-danger: #ef4444;
+  
+  --ss-bg-primary: #ffffff;
+  --ss-bg-secondary: #f8fafc;
+  --ss-bg-tertiary: #f1f5f9;
+  
+  --ss-text-primary: #0f172a;
+  --ss-text-secondary: #475569;
+  --ss-text-muted: #94a3b8;
+  
+  --ss-border: #e2e8f0;
+  --ss-border-focus: #6366f1;
+  
+
+  --ss-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --ss-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --ss-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --ss-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  
+
+  --ss-radius-sm: 0.375rem;
+  --ss-radius: 0.5rem;
+  --ss-radius-md: 0.75rem;
+  --ss-radius-lg: 1rem;
+  --ss-radius-full: 9999px;
+  
+
+  --ss-space-1: 0.25rem;
+  --ss-space-2: 0.5rem;
+  --ss-space-3: 0.75rem;
+  --ss-space-4: 1rem;
+  --ss-space-5: 1.25rem;
+  --ss-space-6: 1.5rem;
+  --ss-space-8: 2rem;
+  
+ 
+  --ss-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --ss-text-xs: 0.75rem;
+  --ss-text-sm: 0.875rem;
+  --ss-text-base: 1rem;
+  --ss-text-lg: 1.125rem;
+  --ss-text-xl: 1.25rem;
+  --ss-text-2xl: 1.5rem;
+  --ss-text-3xl: 1.875rem;
+  
+
+  --ss-transition: all 0.2s ease-in-out;
+}
+
+
+.ss-wrapper {
+  min-height: 100vh;
+  background: var(--ss-bg-secondary);
+  font-family: var(--ss-font-sans);
+  color: var(--ss-text-primary);
+  padding: var(--ss-space-6) var(--ss-space-4);
+}
+
+.ss-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+

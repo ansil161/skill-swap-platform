@@ -74,7 +74,14 @@ class Login(APIView):
             refresh=RefreshToken.for_user(user)
             access_token=str(refresh.access_token)
 
-            response=Response({'message':'Login succesfull'},status=status.HTTP_200_OK)
+            response=Response({'message':'Login succesfull',
+                               'user':{'user_id':user.id,
+                                       'username':user.username,
+                                       'email': user.email,
+                                       'role': user.role
+
+                                       }
+                               },status=status.HTTP_200_OK)
             response.set_cookie(
                 key='access_token',
                 value=access_token,

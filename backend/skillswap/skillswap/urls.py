@@ -29,6 +29,7 @@ urlpatterns = [
     path('skill/videochat/', include('videochat.urls')),
     path('skill/session/',include('session.urls') ),
     path('skill/admin/',include('adminpanel.urls')),
+    path('skill/jobs/', include('jobs.urls')),
 
 
     

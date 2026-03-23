@@ -10,10 +10,11 @@ from userprofile.models import profile
 from skills.models import skill
 from .models import SwapRequest
 from chatapp.models import Conversation
+from access_control.permissions import IsUser
 # Create your views here.
 
 class MatchApi(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsUser]
     def get(self,request):
         user_prf=profile.objects.get(user=request.user)
         skil_want=skill_wanted.objects.filter(user=user_prf).values_list('name' ,flat=True)
@@ -48,7 +49,7 @@ class MatchApi(APIView):
 
 class SwaprRequestApi(APIView):
         
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def post(self, request):
         request_user = profile.objects.get(user=request.user)

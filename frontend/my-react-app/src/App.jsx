@@ -6,7 +6,7 @@ import Match from './user/pages/match'
 import ProfilePage from './user/pages/Profil'
 import Requests from './user/pages/request'
 import Navbar from './user/component/navbar'
-import Dashboard from './user/pages/dashboard'
+import Dashboard from './user/pages/dashboard/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
@@ -21,6 +21,14 @@ import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
 
+
+import JobList from './jobplatform/pages/joblist'
+import JobDetail from './jobplatform/pages/jobdeatail'
+import ApplyJob from './jobplatform/pages/applijob'
+import CreateJob from './jobplatform/pages/createjob'
+import MyJobs from './jobplatform/pages/createjob'
+import Applicants from './jobplatform/pages/applicantjob'
+import RecruiterDashboard from './user/pages/dashboard/recruiiterdash'
 function App(){
 
   return(
@@ -52,6 +60,13 @@ function App(){
         <Route path="/admin/sessions" element={<AdminLayout><Sessions /></AdminLayout>} />
 
       
+      <Route path="/jobs" element={<JobList />} />
+<Route path="/jobs/:id" element={<JobDetail />} />
+<Route path="/jobs/:id/apply" element={<ApplyJob />} />
+<Route path="/create-job" element={<CreateJob />} />
+<Route path="/my-jobs" element={<MyJobs />} />
+<Route path="/jobs/:id/applicants" element={<Applicants />} />
+<Route path="/dashrec" element={<RecruiterDashboard />} />
 
 
   </Routes>
