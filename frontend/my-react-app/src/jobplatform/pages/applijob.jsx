@@ -50,16 +50,20 @@ export default function ApplyJob() {
         <p className="ss-subtitle">Upload your resume and optionally add a cover letter</p>
 
         <form className="ss-form" onSubmit={handleApply}>
-          <div className="ss-form-group">
-            <label className="ss-label" htmlFor="resume">Upload Resume (PDF/DOC)</label>
-            <input
-              id="resume"
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={(e) => setResume(e.target.files[0])}
-              required
-            />
-          </div>
+         <div className="ss-form-group">
+  <label className="ss-label" htmlFor="resume">Upload Resume (PDF/DOC)</label>
+  <input
+    id="resume"
+    type="file"
+    accept=".pdf,.doc,.docx"
+    className="ss-input"  
+    onChange={(e) => setResume(e.target.files[0])}
+    required
+  />
+  {resume && (
+    <span className="ss-file-name">📄 {resume.name}</span>
+  )}
+</div>
 
           <div className="ss-form-group">
             <label className="ss-label" htmlFor="coverLetter">Cover Letter (Optional)</label>
