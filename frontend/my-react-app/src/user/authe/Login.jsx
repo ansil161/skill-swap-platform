@@ -27,9 +27,18 @@ const handleLogin = (e) => {
 
     api.post('auth/Login/', state)
     .then((res)=>{
-        console.log(res.data)
-        nav('/dash')
-        alert("User loginsuccessfully")
+
+        console.log('haiuser',res.data)
+        const role = res.data.user.role
+        console.log('iwa',role)
+        if(role === 'recruiter'){
+            nav("/dashrec");
+        } else {
+            nav('/dash');
+        }
+
+        alert("Login successful");
+     
         
     })
     .catch((err)=>{
