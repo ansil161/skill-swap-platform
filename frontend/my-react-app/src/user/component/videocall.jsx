@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/videocall.css";
 import api from '../../api/axios'
+import { useNavigate } from "react-router-dom";
 
-export default function VideoCall({ roomId }) {
+export default function VideoCall({ roomId, sessionid }) {
    const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
@@ -17,6 +18,7 @@ export default function VideoCall({ roomId }) {
 
   const localStreamRef = useRef(null);
   let timerRef = useRef(null);
+  const navigate=useNavigate()
 
   useEffect(() => {
     let ws;
@@ -163,16 +165,21 @@ export default function VideoCall({ roomId }) {
 const submitFeedback = async () => {
   try {
     await api.post("session/feedbacks/", { 
-      session: roomId,  
+      session:  sessionid,  
       rating,
       feedback,
     });
     alert("Feedback submitted!");
     setShowFeedback(false);
+    navigate("/sessions")
   } catch (err) {
     console.error(err);
     alert("Failed to submit feedback");
   }
+};
+const skipFeedback = () => {
+  setShowFeedback(false);
+  navigate("/sessions");
 };
 
   return (
@@ -272,7 +279,7 @@ const submitFeedback = async () => {
               <button className="vc-submit" onClick={submitFeedback}>
                 Submit
               </button>
-              <button className="vc-skip" onClick={() => setShowFeedback(false)}>
+              <button className="vc-skip" onClick={() => skipFeedback()}>
                 Skip
               </button>
             </div>

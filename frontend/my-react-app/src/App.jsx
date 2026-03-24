@@ -30,6 +30,9 @@ import CreateJob from './jobplatform/pages/createjob'
 import MyJobs from './jobplatform/pages/createjob'
 import Applicants from './jobplatform/pages/applicantjob'
 import RecruiterDashboard from './user/pages/dashboard/recruiiterdash'
+import { ToastContainer } from "react-toastify"
+import 'react-toastify/dist/ReactToastify.css';
+
 function App(){
 
   return(
@@ -72,6 +75,16 @@ function App(){
 
 
   </Routes>
+   <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      pauseOnHover
+      toastClassName="custom-toast"
+      bodyClassName="custom-toast-body"
+    />
   </BrowserRouter>
     </>
   )

@@ -104,12 +104,12 @@ class SessionFeedbackListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_profile = request.user.profile
-        feedbacks = SessionFeedback.objects.filter(
-            Q(session__mentor=user_profile) | Q(session__learner=user_profile)
-        )
-        serializer = SessionFeedbackSerializer(feedbacks, many=True)
-        return Response(serializer.data)
+           user_profile = request.user.profile
+           feedbacks = SessionFeedback.objects.filter(
+               Q(session__mentor=user_profile) | Q(session__learner=user_profile)
+           )
+           serializer = SessionFeedbackSerializer(feedbacks, many=True, context={'request': request})
+           return Response(serializer.data)
 
     def post(self, request):
         session_id = request.data.get("session") 
@@ -135,6 +135,8 @@ class SessionFeedbackListCreateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class SessionFeedbackRetrieveUpdateDeleteAPIView(APIView):
     permission_classes = [IsAuthenticated]
 

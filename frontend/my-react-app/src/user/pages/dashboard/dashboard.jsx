@@ -40,6 +40,8 @@ const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [pendingRequests, setPendingRequests] = useState(0);
   const navigate=useNavigate
 
   useEffect(()=>{
@@ -82,9 +84,42 @@ const Dashboard = () => {
     .catch(err=>{
       console.log(err?.response?.data)
     })
+api.get("session/sessions/")
+  .then((res) => { 
+    setSessions(res.data);
+    const count = res.data.filter(session => session.status === "completed").length;
+    setCompletedCount(count); 
+
+  })
+  .catch((err) => console.error(err));
 
 
+             api.get('swaps/swaprequest/')
+    .then((res) => {
+      setPendingRequests(res.data.pending_count);
+    })
+    .catch((err) => console.error(err));
+      
+api.get("session/feedbacks/")
+  .then((res) => {
+    console.log('feedback', res.data);
+
+    const mappedReviews = res.data.map((f) => ({
+      id: f.id,
+      name: f.name,                   
+      rating: f.rating,
+      comment: f.comment,
+      date: new Date(f.create_at).toLocaleDateString(),
+    }));
+
+    setReviews(mappedReviews);
+  })
+  .catch((err) => console.error(err));
   },[])
+  console.log('upco',sessions)
+  console.log('user',user)
+  console.log('feedback',reviews)
+
 
 
   const pointsChartData = {
@@ -160,7 +195,7 @@ const Dashboard = () => {
             <button className="btn btn-primary">
               <i className="fas fa-exchange-alt"></i>
               <span>Requests</span>
-              <span className="notification-badge">0</span>
+              <span className="notification-badge">{pendingRequests||0}</span>
             </button>
           </div>
         </div>
@@ -201,7 +236,7 @@ const Dashboard = () => {
               <i className="fas fa-check-circle"></i>
             </div>
             <div className="stat-content">
-              <span className="stat-value">3</span>
+              <span className="stat-value">{completedCount}</span>
               <span className="stat-label">Sessions Completed</span>
             </div>
           </div>
@@ -211,7 +246,7 @@ const Dashboard = () => {
               <i className="fas fa-clock"></i>
             </div>
             <div className="stat-content">
-              <span className="stat-value">0</span>
+              <span className="stat-value">{pendingRequests  ||0}</span>
               <span className="stat-label">Pending Requests</span>
             </div>
           </div>
@@ -347,51 +382,33 @@ const Dashboard = () => {
     </h3>
   </div>
 
-  <div className="reviews-list">
-
-    {reviews.length === 0 ? (
-
-      <p className="no-data">No reviews yet</p>
-
-    ) : (
-
-      reviews.map((r, index) => (
-
-        <div className="review-item" key={index}>
-
-          <div className="review-header">
-            <div className="reviewer-info">
-              <div>
-                <p className="reviewer-name">{r.name}</p>
-
-                <div className="review-stars">
-                  {[1,2,3,4,5].map((star) => (
-                    <i
-                      key={star}
-                      className={
-                        star <= r.rating
-                        ? "fas fa-star"
-                        : "far fa-star"
-                      }
-                    ></i>
-                  ))}
-                </div>
-
+<div className="reviews-list">
+  {reviews.length === 0 ? (
+    <p className="no-data">No reviews yet</p>
+  ) : (
+    reviews.map((r, index) => (
+      <div className="review-item" key={index}>
+        <div className="review-header">
+          <div className="reviewer-info">
+            <div>
+              <p className="reviewer-name">{r.name}</p>
+              <div className="review-stars">
+                {[1,2,3,4,5].map((star) => (
+                  <i
+                    key={star}
+                    className={star <= r.rating ? "fas fa-star" : "far fa-star"}
+                  ></i>
+                ))}
               </div>
             </div>
           </div>
-
-          <p className="review-text">{r.comment}</p>
-
-          <p className="review-date">{r.date}</p>
-
         </div>
-
-      ))
-
-    )}
-
-  </div>
+        <p className="review-text">{r.comment}</p>
+        <p className="review-date">{r.date}</p>
+      </div>
+    ))
+  )}
+</div>
 </div>
 
             {/* <div className="dual-grid">
@@ -439,12 +456,15 @@ const Dashboard = () => {
           <div className="session-details">
 
             <p className="session-title">
-              {s.skill} with {s.partner}
+              {s.skill_name} with {s.learner_username
+}
             </p>
 
             <p className="session-time">
               <i className="far fa-calendar"></i>
-              {s.type} · {s.date} {s.time}
+              {s.video_call_type || s.google_meet_link
+} · {s.
+scheduled_time} {s.time}
             </p>
 
             <span className="session-tag">
