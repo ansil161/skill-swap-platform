@@ -7,9 +7,29 @@ from rest_framework import serializers
 from swapsystem.models import SwapRequest
 
 class SessionSerializer(serializers.ModelSerializer):
+    mentor_username = serializers.SerializerMethodField()
+    learner_username = serializers.SerializerMethodField()
+    scheduled_time = serializers.SerializerMethodField()
+    skill_name = serializers.SerializerMethodField()
     class Meta:
         model = Session
         fields = '__all__'
+    
+    def get_mentor_username(self, obj):
+        return str(obj.mentor.user.username)
+    
+    def get_learner_username(self, obj):
+        return str(obj.learner.user.username)
+    
+    def get_scheduled_time(self, obj):
+        return obj.scheduled_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    def get_skill_name(self, obj):
+   
+        return str(obj.swap_request.skill.skills.name) if obj.swap_request and obj.swap_request.skill else ""
+    
+    def get_skill_want(self,obj):
+         return str(obj.swap_request.skill.skills.name) if obj.swap_request and obj.swap_request.skill else ""
 
         
 

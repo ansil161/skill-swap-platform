@@ -40,6 +40,7 @@ const Dashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
   const navigate=useNavigate
 
   useEffect(()=>{
@@ -82,9 +83,20 @@ const Dashboard = () => {
     .catch(err=>{
       console.log(err?.response?.data)
     })
+api.get("session/sessions/")
+  .then((res) => { 
+    setSessions(res.data);
+    const count = res.data.filter(session => session.status === "completed").length;
+    setCompletedCount(count); 
 
+  })
+  .catch((err) => console.error(err));
+      
 
   },[])
+  console.log('upco',sessions)
+  console.log('user',user)
+
 
 
   const pointsChartData = {
@@ -201,7 +213,7 @@ const Dashboard = () => {
               <i className="fas fa-check-circle"></i>
             </div>
             <div className="stat-content">
-              <span className="stat-value">3</span>
+              <span className="stat-value">{completedCount}</span>
               <span className="stat-label">Sessions Completed</span>
             </div>
           </div>
@@ -439,12 +451,15 @@ const Dashboard = () => {
           <div className="session-details">
 
             <p className="session-title">
-              {s.skill} with {s.partner}
+              {s.skill_name} with {s.learner_username
+}
             </p>
 
             <p className="session-time">
               <i className="far fa-calendar"></i>
-              {s.type} · {s.date} {s.time}
+              {s.video_call_type || s.google_meet_link
+} · {s.
+scheduled_time} {s.time}
             </p>
 
             <span className="session-tag">
