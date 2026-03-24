@@ -82,6 +82,7 @@ class SwaprRequestApi(APIView):
             provider=provider_user,
             skill=skill_instance
         )
+        
 
 
         return Response({'message': 'Swap request sent successfully'}, status=status.HTTP_200_OK)
@@ -123,8 +124,9 @@ class SwaprRequestApi(APIView):
                 'created': r.create,
                 'conversation_id': conversation.id if conversation else None
             })
+            pending_count = received_requests.filter(status='Pending').count()
 
-        return Response({'sent': sent, 'received': received}, status=status.HTTP_200_OK)
+        return Response({'sent': sent, 'received': received,'pending_count': pending_count}, status=status.HTTP_200_OK)
 
 
     def put(self, request):

@@ -41,6 +41,7 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [completedCount, setCompletedCount] = useState(0);
+  const [pendingRequests, setPendingRequests] = useState(0);
   const navigate=useNavigate
 
   useEffect(()=>{
@@ -91,8 +92,29 @@ api.get("session/sessions/")
 
   })
   .catch((err) => console.error(err));
-      
 
+
+             api.get('swaps/swaprequest/')
+    .then((res) => {
+      setPendingRequests(res.data.pending_count);
+    })
+    .catch((err) => console.error(err));
+      
+ api.get("session/feedbacks/")
+    .then((res) => {
+    
+      const mappedReviews = res.data.map((f) => ({
+        id: f.id,
+        name: f.session.mentor?.username === user?.username 
+              ? f.session.learner.username 
+              : f.session.mentor.username,
+        rating: f.rating,
+        comment: f.feedback,
+        date: new Date(f.created_at).toLocaleDateString(),
+      }));
+      setReviews(mappedReviews);
+    })
+    .catch((err) => console.error(err));
   },[])
   console.log('upco',sessions)
   console.log('user',user)
@@ -172,7 +194,7 @@ api.get("session/sessions/")
             <button className="btn btn-primary">
               <i className="fas fa-exchange-alt"></i>
               <span>Requests</span>
-              <span className="notification-badge">0</span>
+              <span className="notification-badge">{pendingRequests||0}</span>
             </button>
           </div>
         </div>
@@ -223,7 +245,7 @@ api.get("session/sessions/")
               <i className="fas fa-clock"></i>
             </div>
             <div className="stat-content">
-              <span className="stat-value">0</span>
+              <span className="stat-value">{pendingRequests  ||0}</span>
               <span className="stat-label">Pending Requests</span>
             </div>
           </div>
