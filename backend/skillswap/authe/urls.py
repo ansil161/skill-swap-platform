@@ -24,6 +24,7 @@ urlpatterns = [
     path("refresh/", RefreshAccessToken.as_view(), name="refresh-token"),
     path("activate/<int:user_id>/<str:token>/", Activationapi.as_view(), ),
     path('logout/',LogoutAPI.as_view()),
+    path('user/me/',Currentuserapi.as_view()),
     
      path('auth/', include('dj_rest_auth.urls')),
     path('auth/', include('dj_rest_auth.registration.urls')),

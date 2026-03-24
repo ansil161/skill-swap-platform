@@ -20,6 +20,7 @@ const ChatWindow = ({ conversationId, partnerName, currentUser }) => {
 
   useEffect(() => {
     if (!conversationId) return;
+    setMessages([])
     const fetchMessages = async () => {
       try {
         const res = await api.get(`chats/chat/${conversationId}/messages/`);
@@ -31,10 +32,16 @@ const ChatWindow = ({ conversationId, partnerName, currentUser }) => {
     fetchMessages();
   }, [conversationId]);
 
-  useEffect(() => {
-    if (newMessages.length === 0) return;
-    setMessages((prev) => [...prev, newMessages[newMessages.length - 1]]);
-  }, [newMessages]);
+ useEffect(() => {
+  if (newMessages.length === 0) return;
+
+  const lastMsg = newMessages[newMessages.length - 1];
+
+  setMessages((prev) => {
+    const exists = prev.some((m) => m.id === lastMsg.id);
+    return exists ? prev : [...prev, lastMsg];
+  });
+}, [newMessages]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,7 +73,9 @@ const ChatWindow = ({ conversationId, partnerName, currentUser }) => {
     msg.timestamp
       ? new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
       : "";
-  const getSender = (msg) => msg.sender; 
+  const getSender = (msg) =>
+  typeof msg.sender === "string" ? msg.sender : msg.sender?.username;
+
 const isMe = (msg) => getSender(msg) === currentUser;
 
   const initials = getInitials(partnerName);
@@ -87,22 +96,25 @@ const isMe = (msg) => getSender(msg) === currentUser;
       </div>
 
       <div className="ss-msgs">
-{messages.map((msg, idx) => (
-  <div key={`${conversationId}-${msg.id}-${idx}`} className={`ss-mr ${isMe(msg) ? "me" : ""}`}>
-    {!isMe(msg) && <div className="ss-avs">{getInitials(partnerName)}</div>}
-    <div className="ss-bw">
- 
-<div className={`ss-bbl ${isMe(msg) ? "me" : "them"}`}>
-  {getContent(msg)}
-</div>
-      {msg.timestamp && (
-        <span className="ss-bt">
-          {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-        </span>
-      )}
+{messages.map((msg, idx) => {
+  console.log("MSG:", msg.sender, "CURRENT:", currentUser);
+
+  return (
+    <div key={msg.id || idx} className={`ss-mr ${isMe(msg) ? "me" : ""}`}>
+      {!isMe(msg) && <div className="ss-avs">{getInitials(partnerName)}</div>}
+      
+      <div className="ss-bw">
+        <div className={`ss-bbl ${isMe(msg) ? "me" : "them"}`}>
+          {getContent(msg)}
+        </div>
+
+        {msg.timestamp && (
+          <span className="ss-bt">{getTime(msg)}</span>
+        )}
+      </div>
     </div>
-  </div>
-))}
+  );
+})}
         <div ref={bottomRef} />
       </div>
 

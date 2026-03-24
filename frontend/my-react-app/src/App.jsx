@@ -14,6 +14,7 @@ import Chat from './user/component/chatlist'
 import SessionList from './user/pages/sessionlist'
 import SessionScheduler from './user/pages/sessionfrom'
 import VideoCallPage from './user/pages/videohome'
+import ChatButton from './user/pages/chatbutton'
 
 import AdminLayout from './adminpanel/pages/adminlayout'
 import Dashboardad from './adminpanel/pages/dashboard'
@@ -34,6 +35,7 @@ function App(){
   return(
     <>
       <BrowserRouter>
+      <ChatButton/>
   <Routes>  
         <Route path='/' element={<Home/>}/>
     <Route path='/register' element={<Register/>}/>

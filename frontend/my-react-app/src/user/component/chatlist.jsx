@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
 import ChatWindow from "../component/chathome";
 import "../styles/chat.css";
-import { getCurrentUser } from "../../utils/cookies";
+
 
 const getInitials = (name = "") =>
   name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2);
@@ -11,7 +11,7 @@ const ChatList = () => {
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
   const [search, setSearch] = useState("");
-  const currentUser = getCurrentUser()
+  const [currentUser, setCurrentUser] = useState(null);
   useEffect(() => {
     api
       .get("chats/conversations/")
@@ -20,6 +20,13 @@ const ChatList = () => {
         console.log('hai',res.data);
       })
       .catch((err) => console.error(err));
+
+
+        api.get("auth/user/me/") 
+    .then(res => {
+      setCurrentUser(res.data.username);
+    })
+    .catch(err => console.error(err));
   }, []);
 
   const activeConv = conversations.find((c) => c.id === activeConversation);
