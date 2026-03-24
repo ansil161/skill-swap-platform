@@ -101,7 +101,15 @@ class Login(APIView):
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         
 
-    
+
+
+class Currentuserapi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        return Response({
+            "username": request.user.username
+        })
     
 
 

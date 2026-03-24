@@ -1,44 +1,54 @@
 import React, { useEffect, useRef, useState } from "react";
 import "../styles/videocall.css";
+import api from '../../api/axios'
 
 export default function VideoCall({ roomId }) {
-  const localVideoRef = useRef(null);
+   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
 
   const [status, setStatus] = useState("connecting");
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);
 
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const [callDuration, setCallDuration] = useState(0);
+
   const localStreamRef = useRef(null);
+  let timerRef = useRef(null);
 
   useEffect(() => {
     let ws;
-    let localStream;
     let peerConnection;
 
     const start = async () => {
       try {
+        if (localStreamRef.current) return;
+
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
         ws = new WebSocket(`${wsProtocol}://localhost:8000/ws/video/${roomId}/`);
 
         ws.onopen = async () => {
           setStatus("connected");
 
-          localStream = await navigator.mediaDevices.getUserMedia({
+          timerRef.current = setInterval(() => {
+            setCallDuration((prev) => prev + 1);
+          }, 1000);
+
+          const stream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true,
           });
 
-          localStreamRef.current = localStream;
-          localVideoRef.current.srcObject = localStream;
+          localStreamRef.current = stream;
+          localVideoRef.current.srcObject = stream;
 
           peerConnection = new RTCPeerConnection({
             iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
           });
 
-          localStream.getTracks().forEach((track) => {
-            peerConnection.addTrack(track, localStream);
-          });
+          stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
 
           peerConnection.ontrack = (event) => {
             remoteVideoRef.current.srcObject = event.streams[0];
@@ -96,9 +106,14 @@ export default function VideoCall({ roomId }) {
     start();
 
     return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
       if (ws) ws.close();
       if (peerConnection) peerConnection.close();
-      if (localStream) localStream.getTracks().forEach((t) => t.stop());
+
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach((t) => t.stop());
+        localStreamRef.current = null;
+      }
     };
   }, [roomId]);
 
@@ -124,9 +139,45 @@ export default function VideoCall({ roomId }) {
     failed: "vc-status--error",
   };
 
+  const formatTime = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
+
+  const endCall = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((t) => t.stop());
+      localStreamRef.current = null;
+    }
+
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+
+    setStatus("disconnected");
+    setShowFeedback(true);
+  };
+
+const submitFeedback = async () => {
+  try {
+    await api.post("session/feedbacks/", { 
+      session: roomId,  
+      rating,
+      feedback,
+    });
+    alert("Feedback submitted!");
+    setShowFeedback(false);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to submit feedback");
+  }
+};
+
   return (
     <div className="vc-wrap">
-      {/* Header */}
+ 
       <div className="vc-header">
         <span className="vc-room">Room · {roomId}</span>
         <div className={`vc-status ${STATUS_COLOR[status] ?? ""}`}>
@@ -135,7 +186,7 @@ export default function VideoCall({ roomId }) {
         </div>
       </div>
 
-      {/* Video feeds */}
+   
       <div className="vc-feeds">
         <div className="vc-feed">
           <video
@@ -164,7 +215,7 @@ export default function VideoCall({ roomId }) {
         </div>
       </div>
 
-      {/* Controls */}
+    
       <div className="vc-controls">
         <button
           className={`vc-btn ${!micOn ? "vc-btn--off" : ""}`}
@@ -182,14 +233,53 @@ export default function VideoCall({ roomId }) {
           {camOn ? <CamIcon /> : <CamOffIcon />}
         </button>
 
-        <button className="vc-btn vc-btn--end" title="End call">
-          <EndCallIcon />
-        </button>
+     <button className="vc-btn vc-btn--end" title="End call" onClick={endCall}>
+  <EndCallIcon />
+</button>
 
         <button className="vc-btn" title="Share screen">
           <ScreenIcon />
         </button>
       </div>
+            
+      {showFeedback && (
+        <div className="vc-feedback-overlay">
+          <div className="vc-feedback-card">
+            <h2>Call Ended</h2>
+            <p>Duration: {formatTime(callDuration)}</p>
+
+            <h3>How was your experience?</h3>
+
+            <div className="vc-stars">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={star <= rating ? "active" : ""}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+
+            <textarea
+              placeholder="Write your feedback..."
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+            />
+
+            <div className="vc-feedback-actions">
+              <button className="vc-submit" onClick={submitFeedback}>
+                Submit
+              </button>
+              <button className="vc-skip" onClick={() => setShowFeedback(false)}>
+                Skip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

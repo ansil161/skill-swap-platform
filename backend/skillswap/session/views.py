@@ -2,19 +2,26 @@ from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions
+from rest_framework import status
 from .models import Session, SessionFeedback
 from .serializer import SessionSerializer, SessionFeedbackSerializer,SwapRequestSerializer
 from    swapsystem.models import SwapRequest
 from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated
 
+from django.db.models import Q
+
+
+from .models import SessionFeedback
 import uuid
 # Create your views here.
 
 
 
+
+
 class SessionListCreateAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user_profile = request.user.profile
@@ -55,7 +62,7 @@ class SessionListCreateAPIView(APIView):
         serializer = SessionSerializer(session)
         return Response(serializer.data, status=201)
 class SessionRetrieveUpdateDeleteAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk, user):
         try:
@@ -93,31 +100,43 @@ class SessionRetrieveUpdateDeleteAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-
 class SessionFeedbackListCreateAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user_profile = request.user.profile
         feedbacks = SessionFeedback.objects.filter(
-            session__mentor=user_profile
-        ) | SessionFeedback.objects.filter(
-            session__learner=user_profile
+            Q(session__mentor=user_profile) | Q(session__learner=user_profile)
         )
         serializer = SessionFeedbackSerializer(feedbacks, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = SessionFeedbackSerializer(data=request.data)
+        session_id = request.data.get("session") 
+        rating = request.data.get("rating")
+        feedback_text = request.data.get("feedback", "")
+
+
+        try:
+            session = Session.objects.get(id=session_id)
+            if request.user.profile not in [session.mentor, session.learner]:
+                return Response({"detail": "Access denied"}, status=403)
+        except Session.DoesNotExist:
+            return Response({"detail": "Session not found"}, status=404)
+
+   
+        serializer = SessionFeedbackSerializer(data={
+            "session": session.id,
+            "rating": rating,
+            "feedback": feedback_text
+        })
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class SessionFeedbackRetrieveUpdateDeleteAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, pk, user):
         try:
@@ -152,10 +171,9 @@ class SessionFeedbackRetrieveUpdateDeleteAPIView(APIView):
         feedback.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-from django.db.models import Q
 
 class AcceptedSwapRequestsAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user_profile = request.user.profile
