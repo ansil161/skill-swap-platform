@@ -31,10 +31,8 @@ class Joblistapi(APIView):
         serializer = Jobserializer(jobs, many=True)
         return Response(serializer.data)
 
-
-
 class Applyapiview(APIView):
-    permission_classes = [IsAuthenticated,IsUser]
+    permission_classes = [IsAuthenticated, IsUser]
 
     def post(self, request):
         job_id = request.data.get("job")
@@ -43,17 +41,21 @@ class Applyapiview(APIView):
             job = Job.objects.get(id=job_id)
         except Job.DoesNotExist:
             return Response({"error": "Job not found"}, status=404)
+        
+        userprofile = request.user.profile
 
-        if JobApplication.objects.filter(user=request.user, job=job).exists():
+        if JobApplication.objects.filter(user=userprofile, job=job).exists():
             return Response({"error": "Already applied"}, status=400)
 
         serializer = JobapplicationSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=request.user, job=job)
+            serializer.save(user=userprofile, job=job)
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)
+
+
 
 
 
