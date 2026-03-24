@@ -4,7 +4,8 @@ import { useState } from 'react';
 import api from '../../api/axios';
 import { Link } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google"
+import { toast } from 'react-toastify';
 function Login() {
 
 const [state, setState] = useState({
@@ -37,12 +38,13 @@ const handleLogin = (e) => {
             nav('/dash');
         }
 
-        alert("Login successful");
+        toast.success("Login successful");
      
         
     })
     .catch((err)=>{
         console.log(err.response.data)
+        toast.error(err.response?.data?.message || "Registration failed");
     })
 }
 

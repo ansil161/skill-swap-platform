@@ -2,6 +2,7 @@
 import { useState } from "react";
 import api from "../../api/axios";
 import "../styles/forgot.css";
+import { toast } from "react-toastify";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -10,17 +11,17 @@ export default function ForgotPassword() {
     e.preventDefault();
 
     if (!email) {
-      alert("Please enter your email address.");
+      toast.error("Please enter your email address.");
       return;
     }
 
     try {
       await api.post('auth/password-reset/', { email });
-      alert("Reset link sent! Please check your email.");
+      toast.error("Reset link sent! Please check your email.");
       setEmail('');
     } catch (err) {
       const errorMsg = err.response?.data?.error || "Something went wrong. Please try again.";
-      alert(errorMsg);
+      toast.error(errorMsg);
     }
   };
 

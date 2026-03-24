@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import api from "../../api/axios"
 import '../styles/request.css'
 import Chat from "../component/chathome"
+import { toast } from "react-toastify"
 
 function Requests() {
   const [activeChat, setActiveChat] = useState(null)
@@ -43,7 +44,7 @@ function Requests() {
       status: status
     })
     .then(() => {
-      alert("Request " + status)
+      toast.success(err.response?.data?.message ||"Request " + status)
       getRequests()
     })
     .catch(err => console.log(err))

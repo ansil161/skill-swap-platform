@@ -100,24 +100,25 @@ api.get("session/sessions/")
     })
     .catch((err) => console.error(err));
       
- api.get("session/feedbacks/")
-    .then((res) => {
-    
-      const mappedReviews = res.data.map((f) => ({
-        id: f.id,
-        name: f.session.mentor?.username === user?.username 
-              ? f.session.learner.username 
-              : f.session.mentor.username,
-        rating: f.rating,
-        comment: f.feedback,
-        date: new Date(f.created_at).toLocaleDateString(),
-      }));
-      setReviews(mappedReviews);
-    })
-    .catch((err) => console.error(err));
+api.get("session/feedbacks/")
+  .then((res) => {
+    console.log('feedback', res.data);
+
+    const mappedReviews = res.data.map((f) => ({
+      id: f.id,
+      name: f.name,                   
+      rating: f.rating,
+      comment: f.comment,
+      date: new Date(f.create_at).toLocaleDateString(),
+    }));
+
+    setReviews(mappedReviews);
+  })
+  .catch((err) => console.error(err));
   },[])
   console.log('upco',sessions)
   console.log('user',user)
+  console.log('feedback',reviews)
 
 
 
@@ -381,51 +382,33 @@ api.get("session/sessions/")
     </h3>
   </div>
 
-  <div className="reviews-list">
-
-    {reviews.length === 0 ? (
-
-      <p className="no-data">No reviews yet</p>
-
-    ) : (
-
-      reviews.map((r, index) => (
-
-        <div className="review-item" key={index}>
-
-          <div className="review-header">
-            <div className="reviewer-info">
-              <div>
-                <p className="reviewer-name">{r.name}</p>
-
-                <div className="review-stars">
-                  {[1,2,3,4,5].map((star) => (
-                    <i
-                      key={star}
-                      className={
-                        star <= r.rating
-                        ? "fas fa-star"
-                        : "far fa-star"
-                      }
-                    ></i>
-                  ))}
-                </div>
-
+<div className="reviews-list">
+  {reviews.length === 0 ? (
+    <p className="no-data">No reviews yet</p>
+  ) : (
+    reviews.map((r, index) => (
+      <div className="review-item" key={index}>
+        <div className="review-header">
+          <div className="reviewer-info">
+            <div>
+              <p className="reviewer-name">{r.name}</p>
+              <div className="review-stars">
+                {[1,2,3,4,5].map((star) => (
+                  <i
+                    key={star}
+                    className={star <= r.rating ? "fas fa-star" : "far fa-star"}
+                  ></i>
+                ))}
               </div>
             </div>
           </div>
-
-          <p className="review-text">{r.comment}</p>
-
-          <p className="review-date">{r.date}</p>
-
         </div>
-
-      ))
-
-    )}
-
-  </div>
+        <p className="review-text">{r.comment}</p>
+        <p className="review-date">{r.date}</p>
+      </div>
+    ))
+  )}
+</div>
 </div>
 
             {/* <div className="dual-grid">

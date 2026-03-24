@@ -2,6 +2,7 @@
 import { useState } from "react";
 import api from "../../api/axios";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function SessionScheduler() {
    const { swapRequestId } = useParams()
@@ -24,11 +25,11 @@ export default function SessionScheduler() {
     try {
       const res = await api.post("session/sessions/", data);
       
-      alert("Session scheduled!");
+      toast.success(err.response?.data?.message ||"Session scheduled!");
       console.log(res.data);
     } catch (err) {
       console.error(err);
-      alert("Error scheduling session");
+      toast.error(err.response?.data?.message ||"Error scheduling session");
     }
   };
  

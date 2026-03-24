@@ -33,12 +33,23 @@ class SessionSerializer(serializers.ModelSerializer):
 
         
 
+
 class SessionFeedbackSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()  
+    comment = serializers.CharField(source='feedback')  
+
     class Meta:
         model = SessionFeedback
-        fields = ['session', 'rating', 'feedback']
+        fields = ['id', 'session', 'rating', 'comment', 'name', 'create_at']
 
-
+    def get_name(self, obj):
+        request_user = self.context['request'].user.profile if self.context.get('request') else None
+        if not request_user:
+            return None
+        
+        if obj.session.mentor == request_user:
+            return obj.session.learner.user.username
+        return obj.session.mentor.user.username
 
 
 

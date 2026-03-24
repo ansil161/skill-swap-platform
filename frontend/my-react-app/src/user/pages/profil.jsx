@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
 import "../styles/profile.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   
@@ -81,7 +82,7 @@ const addSkillOffered = () => {
     setSkillsOffered((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
     );
-    alert("Error adding skill");
+    toast.error(err.response?.data?.message ||"Error adding skill");
   });
 };
 
@@ -113,7 +114,8 @@ const addSkillWanted = () => {
     setSkillsWanted((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
     );
-    alert("Error adding skill");
+    toast.error(err.response?.data?.message ||"Error adding skill");
+   
   });
 };
 
@@ -192,13 +194,13 @@ const handleSubmit = (e) => {
     },
   })
   .then((res) => {
-    alert("Profile updated successfully!");
+    toast.success("Profile updated successfully!");
     setData(res.data.data);
     setEditMode(false);
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error updating profile");
+    toast.success("Error updating profile");
   });
 };
 
@@ -214,7 +216,8 @@ const handleSubmit = (e) => {
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error deleting offered skill");
+    toast.error(err.response?.data?.message ||"Error deleting offered skill");
+    
   });
 
 };
@@ -231,7 +234,7 @@ const deleteWantedSkill = (skillId) => {
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error deleting wanted skill");
+    toast.error(err.response?.data?.message ||"Error deleting wanted skill");
   });
 
 };

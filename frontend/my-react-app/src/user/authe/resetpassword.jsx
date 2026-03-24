@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../../api/axios";
 import "../styles/resetpass.css";
+import { toast } from "react-toastify";
 
 export default function ResetPassword() {
   const { uid, token } = useParams();
@@ -13,12 +14,12 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      toast.error("Passwords do not match.");
       return;
     }
 
     if (password.length < 8) {
-      alert("Password must be at least 8 characters.");
+      toast.error("Password must be at least 8 characters.");
       return;
     }
 
@@ -27,14 +28,14 @@ export default function ResetPassword() {
         password 
       });
       
-      alert("Password reset successfully!");
+      toast.error("Password reset successfully!");
       setPassword('');
       setConfirmPassword('');
      
       window.location.href = "/login"; 
     } catch (err) {
       const errorMsg = err.response?.data?.error
-      alert(errorMsg);
+      toast.error(errorMsg);
     }
   };
 

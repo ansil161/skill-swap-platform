@@ -9,6 +9,7 @@ import {
   faUser, faSignOutAlt 
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -63,11 +64,11 @@ const Navbar = () => {
   const handleLogout = () => {
     api.post('auth/logout/')
     .then((res)=>{
-      alert('user is log out')
+      toast.success('user is log out')
       navigate('/login')
     })
     .catch(err=>{
-      alert('there is a error')
+      toast.error(err.response?.data?.message);
       console.log(err?.response?.message?.data)
     })
     
