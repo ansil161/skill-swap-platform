@@ -18,6 +18,7 @@ const [newSkillWanted, setNewSkillWanted] = useState("");
 const [profileImage, setProfileImage] = useState(null);
 const [acceptedSwapRequests, setAcceptedSwapRequests] = useState([]);
 const [selectedSwapRequestId, setSelectedSwapRequestId] = useState("");
+const[review,setReviews]=useState([])
 
 
   const [formData, setFormData] = useState({
@@ -162,6 +163,23 @@ api.get("session/sessions/")
 .catch((err)=>{
   console.log(err.response?.data)
 })
+
+api.get("session/feedbacks/")
+  .then((res) => {
+    console.log('feedback', res.data);
+
+    const mappedReviews = res.data.map((f) => ({
+      id: f.id,
+      name: f.name,                   
+      rating: f.rating,
+      comment: f.comment,
+       photo: f.photo, 
+      date: new Date(f.create_at).toLocaleDateString(),
+    }));
+
+    setReviews(mappedReviews);
+  })
+  .catch((err) => console.error(err));
   }, []);
 
   const handleChange = (e) => {
@@ -287,15 +305,15 @@ const deleteWantedSkill = (skillId) => {
               </div>
               <div className="stat-item">
                 <span className="stat-icon">✓</span>
-                <span>232 Swaps Completed</span>
+                <span>1 Swaps Completed</span>
               </div>
               <div className="stat-item">
                 <span className="stat-icon">📚</span>
-                <span>34 Skills Offered</span>
+                <span>1 Skills Offered</span>
               </div>
               <div className="stat-item">
                 <span className="stat-icon">👥</span>
-                <span>250+ Swap Partners</span>
+                <span>2+ Swap Partners</span>
               </div>
             </div>
 
@@ -310,7 +328,7 @@ const deleteWantedSkill = (skillId) => {
      
         <div className="rating-section">
           <div className="rating-header">
-            <h3>Feedback (236)</h3>
+            <h3>Feedback (1)</h3>
             <button className="view-all-btn">View All →</button>
           </div>
           
@@ -318,7 +336,7 @@ const deleteWantedSkill = (skillId) => {
             <div className="rating-big">
               <div className="rating-number-large">4.9</div>
               <div className="stars-large">{renderStars(4.9)}</div>
-              <div className="review-count">236 reviews</div>
+              <div className="review-count">1 reviews</div>
             </div>
             
             <div className="rating-breakdown-edu">
@@ -685,14 +703,18 @@ const deleteWantedSkill = (skillId) => {
           {activeTab === "feedback" && (
             <div className="feedback-section-edu">
               <h3>All Feedback</h3>
-              {reviewsData.map((review) => (
+              {review.map((review) => (
                 <div key={review.id} className="feedback-card-edu">
                   <div className="feedback-header-edu">
-                    <img src={review.avatar} alt={review.author} className="feedback-avatar-edu" />
+                    <img
+  src={review.photo ? `http://localhost:8000${review.photo}` : '/default-avatar.png'}
+  alt={review.name}
+  className="feedback-avatar-edu"
+/>
                     <div className="feedback-info-edu">
-                      <h4>{review.author}</h4>
+                      <h4>{review.name}</h4>
                       <div className="feedback-stars-edu">{renderStars(review.rating)}</div>
-                      <span className="feedback-date-edu">{review.date}</span>
+                      <span className="feedback-date-edu">{review.create_at}</span>
                       <span className="feedback-skill-tag">{review.skill}</span>
                     </div>
                   </div>
@@ -745,12 +767,12 @@ const deleteWantedSkill = (skillId) => {
    
           <div className="reviews-sidebar">
             <h4>Recent Feedback</h4>
-            {reviewsData.map((review) => (
+            {review.map((review) => (
               <div key={review.id} className="review-card-edu">
                 <div className="review-header-edu">
-                  <img src={review.avatar} alt={review.author} className="review-avatar-edu" />
+                  <img src={review.photo ? `http://localhost:8000${review.photo}` : '/default-avatar.png'}alt={review.name} className="review-avatar-edu" />
                   <div className="review-author-info-edu">
-                    <h4>{review.author}</h4>
+                    <h4>{review.name}</h4>
                     <div className="review-stars-edu">{renderStars(review.rating)}</div>
                     <span className="review-skill-tag-edu">{review.skill}</span>
                   </div>

@@ -31,7 +31,7 @@ export default function CreateJob() {
 
         
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err?.error?.response));
   };
 
   useEffect(() => {
@@ -118,8 +118,8 @@ export default function CreateJob() {
                 onChange={e => setForm({ ...form, job_type: e.target.value })}
               >
                 <option value="">Select type</option>
-                <option value="full_time">Full Time</option>
-                <option value="part_time">Part Time</option>
+                <option value="full time">Full Time</option>
+                <option value="part time">Part Time</option>
                 <option value="internship">Internship</option>
               </select>
             </div>

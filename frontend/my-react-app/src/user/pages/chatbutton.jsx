@@ -5,8 +5,19 @@ export default function ChatButton() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  
-  if (location.pathname === "/chat") return null;
+
+  const excludedPaths = [
+    "/chat",
+    "/dashrec",
+    "/admin",
+    "/admin/users",
+    "/admin/swaps",
+    "/admin/sessions",
+    '/forgote',
+    "/create-job"
+  ];
+
+  if (excludedPaths.includes(location.pathname)) return null;
 
   return (
     <button

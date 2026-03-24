@@ -37,10 +37,12 @@ class SessionSerializer(serializers.ModelSerializer):
 class SessionFeedbackSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()  
     comment = serializers.CharField(source='feedback')  
+    photo=serializers.SerializerMethodField()
+    
 
     class Meta:
         model = SessionFeedback
-        fields = ['id', 'session', 'rating', 'comment', 'name', 'create_at']
+        fields = ['id', 'session', 'rating', 'comment', 'name', 'create_at','photo']
 
     def get_name(self, obj):
         request_user = self.context['request'].user.profile if self.context.get('request') else None
@@ -50,6 +52,16 @@ class SessionFeedbackSerializer(serializers.ModelSerializer):
         if obj.session.mentor == request_user:
             return obj.session.learner.user.username
         return obj.session.mentor.user.username
+    
+    def get_photo(self, obj):
+        request_user = self.context['request'].user.profile if self.context.get('request') else None
+        if not request_user:
+            return None
+        
+        
+        if obj.session.mentor == request_user:
+            return obj.session.learner.profile_picture.url if obj.session.learner.profile_picture else None
+        return obj.session.mentor.profile_picture.url if obj.session.mentor.profile_picture else None
 
 
 

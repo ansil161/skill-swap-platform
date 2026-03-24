@@ -64,9 +64,9 @@ class Jobapplicantapi(APIView):
 
     def get(self, request, job_id):
         try:
-            job = Job.objects.get(id=job_id, posted_by=request.user)
+            job = Job.objects.get(id=job_id, posted_by=request.user.profile)
         except Job.DoesNotExist:
-            return Response({"error": "Job not found"}, status=404)
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
         applications = JobApplication.objects.filter(job=job)
         serializer = JobapplicationSerializer(applications, many=True)
