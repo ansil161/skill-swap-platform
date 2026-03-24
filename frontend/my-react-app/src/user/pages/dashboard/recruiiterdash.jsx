@@ -54,12 +54,12 @@ export default function RecruiterDashboard() {
               <div key={job.id} className="rd-card">
                 <h3>{job.title}</h3>
                 <div className="rd-card-meta">Job ID: #{job.id}</div>
-                <button 
-                  className="rd-btn-secondary" 
-                  onClick={() => window.location.href = `/job/${job.id}/applicants`}
-                >
-                  View Applicants
-                </button>
+               <button 
+  className="rd-btn-secondary" 
+  onClick={() => nav(`/jobs/${job.id}/applicants`)}
+>
+  View Applicants
+</button>
               </div>
             ))}
           </div>
