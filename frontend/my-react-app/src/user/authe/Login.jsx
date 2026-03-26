@@ -34,7 +34,12 @@ const handleLogin = (e) => {
         console.log('iwa',role)
         if(role === 'recruiter'){
             nav("/dashrec");
-        } else {
+
+        } else if(role=='admin'){
+            nav("/admin")
+
+        }
+        else {
             nav('/dash');
         }
 

@@ -5,6 +5,7 @@ from swapsystem.models import SwapRequest
 from session.models import Session
 from chatapp.models import Conversation, ChatMessage
 
+from authe.models import Userprofile  
 
 class AdminUserSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username')
@@ -77,3 +78,23 @@ class AdminConversationSerializer(serializers.ModelSerializer):
             'create_at',
             'messages',
         ]
+
+
+class CreaterecruiterSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Userprofile
+        fields = ["username", "email", "password", "role"]
+
+    def validate_role(self, value):
+        if value != "recruiter":
+            raise serializers.ValidationError("Only 'recruiter' role can be created here.")
+        return value
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = Userprofile(**validated_data)
+        user.set_password(password)  
+        user.save()
+        return user
