@@ -30,6 +30,7 @@ urlpatterns = [
     path('skill/session/',include('session.urls') ),
     path('skill/admin/',include('adminpanel.urls')),
     path('skill/jobs/', include('jobs.urls')),
+     path('skill/noti/', include('notification.urls')),
 
 
     

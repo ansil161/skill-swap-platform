@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'adminpanel',
     'access_control',
     'jobs',
+    'notification',
 
     'rest_framework.authtoken',
     "channels",
