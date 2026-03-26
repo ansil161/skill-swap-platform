@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 import "../styles/navbarad.css";
+import api from "../../api/axios";
+import { toast } from "react-toastify";
 
 const PAGE_LABELS = {
   "/admin":          "Dashboard",
@@ -11,7 +13,19 @@ const PAGE_LABELS = {
 export default function Navbar() {
   const { pathname } = useLocation();
   const pageTitle = PAGE_LABELS[pathname] ?? "Admin";
-
+const handleLogout = () => {
+    api.post('auth/logout/')
+    .then((res)=>{
+      toast.success('user is log out')
+      navigate('/login')
+    })
+    .catch(err=>{
+      toast.error(err.response?.data?.message);
+      console.log(err?.response?.message?.data)
+    })
+    
+    
+  };
   return (
     <header className="navbar">
       <div className="navbar__left">
@@ -35,8 +49,9 @@ export default function Navbar() {
             <path d="M6.5 13.5a1.5 1.5 0 0 0 3 0" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
           </svg>
         </button>
+                <button className="navbar__bell" aria-label="Notifications" onClick={()=>handleLogout()}>logout</button>
 
-        <div className="navbar__avatar" title="Admin">A</div>
+       
       </div>
     </header>
   );

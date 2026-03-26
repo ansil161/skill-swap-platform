@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "../styles/table.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const navigate=useNavigate()
 
   useEffect(() => {
     api.get("admin/users/")
@@ -62,23 +64,23 @@ export default function Users() {
                 <th>Swaps</th>
               </tr>
             </thead>
-            <tbody>
-              {filtered.map(u => (
-                <tr key={u.id}>
-                  <td>
-                    <div className="user-cell">
-                      <div className="user-cell__avatar">{initials(u.username)}</div>
-                      <div className="user-cell__name">{u.username}</div>
-                    </div>
-                  </td>
-                  <td style={{ color: "var(--text-secondary)" }}>{u.email}</td>
-                  <td>
-                    <span className="rating">★ {u.rating ?? "—"}</span>
-                  </td>
-                  <td>{u.swap_count ?? 0}</td>
-                </tr>
-              ))}
-            </tbody>
+       <tbody>
+  {filtered.map(u => (
+    <tr key={u.id} onClick={() => navigate(`/skill/userdetail/${u.id}`)} style={{ cursor: "pointer" }}>
+      <td>
+        <div className="user-cell">
+          <div className="user-cell__avatar">{initials(u.username)}</div>
+          <div className="user-cell__name">{u.username}</div>
+        </div>
+      </td>
+      <td style={{ color: "var(--text-secondary)" }}>{u.email}</td>
+      <td>
+        <span className="rating">★ {u.rating ?? "—"}</span>
+      </td>
+      <td>{u.swap_count ?? 0}</td>
+    </tr>
+  ))}
+</tbody>
           </table>
         )}
 

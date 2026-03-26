@@ -21,6 +21,7 @@ import Dashboardad from './adminpanel/pages/dashboard'
 import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
+import UserDetail from './adminpanel/pages/userdeatailpage'
 
 
 import JobList from './jobplatform/pages/joblist'
@@ -122,6 +123,13 @@ function App(){
     <AdminLayout><Swaps /></AdminLayout>
   </RoleProtectedRoute>
 } />
+<Route path="/skill/userdetail/:user_id" element={
+  <RoleProtectedRoute allowedRoles={["admin"]}>
+    <AdminLayout><UserDetail /></AdminLayout>
+  </RoleProtectedRoute>
+} />
+
+
         <Route path="/admin/sessions" element={<AdminLayout><Sessions /></AdminLayout>} />
 
       
@@ -175,7 +183,7 @@ function App(){
     </>
   )
 
-  hai iam
+
 
 }
 
