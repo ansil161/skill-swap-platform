@@ -53,3 +53,5 @@ class JobApplication(models.Model):
    
     class Meta:
         unique_together = ['user', 'job']
+
+

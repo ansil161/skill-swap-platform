@@ -14,7 +14,8 @@ export default function ChatButton() {
     "/admin/swaps",
     "/admin/sessions",
     '/forgote',
-    "/create-job"
+    "/create-job",
+    '/login'
   ];
 
   if (excludedPaths.includes(location.pathname)) return null;

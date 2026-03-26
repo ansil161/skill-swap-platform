@@ -9,4 +9,7 @@ urlpatterns = [
     path('application/<int:application_id>/update/', Updateapplicationstatusapi.as_view()),
     path('userdeatails/',userdeatails.as_view()),
      path('<int:job_id>/', Jobuserdeatialapi.as_view()), 
+     path('recruiter/profile/', RecruiterProfileAPI.as_view()),
+     path('job/<int:job_id>/delete/', JobDeleteAPI.as_view(), ),
+      path("my-application/", UserApplicationsAPI.as_view(),),
 ]

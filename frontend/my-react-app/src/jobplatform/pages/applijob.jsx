@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import api from "../../api/axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 import '../styles/apply.css'
 
@@ -9,12 +11,12 @@ export default function ApplyJob() {
   const [coverLetter, setCoverLetter] = useState("");
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
-
+const navigate=useNavigate()
   const handleApply = async (e) => {
     e.preventDefault();
 
     if (!resume) {
-      alert("Please upload your resume before applying.");
+      toast.success("Please upload your resume before applying.");
       return;
     }
 
@@ -32,12 +34,14 @@ export default function ApplyJob() {
           "Content-Type": "multipart/form-data"
         }
       });
-      alert("Applied Successfully!");
+      toast.success("Applied Successfully!");
+      navigate("/jobs")
+      
       setResume(null);
       setCoverLetter("");
     } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.error || "Failed to apply");
+      console.error(err); 
+      toast.success(err.response?.data?.error || "Failed to apply");
     } finally {
       setLoading(false);
     }

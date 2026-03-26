@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "../styles/createjob.css";
+import RecruiterNavbar from "./recruternav";
+import { toast } from "react-toastify";
 
 export default function CreateJob() {
   const [form, setForm] = useState({
@@ -17,7 +19,8 @@ export default function CreateJob() {
     e.preventDefault(); 
     api.post("jobs/create/", form)
       .then(() => {
-        alert("Job Created")
+        toast.success("Job Created")
+        
         setForm({
         title: "",
         description: "",
@@ -42,6 +45,7 @@ export default function CreateJob() {
 
   return (
     <div className="ss-wrapper">
+      <RecruiterNavbar/>
       <div className="ss-card">
         <div className="ss-header">
           <h1 className="ss-title">Create Job</h1>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import api from "../../api/axios";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function SessionScheduler() {
    const { swapRequestId } = useParams()
@@ -11,6 +12,7 @@ export default function SessionScheduler() {
   const [scheduledTime, setScheduledTime] = useState("");
   const [videoType, setVideoType] = useState("internal"); 
   const [googleLink, setGoogleLink] = useState("");
+  const navigate=useNavigate()
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +27,9 @@ export default function SessionScheduler() {
     try {
       const res = await api.post("session/sessions/", data);
       
-      toast.success(err.response?.data?.message ||"Session scheduled!");
+      toast.success(res.response?.data?.message ||"Session scheduled!");
+      navigate("/sessions")
+
       console.log(res.data);
     } catch (err) {
       console.error(err);

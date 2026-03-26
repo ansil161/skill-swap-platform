@@ -2,48 +2,42 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from session.models import Session
+from django.core.cache import cache
 
 
 class VideoCallConsumer(AsyncWebsocketConsumer):
 
+
     async def connect(self):
         self.user = self.scope["user"]
-        print("USER:", self.user)
-
+    
         if self.user is None or self.user.is_anonymous:
             await self.close()
             return
-
+    
         self.room_name = self.scope["url_route"]["kwargs"]["room_id"]
         self.room_group_name = f"video_{self.room_name}"
-
+    
         if not await self.is_user_allowed():
-            print("❌ Not allowed")
             await self.close()
             return
-
-        # ⚠️ temp in-memory tracking (OK for dev)
-        if not hasattr(self.channel_layer, "rooms"):
-            self.channel_layer.rooms = {}
-
-        if self.room_group_name not in self.channel_layer.rooms:
-            self.channel_layer.rooms[self.room_group_name] = []
-
-        self.channel_layer.rooms[self.room_group_name].append(self.channel_name)
-
+    
+      
+        if cache.get(self.room_group_name) is None:
+            cache.set(self.room_group_name, 0)
+    
+        count = cache.incr(self.room_group_name)
+    
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
-
+    
         await self.accept()
-
-        users = self.channel_layer.rooms[self.room_group_name]
-
-        # ✅ SEND ROLE (IMPORTANT)
+    
         await self.send(text_data=json.dumps({
             "type": "role",
-            "initiator": len(users) == 1
+            "initiator": count == 1
         }))
 
     async def disconnect(self, close_code):
@@ -51,12 +45,14 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
-        if hasattr(self.channel_layer, "rooms"):
-            if self.room_group_name in self.channel_layer.rooms:
-                if self.channel_name in self.channel_layer.rooms[self.room_group_name]:
-                    self.channel_layer.rooms[self.room_group_name].remove(self.channel_name)
-
+    
+       
+        count = cache.get(self.room_group_name, 1)
+    
+        if count <= 1:
+            cache.delete(self.room_group_name)
+        else:
+            cache.decr(self.room_group_name)
     async def receive(self, text_data):
         data = json.loads(text_data)
 
@@ -70,7 +66,7 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
         )
 
     async def signal_message(self, event):
-        # ❌ don't send back to sender
+       
         if self.channel_name == event["sender"]:
             return
 

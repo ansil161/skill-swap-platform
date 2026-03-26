@@ -39,15 +39,18 @@ function Requests() {
   }
 
   function updateStatus(requestId, status) {
-    api.put("swaps/swaprequest/", {
-      request_id: requestId,
-      status: status
-    })
-    .then(() => {
-      toast.success(err.response?.data?.message ||"Request " + status)
-      getRequests()
-    })
-    .catch(err => console.log(err))
+   api.put("swaps/swaprequest/", {
+    request_id: requestId,
+    status: status
+  })
+  .then((res) => {
+    toast.success(res.data?.message || "Request " + status);
+    getRequests();
+  })
+  .catch(err => {
+    console.error(err);
+    toast.error(err.response?.data?.message || "Something went wrong");
+  });
   }
 
   const getStatusBadgeClass = (status) => {

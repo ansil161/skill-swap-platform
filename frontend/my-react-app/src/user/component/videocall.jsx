@@ -2,10 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import "../styles/videocall.css";
 import api from '../../api/axios'
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function VideoCall({ roomId, sessionid }) {
+  console.log('sessionid',sessionid)
    const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const pcRef = useRef(null);
 
   const [status, setStatus] = useState("connecting");
   const [micOn, setMicOn] = useState(true);
@@ -22,7 +25,8 @@ export default function VideoCall({ roomId, sessionid }) {
 
   useEffect(() => {
     let ws;
-    let peerConnection;
+    
+    let isInitiator = false;
 
     const start = async () => {
       try {
@@ -46,56 +50,68 @@ export default function VideoCall({ roomId, sessionid }) {
           localStreamRef.current = stream;
           localVideoRef.current.srcObject = stream;
 
-          peerConnection = new RTCPeerConnection({
-            iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-          });
+         pcRef.current = new RTCPeerConnection({
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+});
 
-          stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+        stream.getTracks().forEach((track) => pcRef.current.addTrack(track, stream));
 
-          peerConnection.ontrack = (event) => {
-            remoteVideoRef.current.srcObject = event.streams[0];
-          };
+          pcRef.current.ontrack = (event) => {
+  remoteVideoRef.current.srcObject = event.streams[0];
+};
 
-          peerConnection.onicecandidate = (event) => {
+          pcRef.current.onicecandidate = (event) => {
             if (event.candidate) {
               ws.send(JSON.stringify({ type: "candidate", candidate: event.candidate }));
             }
           };
 
-          peerConnection.onconnectionstatechange = () => {
-            setStatus(peerConnection.connectionState);
-          };
+          pcRef.current.onconnectionstatechange = () => {
+  setStatus(pcRef.current.connectionState);
+};
         };
 
-        ws.onmessage = async (event) => {
-          const data = JSON.parse(event.data);
-          if (!peerConnection) return;
+ws.onmessage = async (event) => {
+  const data = JSON.parse(event.data);
+  if (!pcRef.current) return;
 
-          if (data.type === "role" && data.initiator) {
-            const offer = await peerConnection.createOffer();
-            await peerConnection.setLocalDescription(offer);
-            ws.send(JSON.stringify({ type: "offer", offer }));
-          }
+  
+  if (data.type === "role") {
+    isInitiator = data.initiator;
 
-          if (data.type === "offer") {
-            await peerConnection.setRemoteDescription(data.offer);
-            const answer = await peerConnection.createAnswer();
-            await peerConnection.setLocalDescription(answer);
-            ws.send(JSON.stringify({ type: "answer", answer }));
-          }
+    if (
+      isInitiator &&
+      pcRef.current.signalingState === "stable"
+    ) {
+      const offer = await pcRef.current.createOffer();
+      await pcRef.current.setLocalDescription(offer);
 
-          if (data.type === "answer") {
-            await peerConnection.setRemoteDescription(data.answer);
-          }
+      ws.send(JSON.stringify({ type: "offer", offer }));
+    }
+  }
 
-          if (data.type === "candidate") {
-            try {
-              await peerConnection.addIceCandidate(data.candidate);
-            } catch (err) {
-              console.error("ICE error:", err);
-            }
-          }
-        };
+  if (data.type === "offer") {
+    await pcRef.current.setRemoteDescription(data.offer);
+
+    const answer = await pcRef.current.createAnswer();
+    await pcRef.current.setLocalDescription(answer);
+
+    ws.send(JSON.stringify({ type: "answer", answer }));
+  }
+
+  
+  if (data.type === "answer") {
+    await pcRef.current.setRemoteDescription(data.answer);
+  }
+
+  if (data.type === "candidate") {
+    try {
+      await pcRef.current.addIceCandidate(data.candidate);
+    } catch (err) {
+      console.error("ICE error:", err);
+    }
+  }
+};
 
         ws.onerror = () => setStatus("error");
         ws.onclose = () => setStatus("disconnected");
@@ -110,7 +126,7 @@ export default function VideoCall({ roomId, sessionid }) {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (ws) ws.close();
-      if (peerConnection) peerConnection.close();
+      if (pcRef.current) pcRef.current.close();
 
       if (localStreamRef.current) {
         localStreamRef.current.getTracks().forEach((t) => t.stop());
@@ -165,16 +181,23 @@ export default function VideoCall({ roomId, sessionid }) {
 const submitFeedback = async () => {
   try {
     await api.post("session/feedbacks/", { 
-      session:  sessionid,  
-      rating,
-      feedback,
+      session:  parseInt(sessionid),  
+      rating:parseInt(rating),
+      feedback:feedback || '',
+      
+     
     });
-    alert("Feedback submitted!");
+
+    toast.success("Feedback submitted!");
     setShowFeedback(false);
     navigate("/sessions")
   } catch (err) {
     console.error(err);
-    alert("Failed to submit feedback");
+    toast.error(
+  err?.response?.data?.session?.[0] || 
+  err?.response?.data?.error || 
+  "Failed to submit feedback"
+);
   }
 };
 const skipFeedback = () => {
@@ -182,6 +205,7 @@ const skipFeedback = () => {
   navigate("/sessions");
 };
 
+ 
   return (
     <div className="vc-wrap">
  

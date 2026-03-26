@@ -124,11 +124,11 @@ const Navbar = () => {
         </li>
         <li>
           <div 
-            className={`nav-item ${isActive('/hai') ? 'active' : ''}`} 
-            onClick={() => navigate('/hai')}
+            className={`nav-item ${isActive("/jobs") ? 'active' : ''}`} 
+            onClick={() => navigate("/jobs")}
           >
             <FontAwesomeIcon icon={faMagic} />
-            <span>features</span>
+            <span>jobs</span>
           </div>
         </li>
       </ul>

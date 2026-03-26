@@ -49,7 +49,7 @@ class Register(APIView):
         if user.is_valid():
             user=user.save()
             token=activation_token.make_token(user)
-            activation_link=f"http://127.0.0.1:8000/skill/activate/{user.id}/{token}" 
+            activation_link=f"http://127.0.0.1:8000/skill/activate/{user.id}/{token}/" 
             print('hai iama ',user.email)
             send_mail(
                 "activate/"
@@ -108,7 +108,8 @@ class Currentuserapi(APIView):
 
     def get(self, request):
         return Response({
-            "username": request.user.username
+            "username": request.user.username,
+            'role':request.user.role,
         })
     
 

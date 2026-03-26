@@ -4,7 +4,7 @@ from rest_framework import status
 
 from access_control.permissions import IsUser, IsAdminOrRecruiter
 from .models import Job, JobApplication
-from .serializer import JobapplicationSerializer,Jobserializer
+from .serializer import JobapplicationSerializer,Jobserializer,ProfileSerializer,UserJobApplicationSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
@@ -12,7 +12,7 @@ class Jobapiview(APIView):
     permission_classes = [IsAuthenticated,IsAdminOrRecruiter]
 
     def post(self, request):
-        serializer = Jobserializer(data=request.data)
+        serializer = Jobserializer(data=request.data, context={'request': request})
 
         if serializer.is_valid():
             serializer.save(posted_by=request.user.profile)
@@ -28,7 +28,7 @@ class Joblistapi(APIView):
     
     def get(self, request):
         jobs = Job.objects.filter(is_active=True)
-        serializer = Jobserializer(jobs, many=True)
+        serializer = Jobserializer(jobs, many=True ,context={'request': request})
         return Response(serializer.data)
 
 class Applyapiview(APIView):
@@ -82,7 +82,7 @@ class Updateapplicationstatusapi(APIView):
         try:
             application = JobApplication.objects.get(
                 id=application_id,
-                job__posted_by=request.user
+                job__posted_by=request.user.profile
             )
         except JobApplication.DoesNotExist:
             return Response({"error": "Application not found"}, status=404)
@@ -118,4 +118,37 @@ class Jobuserdeatialapi(APIView):
             return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = Jobserializer(job)
+        return Response(serializer.data)
+    
+
+class RecruiterProfileAPI(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrRecruiter]
+
+    def get(self, request):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+    
+
+class JobDeleteAPI(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrRecruiter]
+
+    def delete(self, request, job_id):
+        try:
+            
+            job = Job.objects.get(id=job_id, posted_by=request.user.profile)
+        except Job.DoesNotExist:
+            return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        job.delete()  
+        return Response({"message": "Job deleted successfully"}, status=status.HTTP_200_OK)
+    
+
+class UserApplicationsAPI(APIView):
+    permission_classes = [IsAuthenticated,IsUser]
+
+    def get(self, request):
+        user_profile = request.user.profile
+        applications = JobApplication.objects.filter(user=user_profile)
+        serializer = UserJobApplicationSerializer(applications, many=True)
         return Response(serializer.data)

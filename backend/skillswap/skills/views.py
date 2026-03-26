@@ -5,9 +5,10 @@ from .models import skill_wanted, skilloffered
 from .serializer import SkillWantedSerializer, SkillOfferedSerializer
 from rest_framework.permissions import IsAuthenticated
 from userprofile.models import profile
+from access_control.permissions import IsUser
 
 class SkillsWanted(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsUser]
     def get(self, request, id=None):
         user_profile = profile.objects.get(user=request.user)
         if id:
@@ -51,7 +52,7 @@ class SkillsWanted(APIView):
             )
 
 class SkillsOffered(APIView):
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsUser]
     def get(self, request, id=None):
         user_profile = profile.objects.get(user=request.user)
         if id:

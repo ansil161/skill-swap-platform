@@ -1,8 +1,6 @@
-
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/axios";
-import "./recruiterNavbar.css";
+import "../styles/recruternav.css";
 
 export default function RecruiterNavbar() {
   const location = useLocation();
@@ -22,26 +20,32 @@ export default function RecruiterNavbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <h2>SkillSwap Recruiter</h2>
+        <h2>SkillSwap <span>Recruiter</span></h2>
       </div>
 
-      <ul className="navbar-links">
-        <li className={isActive("/dashboard") ? "active" : ""}>
-          <Link to="/recruiter/dashboard">Dashboard</Link>
-        </li>
+   <ul className="navbar-links">
+  <li className={isActive("/dashrec") ? "active" : ""}>
+    <span onClick={() => navigate("/dashrec")}>Dashboard</span>
+  </li>
 
-        <li className={isActive("/create-job") ? "active" : ""}>
-          <Link to="/recruiter/create-job">Post Job</Link>
-        </li>
+  <li className={isActive("/create-job") ? "active" : ""}>
+    <span onClick={() => navigate("/create-job")}>
+      Post Job
+    </span>
+  </li>
 
-        <li className={isActive("/applications") ? "active" : ""}>
-          <Link to="/recruiter/applications">Applicants</Link>
-        </li>
+  {/* <li className={isActive("/applications") ? "active" : ""}>
+    <span onClick={() => navigate("/recruiter/applications")}>
+      Applicants
+    </span>
+  </li> */}
 
-        <li className={isActive("/profile") ? "active" : ""}>
-          <Link to="/recruiter/profile">Profile</Link>
-        </li>
-      </ul>
+  <li className={isActive("/profile") ? "active" : ""}>
+    <span onClick={() => navigate("/recriterprofile")}>
+      Profile
+    </span>
+  </li>
+</ul>
 
       <div className="navbar-actions">
         <button onClick={handleLogout} className="logout-btn">

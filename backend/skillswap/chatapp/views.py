@@ -3,6 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Conversation, ChatMessage
 from .serializer import ChatMessageSerializer, ConversationSerializer
+from access_control.permissions import IsUser
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -11,6 +13,8 @@ from userprofile.models import profile
 
 
 class ConversationListView(APIView):
+    permission_classes = [IsAuthenticated,IsUser]
+
     def get(self, request):
        
         try:
@@ -32,6 +36,7 @@ class ConversationListView(APIView):
 
 
 class ChatMessageListView(APIView):
+    permission_classes = [IsAuthenticated,IsUser]
     def get(self, request, conversation_id):
         try:
             conversation = Conversation.objects.get(id=conversation_id)

@@ -22,7 +22,7 @@ class SessionSerializer(serializers.ModelSerializer):
         return str(obj.learner.user.username)
     
     def get_scheduled_time(self, obj):
-        return obj.scheduled_time.strftime("%Y-%m-%d %H:%M:%S")
+        return obj.scheduled_time
     
     def get_skill_name(self, obj):
    
@@ -36,7 +36,7 @@ class SessionSerializer(serializers.ModelSerializer):
 
 class SessionFeedbackSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()  
-    comment = serializers.CharField(source='feedback')  
+    comment = serializers.CharField(source='feedback',required=False,allow_blank=True)  
     photo=serializers.SerializerMethodField()
     
 

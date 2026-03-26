@@ -1,34 +1,26 @@
-import axios from 'axios'
+// src/api/axios.js
+import axios from "axios";
+
 const api = axios.create({
   baseURL: "http://localhost:8000/skill/",
-  withCredentials: true,  
-})
-api.interceptors.request.use(
-  (config) => {
-    console.log("Request sent:", config.url);
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-)
-
+  withCredentials: true,
+});
 
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
-
     const originalRequest = error.config;
 
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
-
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("login")
+    ) {
       originalRequest._retry = true;
 
       try {
-        await api.post("refresh/"); 
-
-        return api(originalRequest); 
-
+        await api.post("refresh/"); // cookie-based
+        return api(originalRequest);
       } catch (err) {
         window.location.href = "/login";
       }
@@ -38,4 +30,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default api

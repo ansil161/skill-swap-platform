@@ -2,15 +2,17 @@
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .permission import IsAdminUserCustom
+
 
 from userprofile.models import profile
 from swapsystem.models import SwapRequest
 from session.models import Session
+from access_control.permissions import IsAdmin
+from rest_framework.permissions import IsAuthenticated
 
 
 class AdminDashboardView(APIView):
-    permission_classes = [IsAdminUserCustom]
+    permission_classes = [IsAuthenticated,IsAdmin]
 
     def get(self, request):
         data = {
@@ -22,7 +24,7 @@ class AdminDashboardView(APIView):
         return Response(data)
     
 class AdminUserListView(APIView):
-    permission_classes = [IsAdminUserCustom]
+    permission_classes = [IsAuthenticated,IsAdmin]
 
     def get(self, request):
         users = profile.objects.select_related('user').all()
@@ -42,7 +44,7 @@ class AdminUserListView(APIView):
     
 
 class AdminSwapListView(APIView):
-    permission_classes = [IsAdminUserCustom]
+    permission_classes = [IsAuthenticated,IsAdmin]
 
     def get(self, request):
         swaps = SwapRequest.objects.select_related('requester', 'provider').all()
@@ -60,7 +62,7 @@ class AdminSwapListView(APIView):
         return Response(data)
 
 class AdminSessionListView(APIView):
-    permission_classes = [IsAdminUserCustom]
+    permission_classes = [IsAuthenticated,IsAdmin]
 
     def get(self, request):
         sessions = Session.objects.select_related('mentor', 'learner').all()

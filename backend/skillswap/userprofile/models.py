@@ -22,3 +22,4 @@ class profile(models.Model):
     portfolio_link=models.URLField(blank=True,null=True)
     connection_count=models.PositiveBigIntegerField(default=0)
     title=models.CharField(max_length=100,null=True)
+    company=models.CharField(max_length=100,blank=True,null=True)

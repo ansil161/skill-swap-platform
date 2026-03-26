@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../../api/axios";
 import '../../styles/dashrecruter.css'
+import RecruiterNavbar from "../../../jobplatform/pages/recruternav";
 
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RecruiterDashboard() {
   const [jobs, setJobs] = useState([]);
@@ -21,7 +23,9 @@ export default function RecruiterDashboard() {
   }, []);
 
   return (
+ 
     <div className="rd-container">
+         <RecruiterNavbar/>
       <div className="rd-wrapper">
         
 
@@ -33,6 +37,7 @@ export default function RecruiterDashboard() {
           <button className="rd-btn-primary" onClick={() => nav("/create-job")}>
             <span>+</span> Create Job
           </button>
+          
         </div>
 
     
@@ -60,6 +65,23 @@ export default function RecruiterDashboard() {
 >
   View Applicants
 </button>
+   <button
+      className= "rd-btn-secondary"
+      onClick={async () => {
+        if(window.confirm("Are you sure you want to delete this job?")) {
+          try {
+            await api.delete(`jobs/job/${job.id}/delete/`);
+            setJobs(prev => prev.filter(j => j.id !== job.id));
+            toast.success('job is deleted')
+          } catch (err) {
+            console.error(err);
+            toast.error("Failed to delete job");
+          }
+        }
+      }}
+    >
+      Delete Job
+    </button>
               </div>
             ))}
           </div>

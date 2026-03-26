@@ -14,6 +14,7 @@ from django.db.models import Q
 
 from .models import SessionFeedback
 import uuid
+from access_control.permissions import IsUser
 # Create your views here.
 
 
@@ -21,7 +22,7 @@ import uuid
 
 
 class SessionListCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def get(self, request):
         user_profile = request.user.profile
@@ -61,8 +62,9 @@ class SessionListCreateAPIView(APIView):
         session.save()
         serializer = SessionSerializer(session)
         return Response(serializer.data, status=201)
+    
 class SessionRetrieveUpdateDeleteAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def get_object(self, pk, user):
         try:
@@ -101,7 +103,7 @@ class SessionRetrieveUpdateDeleteAPIView(APIView):
 
 
 class SessionFeedbackListCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def get(self, request):
            user_profile = request.user.profile
@@ -115,6 +117,7 @@ class SessionFeedbackListCreateAPIView(APIView):
         session_id = request.data.get("session") 
         rating = request.data.get("rating")
         feedback_text = request.data.get("feedback", "")
+   
 
 
         try:
@@ -122,23 +125,25 @@ class SessionFeedbackListCreateAPIView(APIView):
             if request.user.profile not in [session.mentor, session.learner]:
                 return Response({"detail": "Access denied"}, status=403)
         except Session.DoesNotExist:
-            return Response({"detail": "Session not found"}, status=404)
+            return Response({"error": "Session not found"}, status=404)
 
    
         serializer = SessionFeedbackSerializer(data={
             "session": session.id,
             "rating": rating,
-            "feedback": feedback_text
+            "comment": feedback_text
         })
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+    
 class SessionFeedbackRetrieveUpdateDeleteAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def get_object(self, pk, user):
         try:
@@ -175,7 +180,7 @@ class SessionFeedbackRetrieveUpdateDeleteAPIView(APIView):
 
 
 class AcceptedSwapRequestsAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsUser]
 
     def get(self, request):
         user_profile = request.user.profile

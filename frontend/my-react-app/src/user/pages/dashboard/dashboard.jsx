@@ -42,7 +42,7 @@ const Dashboard = () => {
   const [reviews, setReviews] = useState([]);
   const [completedCount, setCompletedCount] = useState(0);
   const [pendingRequests, setPendingRequests] = useState(0);
-  const navigate=useNavigate
+  const navigate=useNavigate()
 
   useEffect(()=>{
        api.get('user/profile/')
@@ -87,6 +87,8 @@ const Dashboard = () => {
 api.get("session/sessions/")
   .then((res) => { 
     setSessions(res.data);
+    console.log(res.data)
+
     const count = res.data.filter(session => session.status === "completed").length;
     setCompletedCount(count); 
 
@@ -181,43 +183,43 @@ api.get("session/feedbacks/")
             </div> */}
             <div className="user-details">
               <h1 className="welcome-text">Welcome back, {user?.username}!</h1>
-              <div className="user-badges">
+              {/* <div className="user-badges">
                 <span className="badge badge-purple">Lv4 Practitioner</span>
                 <span className="points-text">420 points</span>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="header-actions">
-            <button className="btn btn-secondary" onClick={()=>nav}>
+            <button className="btn btn-secondary" onClick={()=>navigate('/match')}>
               <i className="fas fa-user-plus"></i>
               <span>Find Partners</span>
             </button>
-            <button className="btn btn-primary">
+            {/* <button className="btn btn-primary">
               <i className="fas fa-exchange-alt"></i>
               <span>Requests</span>
               <span className="notification-badge">{pendingRequests||0}</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </header>
 
       <main className="dashboard-main">
 
-        <div className="progress-card">
+        {/* <div className="progress-card">
           <div className="progress-header">
             <div>
               <p className="progress-label">Level Progress</p>
               <h2 className="progress-title">Practitioner → Specialist</h2>
             </div>
-            {/* <div className="progress-stats">
+            <div className="progress-stats">
               <p className="progress-current">420 / 500 pts</p>
               <p className="progress-remaining">80 pts to next level</p>
-            </div> */}
+            </div>
           </div>
           <div className="progress-bar-container">
             <div className="progress-bar" style={{ width: '84%' }}></div>
           </div>
-        </div>
+        </div> */}
 
       
         <div className="stats-grid">
@@ -343,7 +345,7 @@ api.get("session/feedbacks/")
                     <i className="fas fa-magic"></i>
                      Matches
                   </h3>
-                  <button className="link-button">See more</button>
+                  <button className="link-button" onClick={()=>navigate('/match')}>See more</button>
                 </div>
                <div className="matches-list">
                 {match?.map((m) => (
@@ -366,7 +368,7 @@ api.get("session/feedbacks/")
                   </div>
                 ))}
               </div>
-                <button className="btn btn-outline btn-full">
+                <button className="btn btn-outline btn-full" onClick={()=>navigate('/match')}>
                   <i className="fas fa-robot"></i>
                   View more
                 </button>
@@ -484,18 +486,15 @@ scheduled_time} {s.time}
             <div className="quick-actions-card">
               <h3 className="card-title text-white">Quick Actions</h3>
               <div className="quick-actions-list">
-                <button className="quick-action-btn">
+                <button className="quick-action-btn" onClick={()=>navigate("/sessions")}>
                   <i className="fas fa-plus-circle"></i>
                   New Session
                 </button>
-                <button className="quick-action-btn">
+                <button className="quick-action-btn" onClick={()=>navigate('/request' )}>
                   <i className="fas fa-search"></i>
                   Find Learning Partner
                 </button>
-                <button className="quick-action-btn">
-                  <i className="fas fa-certificate"></i>
-                  View Achievements
-                </button>
+               
               </div>
             </div>
 

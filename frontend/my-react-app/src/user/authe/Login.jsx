@@ -136,10 +136,7 @@ const googleLogin = useGoogleLogin({
                         </div>
 
                         <div className="form-actions">
-                            <label className="checkbox-container">
-                                <input type="checkbox" name="remember" />
-                                <span>Remember me</span>
-                            </label>
+                           
                             <a href="/forgote" className="forgot-link">Forgot password?</a>
                         </div>
 

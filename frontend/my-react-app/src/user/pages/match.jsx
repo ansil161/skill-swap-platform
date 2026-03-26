@@ -115,7 +115,7 @@ function Match() {
         </div>
       )}
 
-     
+{/*      
       <div className="search-filters">
         <div className="search-bar">
           <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -138,7 +138,7 @@ function Match() {
             <option>Top Rated</option>
           </select>
         </div>
-      </div>
+      </div> */}
 
       <div className="results-count">
         {matches.length} people found

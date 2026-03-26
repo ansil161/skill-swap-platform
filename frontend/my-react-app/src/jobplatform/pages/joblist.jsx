@@ -1,85 +1,174 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-
-import '../styles/joblist.css'
+import Navbar from "../../user/component/navbar";
+import JobsSubNavbar from "./jobsubnav";
+import '../styles/joblist.css';
 
 export default function JobList() {
   const [jobs, setJobs] = useState([]);
-  const [userId, setUserId] = useState(null); // store current logged-in user ID
+
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch jobs
-    api.get("jobs/list/")
-      .then(res => {
-        setJobs(res.data);
-        console.log(res.data);
-      })
-      .catch(err => console.log(err));
+useEffect(() => {
+  api.get("jobs/list/")
+    .then(res => {
+      setJobs(res.data);
+      console.log(res.data)
+      setLoading(false);
+    })
+    .catch(err => {
+      console.log(err);
+      setLoading(false);
+    });
+}, []);
 
-    // Optionally, fetch current user info
-    api.get("users/me/") // adjust API path as per your backend
-      .then(res => setUserId(res.data.id))
-      .catch(err => console.log(err));
-  }, []);
+
+  const getJobTypeColor = (type) => {
+    switch(type?.toLowerCase()) {
+      case 'full_time': return '#10b981';
+      case 'part_time': return '#f59e0b';
+      case 'internship': return '#8b5cf6';
+      case 'freelance': return '#06b6d4';
+      default: return '#6b7280';
+    }
+  };
+
+  const getJobTypeText = (type) => {
+    const map = {
+      'full time': 'Full Time',
+      'part time': 'Part Time',
+      'internship': 'Internship',
+      'freelance': 'Freelance'
+    };
+    return map[type?.toLowerCase()] || type;
+  };
+
+  const parseSkills = (skillsStr) => {
+    if (!skillsStr) return [];
+    return skillsStr.split(',').map(s => s.trim()).filter(s => s);
+  };
+
+  const getDaysLeft = (deadline) => {
+    if (!deadline) return null;
+    const days = Math.ceil((new Date(deadline) - new Date()) / (1000 * 60 * 60 * 24));
+    return days;
+  };
 
   return (
-    <div className="ss-wrapper">
-      <div className="ss-container">
-        <div className="ss-header">
-          <h1 className="ss-title">
-            <span className="ss-title-icon">💼</span>
-            Available Jobs
-          </h1>
-          <p className="ss-count">{jobs.length} positions found</p>
+    <div className="job-page">
+      <Navbar />
+      <JobsSubNavbar/>
+  
+      
+      <main className="job-main">
+        <div className="job-header">
+          <div className="job-header-content">
+            <h1 className="job-title">Explore Opportunities</h1>
+            <p className="job-subtitle">Find your next career move</p>
+          </div>
+          <div className="job-stats">
+            <span className="job-count">{jobs.length} Jobs Available</span>
+          </div>
         </div>
 
-        {jobs.length === 0 ? (
-          <div className="ss-empty">
-            <div className="ss-empty-icon">🔍</div>
-            <h3 className="ss-empty-title">No jobs yet</h3>
-            <p className="ss-empty-desc">Check back later or create a new job posting.</p>
+        {loading ? (
+          <div className="job-loading">
+            <div className="loading-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <p>Fetching opportunities...</p>
+          </div>
+        ) : jobs.length === 0 ? (
+          <div className="job-empty">
+            <div className="empty-illustration">📭</div>
+            <h3>No Jobs Posted Yet</h3>
+            <p>Be the first to post or check back later</p>
           </div>
         ) : (
-          <div className="ss-grid">
+          <div className="job-grid">
             {jobs.map(job => {
-              // Check if user already applied
-              const alreadyApplied = job.applied_users?.includes(userId) || job.is_applied;
+              const alreadyApplied = job.is_applied
+              console.log('alre',alreadyApplied)
+              const skills = parseSkills(job.skills_required);
+              const daysLeft = getDaysLeft(job.deadline);
 
               return (
-                <div 
+                <article 
                   key={job.id} 
-                  className="ss-card"
+                  className={`job-card ${alreadyApplied ? 'applied' : ''}`}
                   onClick={() => navigate(`/jobs/${job.id}`)}
                 >
-                  <div className="ss-card-header">
-                    <h3 className="ss-card-title">{job.title}</h3>
+                  <div className="job-card-header">
+                    <div className="job-type-badge" style={{ 
+                      backgroundColor: `${getJobTypeColor(job.job_type)}20`,
+                      color: getJobTypeColor(job.job_type)
+                    }}>
+                      {getJobTypeText(job.job_type)}
+                    </div>
+                    {daysLeft !== null && daysLeft <= 3 && daysLeft >= 0 && (
+                      <span className="urgent-tag">Closing Soon</span>
+                    )}
                   </div>
-                  <p className="ss-card-company">{job.company}</p>
-                  <div className="ss-card-footer">
-                    <span className="ss-tag">
-                      {alreadyApplied ? "Already Applied" : "View Details"}
-                    </span>
-                    <button 
-                      className="ss-btn"
-                      disabled={alreadyApplied}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (!alreadyApplied) {
-                          navigate(`/jobs/${job.id}`);
-                        }
-                      }}
-                    >
-                      {alreadyApplied ? "Applied" : "Apply →"}
-                    </button>
+
+                  <div className="job-card-body">
+                    <h3 className="job-title-text">{job.title}</h3>
+                    
+                    <div className="job-company">
+                      <span className="company-icon">🏢</span>
+                      {job.company}
+                    </div>
+
+                    <div className="job-meta">
+                      <div className="meta-item">
+                        <span className="meta-icon">📍</span>
+                        <span>{job.location}</span>
+                      </div>
+                      {job.deadline && (
+                        <div className="meta-item">
+                          <span className="meta-icon">⏰</span>
+                          <span className={daysLeft <= 3 ? 'urgent' : ''}>
+                            {daysLeft} days left
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {skills.length > 0 && (
+                      <div className="job-skills">
+                        {skills.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="skill-pill">{skill}</span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
+
+                  <div className="job-card-footer">
+                    <div className="apply-status">
+                      {alreadyApplied ? (
+                        <span className="status-badge applied">✓ Applied</span>
+                      ) : (
+                        <span className="status-badge open">● Open</span>
+                      )}
+                    </div>
+<button
+  className="ss-btn"
+  disabled={alreadyApplied}
+  onClick={(e) => {
+    e.stopPropagation();
+    navigate(`/jobs/${job.id}/apply`);
+  }}
+>
+  {alreadyApplied ? "Already Applied" : "Apply Now"}
+</button>
+                  </div>
+                </article>
               );
             })}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
-}
+} 

@@ -1,177 +1,173 @@
-
-
-.session-list-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary-bg: #f3f4f6;
+  --text-dark: #1f2937;
+  --text-light: #6b7280;
+  --success: #10b981;
+  --border-color: #e5e7eb;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.page-title {
-    text-align: center;
-    color: #1f2937;
-    margin-bottom: 2rem;
-    font-size: 2rem;
-}
-
-.loading {
-    text-align: center;
-    padding: 3rem;
-    color: #6b7280;
-    font-size: 1.2rem;
-}
-
-.no-sessions {
-    text-align: center;
-    padding: 3rem;
-    color: #6b7280;
-    background: #f9fafb;
-    border-radius: 8px;
-}
-
-.sessions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 1.5rem;
-}
-
-.session-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    border: 1px solid #e5e7eb;
-}
-
-.session-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+.session-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 .session-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #f3f4f6;
+  margin-bottom: 2rem;
 }
 
-.session-header h3 {
-    margin: 0;
-    color: #4f46e5;
-    font-size: 1.2rem;
+.session-header h2 {
+  margin: 0;
+  color: var(--text-dark);
+  font-size: 1.8rem;
 }
 
-
-.status-badge {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-transform: capitalize;
+.subtitle {
+  color: var(--text-light);
+  margin-top: 0.5rem;
 }
 
-.status-completed {
-    background: #d1fae5;
-    color: #065f46;
+/* Grid Layout */
+.session-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
-.status-cancelled {
-    background: #fee2e2;
-    color: #991b1b;
+/* Card Styles */
+.session-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.status-pending {
-    background: #fef3c7;
-    color: #92400e;
+.session-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.status-scheduled {
-    background: #dbeafe;
-    color: #1e40af;
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.status-default {
-    background: #f3f4f6;
-    color: #4b5563;
+.time {
+  font-size: 0.875rem;
+  color: var(--text-light);
 }
 
-
-.session-details {
-    margin-bottom: 1.5rem;
+/* Badges */
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #f9fafb;
+.badge-success { background-color: #d1fae5; color: #065f46; }
+.badge-primary { background-color: #dbeafe; color: #1e40af; }
+.badge-danger { background-color: #fee2e2; color: #991b1b; }
+.badge-neutral { background-color: #f3f4f6; color: #374151; }
+
+/* Info Rows */
+.card-body {
+  margin-bottom: 1.5rem;
 }
 
-.detail-row:last-child {
-    border-bottom: none;
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
 }
 
 .label {
-    font-weight: 600;
-    color: #6b7280;
-    font-size: 0.9rem;
+  color: var(--text-light);
+  font-weight: 500;
 }
 
 .value {
-    color: #1f2937;
-    font-size: 0.9rem;
-    text-align: right;
+  color: var(--text-dark);
+  font-weight: 600;
+  text-align: right;
 }
 
-
-.update-section {
-    background: #f9fafb;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
+/* Actions */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
 }
 
-.update-section label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #4b5563;
-    font-size: 0.9rem;
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+  font-size: 0.9rem;
 }
 
-.status-dropdown {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
-    outline: none;
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
 }
 
-.status-dropdown:focus {
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+.btn-primary:hover {
+  background-color: var(--primary-hover);
 }
 
-.status-dropdown:disabled {
-    background: #f3f4f6;
-    cursor: not-allowed;
-    opacity: 0.7;
+.btn-secondary {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  color: var(--text-dark);
 }
 
+.btn-secondary:hover {
+  background-color: var(--secondary-bg);
+}
 
-@media (max-width: 768px) {
-    .sessions-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .session-list-container {
-        padding: 1rem;
-    }
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+.btn-text {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+.loading-text {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 1.2rem;
 }

@@ -16,7 +16,7 @@ export default function Applicants() {
   }, [id]);
 
   const handleAction = (appId, action) => {
-    api.patch(`jobs/application/${appId}/update/`, { action })
+    api.patch(`jobs/application/${appId}/update/`, { status: action })
       .then(res => {
         console.log(res.data);
       
@@ -63,17 +63,17 @@ export default function Applicants() {
   {!app.status || app.status === 'applied' ? (
     <div className="ss-card-actions">
       <button 
-        className="ss-btn-action ss-accept" 
-        onClick={() => handleAction(app.id, 'accept')}
-      >
-        Accept
-      </button>
-      <button 
-        className="ss-btn-action ss-reject" 
-        onClick={() => handleAction(app.id, 'reject')}
-      >
-        Reject
-      </button>
+  className="ss-btn-action ss-accept" 
+  onClick={() => handleAction(app.id, 'accepted')}  
+>
+  Accept
+</button>
+<button 
+  className="ss-btn-action ss-reject" 
+  onClick={() => handleAction(app.id, 'rejected')} 
+>
+  Reject
+</button>
     </div>
   ) : (
     <p className="ss-status-badge">Status: <strong>{app.status}</strong></p>
