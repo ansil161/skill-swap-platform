@@ -17,7 +17,7 @@ const handleLogout = () => {
     api.post('auth/logout/')
     .then((res)=>{
       toast.success('user is log out')
-      navigate('/login')
+      navigate('/Login')
     })
     .catch(err=>{
       toast.error(err.response?.data?.message);
@@ -37,10 +37,7 @@ const handleLogout = () => {
 
       <div className="navbar__right">
      
-        <div className="navbar__status">
-          <span className="navbar__status-dot" />
-          All systems operational
-        </div>
+        
 
      
         <button className="navbar__bell" aria-label="Notifications">

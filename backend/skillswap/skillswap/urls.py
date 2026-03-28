@@ -31,6 +31,7 @@ urlpatterns = [
     path('skill/admin/',include('adminpanel.urls')),
     path('skill/jobs/', include('jobs.urls')),
      path('skill/noti/', include('notification.urls')),
+     path('skill/ai',include('ai_service.urls')),
 
 
     
