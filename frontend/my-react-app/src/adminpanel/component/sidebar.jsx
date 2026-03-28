@@ -77,15 +77,7 @@ export default function Sidebar() {
       </nav>
 
    
-      <div className="sidebar__footer">
-        <div className="sidebar__footer-user">
-          <div className="sidebar__avatar">A</div>
-          <div>
-            <div className="sidebar__footer-name">Admin</div>
-            <div className="sidebar__footer-role">Super Admin</div>
-          </div>
-        </div>
-      </div>
+    
     </aside>
   );
 }
