@@ -50,6 +50,8 @@ class JobApplication(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     applied_at = models.DateTimeField(auto_now_add=True)
+    ats_score=models.CharField(null=True,blank=True)
+    ats_feedback=models.CharField(null=True,blank=True)
    
     class Meta:
         unique_together = ['user', 'job']
