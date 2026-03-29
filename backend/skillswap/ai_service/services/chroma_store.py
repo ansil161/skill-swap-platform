@@ -1,27 +1,43 @@
+import chromadb
+from chromadb.config import Settings
+from .embedding import resume_embedding
 
-import faiss
-import numpy as np
+client=chromadb.Client(Settings(
+    persist_directory='./chromadb'
 
-dimension = 384
-index = faiss.IndexFlatL2(dimension)
+))
+collection=client.get_or_create_collection(name='rseume')
+def add_vector(vector,application_id):
+    id = []
+    embedding = []
+    document= []
+    metadata = []
+    for i ,chunk in enumerate(vector):
+        id.append(f"{application_id },{i}")
+        embedding.append(resume_embedding(chunk).tolist)
+        document.append(chunk)
+        metadata.append({'applicationid':application_id})
 
-chunk_store=[]
+    collection.add(
+        id=id,
+        embeddings=embedding,
+        documents=document,
+        metadatas=metadata,
+
+    )
 
 
 
-def add_vector(vector,chunk_text):
-    vector = np.array([vector]).astype('float32')
-    index.add(vector)
-    chunk_store.append(chunk_text)
+ 
 
 
-def searchs(qu):
-    query_vector = np.array([query_vector]).astype('float32')
-    distances, indices = index.search(query_vector,)
+def searchs(job_des,application_id,k=5):
+    filter_embedding=resume_embedding(job_des).tolist()
 
-    results = []
-    for idx in indices[0]:
-        if idx < len(chunk_store):
-            results.append(chunk_store[idx])
+    result=collection.query(
+        query_embeddings=[filter_embedding],
+        result=k,
+        where={'application_id':application_id}
+    )
 
-    return results
+    return result['document'][0]
