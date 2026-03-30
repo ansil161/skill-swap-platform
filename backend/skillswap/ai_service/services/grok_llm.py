@@ -2,6 +2,7 @@ from groq import Groq
 import os
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+import json
 
 def analyze_resume(job_desc, chunks):
     context = "\n".join(chunks)
@@ -15,7 +16,7 @@ def analyze_resume(job_desc, chunks):
     Relevant Resume Sections:
     {context}
 
-    Return STRICT JSON:
+    Return ONLY JSON:
     {{
         "score": number,
         "missing_skills": [],
@@ -28,4 +29,13 @@ def analyze_resume(job_desc, chunks):
         messages=[{"role": "user", "content": prompt}]
     )
 
-    return res.choices[0].message.content
+    content = res.choices[0].message.content
+
+    try:
+        return json.loads(content)
+    except:
+        return {
+            "score": None,
+            "missing_skills": [],
+            "suggestions": [content]
+        }

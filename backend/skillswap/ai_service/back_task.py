@@ -1,13 +1,10 @@
 from celery import shared_task
-from .services.rag_pipeline import resume_process
 from jobs.models import JobApplication
-
+from .services.rag_pipeline import resume_process
 
 
 @shared_task
 def process_application_task(application_id):
-   
-
     app = JobApplication.objects.get(id=application_id)
 
     result = resume_process(app)

@@ -3,17 +3,18 @@ from chromadb.config import Settings
 from .embedding import resume_embedding
 
 client=chromadb.Client(Settings(
-    persist_directory='./chromadb'
+    persist_directory='./chromadb',
+    is_persistent=True
 
 ))
-collection=client.get_or_create_collection(name='rseume')
+collection=client.get_or_create_collection(name='resume')
 def add_vector(vector,application_id):
     id = []
     embedding = []
     document= []
     metadata = []
     for i ,chunk in enumerate(vector):
-        id.append(f"{application_id },{i}")
+        id.append(f"{application_id }_{i}")
         embedding.append(resume_embedding(chunk).tolist())
         document.append(chunk)
         metadata.append({'application_id': application_id})

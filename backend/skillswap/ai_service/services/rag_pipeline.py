@@ -1,6 +1,6 @@
 from .resume_parse import resume_parse
 from .embedding import resume_embedding
-from .chroma_store import add_vector,searchs
+from .chroma_store import add_vector,searchs,collection
 from .grok_llm import analyze_resume
 from .chunk import chunk_text
 import json
@@ -9,6 +9,7 @@ def resume_process(application):
   
     resume_converter=resume_parse(application.resume.path)
     chunks=chunk_text(resume_converter)
+    collection.delete(where={"application_id": application.id})
     add_vector(chunks,application.id)
     retrieve=searchs(application.job.description,
                      application.id)
