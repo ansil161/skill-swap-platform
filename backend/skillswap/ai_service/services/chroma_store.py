@@ -14,12 +14,12 @@ def add_vector(vector,application_id):
     metadata = []
     for i ,chunk in enumerate(vector):
         id.append(f"{application_id },{i}")
-        embedding.append(resume_embedding(chunk).tolist)
+        embedding.append(resume_embedding(chunk).tolist())
         document.append(chunk)
-        metadata.append({'applicationid':application_id})
+        metadata.append({'application_id': application_id})
 
     collection.add(
-        id=id,
+        ids=id,
         embeddings=embedding,
         documents=document,
         metadatas=metadata,
@@ -36,8 +36,8 @@ def searchs(job_des,application_id,k=5):
 
     result=collection.query(
         query_embeddings=[filter_embedding],
-        result=k,
+        n_results=k,
         where={'application_id':application_id}
     )
 
-    return result['document'][0]
+    return result['documents'][0]
