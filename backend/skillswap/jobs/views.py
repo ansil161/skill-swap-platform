@@ -7,6 +7,8 @@ from .models import Job, JobApplication
 from .serializer import JobapplicationSerializer,Jobserializer,ProfileSerializer,UserJobApplicationSerializer
 from rest_framework.permissions import IsAuthenticated
 
+from ai_service.back_task import process_application_task
+
 
 class Jobapiview(APIView):
     permission_classes = [IsAuthenticated,IsAdminOrRecruiter]
@@ -50,7 +52,9 @@ class Applyapiview(APIView):
         serializer = JobapplicationSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save(user=userprofile, job=job)
+           
+            application= serializer.save(user=userprofile, job=job)
+            process_application_task.delay(application.id)
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=400)

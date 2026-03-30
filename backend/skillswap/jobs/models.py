@@ -4,6 +4,8 @@ from django.db import models
 from userprofile.models import profile
 
 
+
+
 # Create your models here.
 
 
@@ -50,10 +52,15 @@ class JobApplication(models.Model):
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='applied')
     applied_at = models.DateTimeField(auto_now_add=True)
-    ats_score=models.CharField(null=True,blank=True)
-    ats_feedback=models.CharField(null=True,blank=True)
+    
+
+    ats_score = models.FloatField(null=True, blank=True)
+    ats_feedback = models.TextField(null=True, blank=True)
+    processed = models.BooleanField(default=False)
+    
    
     class Meta:
         unique_together = ['user', 'job']
+
 
 
