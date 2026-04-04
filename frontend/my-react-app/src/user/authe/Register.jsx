@@ -3,6 +3,7 @@ import { Link } from "react-router-dom"
 import "../styles/register.css"
 import api from "../../api/axios"
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 function Register() {
    
@@ -31,7 +32,7 @@ function Register() {
         e.preventDefault()
  
 
-        api.post("Register/", {
+        api.post("auth/Register/", {
             username: form.username,
             email: form.email,
             password: form.password,
@@ -39,7 +40,7 @@ function Register() {
         })
         .then((res) => {
             console.log(res.data)
-            alert("User registered successfully")
+            toast.success("User registered successfully")
             setForm({
     username: "",
     email: "",
@@ -50,6 +51,7 @@ function Register() {
         })
         .catch((err) => {
             console.log(err.response?.data)
+            toast.error(err.response?.data?.message || "Registration failed");
         })
     }
 

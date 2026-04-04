@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
 import "../styles/profile.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   
@@ -14,6 +16,11 @@ const [skillsWanted, setSkillsWanted] = useState([]);
 const [newSkillOffered, setNewSkillOffered] = useState("");
 const [newSkillWanted, setNewSkillWanted] = useState("");
 const [profileImage, setProfileImage] = useState(null);
+const [acceptedSwapRequests, setAcceptedSwapRequests] = useState([]);
+const [selectedSwapRequestId, setSelectedSwapRequestId] = useState("");
+const[review,setReviews]=useState([])
+
+
   const [formData, setFormData] = useState({
     bio: "",
     location: "",
@@ -25,15 +32,11 @@ const [profileImage, setProfileImage] = useState(null);
     skills_wanted: [],
     swap_terms: "1 hour for 1 hour"
   });
+const [sessions, setSessions] = useState([]);
+const navigate = useNavigate();
+console.log('requestid',selectedSwapRequestId)
 
-//mo
-  const scheduleData = [
-    { day: "Tue", date: "10", time: "08:00 - 09:00", skill: "React Basics", partners: 3 },
-    { day: "Wed", date: "11", time: "09:00 - 10:30", skill: "Node.js API", partners: 2 },
-    { day: "Wed", date: "12", time: "08:00 - 09:00", skill: "UI/UX Design", partners: 4 },
-    { day: "Wed", date: "13", time: "09:00 - 12:00", skill: "Full Stack Project", partners: 1 },
-    { day: "Wed", date: "14", time: "09:00 - 12:00", skill: "Code Review", partners: 0 },
-  ];
+
 
 
   const reviewsData = [
@@ -61,7 +64,7 @@ const addSkillOffered = () => {
   setNewSkillOffered("");
 
   
-  api.post("skilloffer/", {
+  api.post("skills/skilloffer/", {
    
     skills: tempSkill.skill_name,
     experience_level: 1
@@ -75,15 +78,15 @@ const addSkillOffered = () => {
     );
   })
   .catch((err) => {
-    console.log(err.response?.data);
+    console.log(err.response?.data?.message);
  
     setSkillsOffered((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
     );
-    alert("Error adding skill");
+    toast.error(err.response?.data?.message ||"Error adding skill");
   });
 };
-console.log(data,'hai iama')
+
 const addSkillWanted = () => {
   if (!newSkillWanted.trim()) return;
 
@@ -95,7 +98,7 @@ const addSkillWanted = () => {
   setSkillsWanted([...skillsWanted, tempSkill]);
   setNewSkillWanted("");
 
-  api.post("skillwant/", {
+  api.post("skills/skillwant/", {
     
     name: tempSkill.skill_name,
    
@@ -108,17 +111,23 @@ const addSkillWanted = () => {
     );
   })
   .catch((err) => {
-    console.log(err.response?.data);
+    console.log(err.response?.data?.message);
     setSkillsWanted((prevSkills) =>
       prevSkills.filter((skill) => skill.id !== tempSkill.id)
     );
-    alert("Error adding skill");
+    toast.error(err.response?.data?.message ||"Error adding skill");
+   
   });
 };
 
+useEffect(() => {
+  api.get("session/sessionswap-requests/?status=accepted") 
+    .then((res) => setAcceptedSwapRequests(res.data))
+    .catch((err) => console.log(err.response?.data));
+}, []);
 
   useEffect(() => {
-    api.get(`profile/`)
+    api.get(`user/profile/`)
       .then((res) => {
         const profile = res.data;
         setData(profile);
@@ -137,15 +146,40 @@ const addSkillWanted = () => {
       .catch((err) => {
         console.log(err.response?.data);
       });
-      api.get('skilloffer/')
+      api.get('skills/skilloffer/')
 .then((res)=>{
   setSkillsOffered(res.data)
 })
 
-api.get('skillwant/')
+api.get('skills/skillwant/')
 .then((res)=>{
   setSkillsWanted(res.data)
 })
+
+api.get("session/sessions/")
+.then((res)=>{
+  setSessions(res.data)
+})
+.catch((err)=>{
+  console.log(err.response?.data)
+})
+
+api.get("session/feedbacks/")
+  .then((res) => {
+    console.log('feedback', res.data);
+
+    const mappedReviews = res.data.map((f) => ({
+      id: f.id,
+      name: f.name,                   
+      rating: f.rating,
+      comment: f.comment,
+       photo: f.photo, 
+      date: new Date(f.create_at).toLocaleDateString(),
+    }));
+
+    setReviews(mappedReviews);
+  })
+  .catch((err) => console.error(err));
   }, []);
 
   const handleChange = (e) => {
@@ -172,25 +206,25 @@ const handleSubmit = (e) => {
     form.append("profile_picture", profileImage);
   }
 
-  api.patch(`profile/`, form, {
+  api.patch(`user/profile/`, form, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   })
   .then((res) => {
-    alert("Profile updated successfully!");
+    toast.success("Profile updated successfully!");
     setData(res.data.data);
     setEditMode(false);
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error updating profile");
+    toast.success("Error updating profile");
   });
 };
 
  const deleteOfferedSkill = (skillId) => {
 
-  api.delete(`skilloffer/${skillId}/`)
+  api.delete(`skills/skilloffer/${skillId}/`)
   .then(() => {
 
     setSkillsOffered((prevSkills) =>
@@ -200,14 +234,15 @@ const handleSubmit = (e) => {
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error deleting offered skill");
+    toast.error(err.response?.data?.message ||"Error deleting offered skill");
+    
   });
 
 };
 
 const deleteWantedSkill = (skillId) => {
 
-  api.delete(`skillwant/${skillId}/`)
+  api.delete(`skills/skillwant/${skillId}/`)
   .then(() => {
 
     setSkillsWanted((prevSkills) =>
@@ -217,7 +252,7 @@ const deleteWantedSkill = (skillId) => {
   })
   .catch((err) => {
     console.log(err.response?.data);
-    alert("Error deleting wanted skill");
+    toast.error(err.response?.data?.message ||"Error deleting wanted skill");
   });
 
 };
@@ -238,8 +273,7 @@ const deleteWantedSkill = (skillId) => {
     );
   }
 
-  console.log('hai',skillsOffered)
-  console.log('hi',skillsWanted)
+ 
 
   return (
     <div className="profile-page">
@@ -271,15 +305,15 @@ const deleteWantedSkill = (skillId) => {
               </div>
               <div className="stat-item">
                 <span className="stat-icon">✓</span>
-                <span>232 Swaps Completed</span>
+                <span>1 Swaps Completed</span>
               </div>
               <div className="stat-item">
                 <span className="stat-icon">📚</span>
-                <span>34 Skills Offered</span>
+                <span>1 Skills Offered</span>
               </div>
               <div className="stat-item">
                 <span className="stat-icon">👥</span>
-                <span>250+ Swap Partners</span>
+                <span>2+ Swap Partners</span>
               </div>
             </div>
 
@@ -294,7 +328,7 @@ const deleteWantedSkill = (skillId) => {
      
         <div className="rating-section">
           <div className="rating-header">
-            <h3>Feedback (236)</h3>
+            <h3>Feedback (1)</h3>
             <button className="view-all-btn">View All →</button>
           </div>
           
@@ -302,7 +336,7 @@ const deleteWantedSkill = (skillId) => {
             <div className="rating-big">
               <div className="rating-number-large">4.9</div>
               <div className="stars-large">{renderStars(4.9)}</div>
-              <div className="review-count">236 reviews</div>
+              <div className="review-count">1 reviews</div>
             </div>
             
             <div className="rating-breakdown-edu">
@@ -551,9 +585,33 @@ const deleteWantedSkill = (skillId) => {
             Sessions
           </button>
         </div>
-        <button className="add-event-btn" onClick={() => alert("Schedule swap feature coming soon!")}>
-          + Schedule Swap
-        </button>
+       <div className="schedule-session-dropdown">
+  {acceptedSwapRequests.length === 0 ? (
+    <p>No accepted swap requests to schedule.</p>
+  ) : (
+    <>
+      <select
+        value={selectedSwapRequestId}
+        onChange={(e) => setSelectedSwapRequestId(e.target.value)}
+      >
+        <option value="">Select a swap request</option>
+        {acceptedSwapRequests.map((sr) => (
+          <option key={sr.id} value={sr.id}>
+            {sr.partner.user.username} - {sr.skill_name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        className="add-event-btn"
+        disabled={!selectedSwapRequestId}
+        onClick={() => navigate(`/schedule/${selectedSwapRequestId}`)}
+      >
+        + Schedule Session
+      </button>
+    </>
+  )}
+</div>
       </div>
 
    
@@ -591,26 +649,36 @@ const deleteWantedSkill = (skillId) => {
                 </div>
               </div>
 
-              <div className="schedule-grid">
-                {scheduleData.map((slot, index) => (
-                  <div key={index} className="schedule-card">
-                    <div className="schedule-day">
-                      <span className="day-name">{slot.day}</span>
-                      <span className="day-date">{slot.date}</span>
-                    </div>
-                    <div className="schedule-time">{slot.time}</div>
-                    <div className="schedule-subject">{slot.skill}</div>
-                    {slot.partners > 0 && (
-                      <div className="student-avatars">
-                        {Array.from({ length: Math.min(slot.partners, 3) }).map((_, i) => (
-                          <div key={i} className="mini-avatar"></div>
-                        ))}
-                        {slot.partners > 3 && <span className="more-students">+{slot.partners - 3}</span>}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+             <div className="schedule-grid">
+  {sessions.length === 0 && <p>No scheduled swaps yet</p>}
+  {sessions.map((session, index) => {
+    const sessionDate = new Date(session.date); 
+    const day = sessionDate.toLocaleDateString("en-US", { weekday: "short" });
+    const date = sessionDate.toLocaleDateString();
+    const time = sessionDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const partners = session.partners_count || 0; 
+    const skill = session.skill_name || "Skill Swap"; 
+
+    return (
+      <div key={index} className="schedule-card">
+        <div className="schedule-day">
+          <span className="day-name">{day}</span>
+          <span className="day-date">{date}</span>
+        </div>
+        <div className="schedule-time">{time}</div>
+        <div className="schedule-subject">{skill}</div>
+        {partners > 0 && (
+          <div className="student-avatars">
+            {Array.from({ length: Math.min(partners, 3) }).map((_, i) => (
+              <div key={i} className="mini-avatar"></div>
+            ))}
+            {partners > 3 && <span className="more-students">+{partners - 3}</span>}
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
             </>
           )}
 
@@ -635,14 +703,18 @@ const deleteWantedSkill = (skillId) => {
           {activeTab === "feedback" && (
             <div className="feedback-section-edu">
               <h3>All Feedback</h3>
-              {reviewsData.map((review) => (
+              {review.map((review) => (
                 <div key={review.id} className="feedback-card-edu">
                   <div className="feedback-header-edu">
-                    <img src={review.avatar} alt={review.author} className="feedback-avatar-edu" />
+                    <img
+  src={review.photo ? `http://localhost:8000${review.photo}` : '/default-avatar.png'}
+  alt={review.name}
+  className="feedback-avatar-edu"
+/>
                     <div className="feedback-info-edu">
-                      <h4>{review.author}</h4>
+                      <h4>{review.name}</h4>
                       <div className="feedback-stars-edu">{renderStars(review.rating)}</div>
-                      <span className="feedback-date-edu">{review.date}</span>
+                      <span className="feedback-date-edu">{review.create_at}</span>
                       <span className="feedback-skill-tag">{review.skill}</span>
                     </div>
                   </div>
@@ -652,29 +724,42 @@ const deleteWantedSkill = (skillId) => {
             </div>
           )}
 
-          {activeTab === "sessions" && (
-            <div className="tab-content-edu">
-              <h3>Swap Session History</h3>
-              <div className="sessions-list">
-                <div className="session-item">
-                  <div className="session-date">March 5, 2026</div>
-                  <div className="session-details">
-                    <h4>React Hooks Deep Dive</h4>
-                    <p>Swapped with: Sarah Johnson</p>
-                    <p>Duration: 1.5 hours</p>
-                  </div>
-                </div>
-                <div className="session-item">
-                  <div className="session-date">March 1, 2026</div>
-                  <div className="session-details">
-                    <h4>Node.js API Development</h4>
-                    <p>Swapped with: Michael Chen</p>
-                    <p>Duration: 2 hours</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        {activeTab === "sessions" && (
+  <div className="tab-content-edu">
+    <h3>Swap Session History</h3>
+
+    <div className="sessions-list">
+
+      {sessions.length === 0 && (
+        <p>No sessions yet</p>
+      )}
+
+      {sessions.map((session) => (
+        <div key={session.id} className="session-item">
+
+          <div className="session-date">
+            {session.date}
+          </div>
+
+          <div className="session-details">
+            <h4>Skill Swap Session</h4>
+
+            <p>
+              Duration: {session.duration} minutes
+            </p>
+
+            <p>
+              Status: {session.status}
+            </p>
+
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  </div>
+)}
         </div>
 
        
@@ -682,12 +767,12 @@ const deleteWantedSkill = (skillId) => {
    
           <div className="reviews-sidebar">
             <h4>Recent Feedback</h4>
-            {reviewsData.map((review) => (
+            {review.map((review) => (
               <div key={review.id} className="review-card-edu">
                 <div className="review-header-edu">
-                  <img src={review.avatar} alt={review.author} className="review-avatar-edu" />
+                  <img src={review.photo ? `http://localhost:8000${review.photo}` : '/default-avatar.png'}alt={review.name} className="review-avatar-edu" />
                   <div className="review-author-info-edu">
-                    <h4>{review.author}</h4>
+                    <h4>{review.name}</h4>
                     <div className="review-stars-edu">{renderStars(review.rating)}</div>
                     <span className="review-skill-tag-edu">{review.skill}</span>
                   </div>

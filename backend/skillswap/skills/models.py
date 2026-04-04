@@ -34,7 +34,7 @@ class  skilloffered(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.user.username} offers {self.skill.name}"
+        return f"{self.user.user.username} offers {self.skills.name}"
     
        
 

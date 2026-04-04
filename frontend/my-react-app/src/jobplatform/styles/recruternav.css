@@ -1,0 +1,164 @@
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+
+.navbar-logo h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+}
+
+.navbar-logo h2:hover {
+  opacity: 0.8;
+}
+
+.navbar-logo h2 span {
+  color: #4f46e5;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 0.5rem;
+}
+
+.navbar-links li {
+  margin: 0;
+}
+
+
+.navbar-links li span {
+  display: block;
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.navbar-links li span:hover {
+  color: #111827;
+  background: #f9fafb;
+}
+
+
+.navbar-links li.active span {
+  color: #111827;
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-btn {
+  padding: 0.6rem 1.5rem;
+  background: #111827;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #1f2937;
+  transform: translateY(-1px);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .navbar-logo h2 {
+    font-size: 1.25rem;
+  }
+
+  .navbar-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+
+  .navbar-links li span {
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-actions {
+    order: 2;
+  }
+
+  .logout-btn {
+    padding: 0.5rem 1.25rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .navbar-logo {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-links {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .navbar-actions {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logout-btn {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+.navbar-links li span:active {
+  transform: scale(0.98);
+}

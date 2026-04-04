@@ -1,0 +1,247 @@
+/* ===== APPLICANTS PAGE — WHITE MODERN THEME ===== */
+
+/* Container */
+.ss-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  background: #fafafa;
+  min-height: 100vh;
+}
+
+/* Header */
+.ss-header {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 2rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+  letter-spacing: -0.02em;
+}
+
+/* ===== APPLICANT CARD ===== */
+.ss-card {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.ss-card:hover {
+  border-color: #d4d4d4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ===== USER NAME & STATUS ===== */
+.ss-user {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #171717;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ss-user::before {
+  content: '👤';
+  font-size: 1.1rem;
+}
+
+.ss-status {
+  font-size: 0.85rem;
+  color: #737373;
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+/* ===== INFO TEXT ===== */
+.ss-card p {
+  margin: 0.5rem 0;
+  color: #404040;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.ss-card p strong {
+  color: #525252;
+  font-weight: 500;
+}
+
+/* ===== LINKS ===== */
+.ss-link,
+.ss-resume-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.ss-link:hover,
+.ss-resume-link:hover {
+  color: #1d4ed8;
+  border-bottom-color: #1d4ed8;
+}
+
+.ss-resume-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ===== COVER LETTER BOX ===== */
+.ss-letter {
+  color: #525252;
+  line-height: 1.7;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+  padding: 1rem 1.25rem;
+  background: #fafafa;
+  border-radius: 10px;
+  border-left: 3px solid #2563eb;
+  margin: 0.5rem 0 0 0;
+}
+
+/* ===== ACTION BUTTONS ===== */
+.ss-card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+  flex-wrap: wrap;
+}
+
+.ss-btn-action {
+  padding: 0.55rem 1.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-width: 95px;
+}
+
+/* Accept Button — Green */
+.ss-accept {
+  background: #f0fdf4;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.ss-accept:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(22, 101, 52, 0.12);
+}
+
+.ss-accept:active {
+  transform: translateY(0);
+}
+
+/* Reject Button — Red */
+.ss-reject {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.ss-reject:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.12);
+}
+
+.ss-reject:active {
+  transform: translateY(0);
+}
+
+/* Disabled State */
+.ss-btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ===== STATUS BADGE ===== */
+.ss-status-badge {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: #f5f5f5;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #404040;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.ss-status-badge strong {
+  text-transform: capitalize;
+  color: #171717;
+}
+
+/* ===== EMPTY STATE ===== */
+.ss-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #737373;
+  font-size: 1.05rem;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px dashed #e5e5e5;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .ss-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .ss-header {
+    font-size: 1.5rem;
+  }
+
+  .ss-card {
+    padding: 1.25rem;
+  }
+
+  .ss-card-actions {
+    flex-direction: column;
+  }
+
+  .ss-btn-action {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ss-user {
+    font-size: 1rem;
+  }
+
+  .ss-letter {
+    font-size: 0.9rem;
+    padding: 0.85rem;
+  }
+
+  .ss-header {
+    font-size: 1.35rem;
+  }
+}

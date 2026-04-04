@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +24,35 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-25ffi4l+rzp6g(0ms1h8_jo+o-w6ux90%9p7ktw0ov%v%d3p4b'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = []
 
+
+ASGI_APPLICATION = "skillswap.asgi.application"
+
+CHANNEL_LAYERS = {
+ "default": {
+  "BACKEND": "channels_redis.core.RedisChannelLayer",
+  "CONFIG": {
+   "hosts": ["redis://127.0.0.1:6379/0"],
+  },
+ },
+}
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/2"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/2"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -49,6 +75,28 @@ INSTALLED_APPS = [
     'userprofile',
     'skills',
     'swapsystem',
+    'chatapp',
+    'videochat',
+    'session',
+    'adminpanel',
+    'access_control',
+    'jobs',
+    'notification',
+    'ai_service',
+
+    'rest_framework.authtoken',
+    "channels",
+
+
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    'dj_rest_auth',
+
     'corsheaders'
 
 ]
@@ -63,6 +111,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -80,6 +129,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'skillswap.urls'
@@ -87,11 +137,11 @@ ROOT_URLCONF = 'skillswap.urls'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'skillswap',  
-        'USER': 'postgres',          
-        'PASSWORD': '12345',   
-        'HOST': 'localhost',        
-        'PORT': '5432',            
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -119,6 +169,7 @@ WSGI_APPLICATION = 'skillswap.wsgi.application'
 
 
 AUTH_USER_MODEL = "authe.Userprofile"
+
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
@@ -173,3 +224,31 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
 }
+
+
+SITE_ID = 1
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+    }
+}
+
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'     
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")      
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")

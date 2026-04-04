@@ -6,7 +6,7 @@ class SkillWantedSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = skill_wanted
-        fields = ['id', 'user', 'name']
+        fields = ['id', 'name']
     def create(self, validated_data):
         skill_name = validated_data.pop('name')
         skill_obj, _ = skill.objects.get_or_create(name=skill_name)
@@ -16,7 +16,7 @@ class SkillOfferedSerializer(serializers.ModelSerializer):
     skills=serializers.CharField()
     class Meta:
         model = skilloffered
-        fields = ['id', 'user', 'skills', 'experience_level']
+        fields = ['id', 'skills', 'experience_level']
 
     def create(self, validated_data):
         skill_name=validated_data.pop('skills')
