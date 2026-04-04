@@ -39,6 +39,8 @@ import RoleProtectedRoute from './routes/protectedroute'
 import Unauthorized from './routes/unauthorised'
 import MyApplications from './jobplatform/pages/myapplylist'
 
+import InterviewSchedule from './jobplatform/pages/interviewsch'
+
 function App(){
 
   return(
@@ -144,6 +146,14 @@ function App(){
 <Route path="/my-jobs" element={
   <RoleProtectedRoute allowedRoles={["recruiter"]}>
     <MyJobs />
+  </RoleProtectedRoute>
+} />
+
+
+
+<Route path="/interviewsch" element={
+  <RoleProtectedRoute allowedRoles={["recruiter"]}>
+   <InterviewSchedule/>
   </RoleProtectedRoute>
 } />
 <Route path="/jobs/:id/applicants" element={<Applicants />} />

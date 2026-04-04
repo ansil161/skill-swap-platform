@@ -33,24 +33,31 @@ ALLOWED_HOSTS = []
 
 ASGI_APPLICATION = "skillswap.asgi.application"
 
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/2"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_BROKER_TRANSPORT = 'redis'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
 CHANNEL_LAYERS = {
- "default": {
-  "BACKEND": "channels_redis.core.RedisChannelLayer",
-  "CONFIG": {
-   "hosts": ["redis://127.0.0.1:6379/0"],
-  },
- },
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/2"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/2"
-CELERY_ACCEPT_CONTENT = ["json"]
-CELERY_TASK_SERIALIZER = "json"
+
 
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/1", # Changed from "redis"
     }
 }
 
@@ -134,6 +141,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'skillswap.urls'
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -194,11 +202,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'   
+
+CELERY_TIMEZONE = 'Asia/Kolkata'
+CELERY_ENABLE_UTC = False
 
 USE_I18N = True
+USE_TZ = True 
 
-USE_TZ = True
+
 
 
 # Static files (CSS, JavaScript, Images)
