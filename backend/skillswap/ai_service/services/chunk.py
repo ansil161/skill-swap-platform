@@ -6,4 +6,6 @@ def chunk_text(text,chunk_size=300):
         chunk=' '.join(words[i:i+chunk_size])
         chunks.append(chunk)
     return chunks
+
+
     
