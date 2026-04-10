@@ -14,6 +14,9 @@ from .task import send_email,send_remainder
 from django.utils import timezone
 from datetime import timedelta
 from django.utils.dateparse import parse_datetime
+
+from notification.utlis import send_notitfication
+
 class Jobapiview(APIView):
     permission_classes = [IsAuthenticated,IsAdminOrRecruiter]
 
@@ -119,6 +122,16 @@ class Updateapplicationstatusapi(APIView):
     
         application.status = new_status
         application.save()
+        send_notitfication(
+            receiver=application.user,
+            sender=request.user.profile,
+            message=f"Your application for {application.job.title} was {new_status}",
+
+
+          
+
+
+        )
     
 
 
@@ -195,6 +208,8 @@ class interviewschedule(APIView):
         return Response(serializer.data)
 
     def post(self, request, application_id):
+
+     
         interview_date = request.data.get('interview_date')
         interview_link = request.data.get('interview_link')
 
@@ -227,6 +242,11 @@ class interviewschedule(APIView):
         applicant.interview_link = interview_link
         applicant.scheduler = request.user.profile
         applicant.save()
+        send_notitfication(
+            receiver=applicant.user,
+            sender=request.user.profile,
+            message='Interview scheduled successfully'
+        )
 
         send_email.delay(applicant.id)
 
@@ -240,4 +260,4 @@ class interviewschedule(APIView):
         return Response(
             {"message": "Interview scheduled successfully"},
             status=201
-        )
+        )                                       
