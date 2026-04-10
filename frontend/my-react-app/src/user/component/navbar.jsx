@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';  
 import '../styles/navbar.css';
 import api from '../../api/axios';
+import NotificationBell from './notification';
 
 import { 
   faBolt, faThLarge, faSearch, faExchangeAlt, 
@@ -135,6 +136,7 @@ const Navbar = () => {
 
     
   <div className="navbar-right">
+  <NotificationBell/>
   {user ? (
     <div className="user-dropdown-wrapper" ref={dropdownRef}>
       <div className="user-trigger" onClick={toggleDropdown}>

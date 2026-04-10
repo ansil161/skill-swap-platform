@@ -11,6 +11,7 @@ from skills.models import skill
 from .models import SwapRequest
 from chatapp.models import Conversation
 from access_control.permissions import IsUser
+from notification.utlis import send_notitfication
 # Create your views here.
 
 class MatchApi(APIView):
@@ -82,6 +83,14 @@ class SwaprRequestApi(APIView):
             provider=provider_user,
             skill=skill_instance
         )
+
+        send_notitfication(
+            receiver=provider_user, 
+            sender=request.user.profile,
+            message=f"{request.user.username} sent you a swap request 🤝",
+
+
+        )
         
 
 
@@ -144,9 +153,15 @@ class SwaprRequestApi(APIView):
 
         swap_req.status = new_status
         swap_req.save()
+        send_notitfication(
+            sender=request.user.id,
+            receiver=swap_req.requester.user.id,
+            message=f"{request.user.username} accepted your swap request"
+        )
         if new_status == "Accepted":
             Conversation.objects.get_or_create(
                 swap_request=swap_req
             )
+        
 
         return Response({'message': f'Swap request {new_status}'}, status=status.HTTP_200_OK)

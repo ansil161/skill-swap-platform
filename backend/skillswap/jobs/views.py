@@ -8,7 +8,14 @@ from .serializer import JobapplicationSerializer,Jobserializer,ProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 
 from ai_service.back_task import process_application_task
+from django.utils.timezone import make_aware, is_naive
 
+from .task import send_email,send_remainder
+from django.utils import timezone
+from datetime import timedelta
+from django.utils.dateparse import parse_datetime
+
+from notification.utlis import send_notitfication
 
 class Jobapiview(APIView):
     permission_classes = [IsAuthenticated,IsAdminOrRecruiter]
@@ -61,10 +68,8 @@ class Applyapiview(APIView):
 
 
 
-
-
 class Jobapplicantapi(APIView):
-    permission_classes = [IsAuthenticated,IsAdminOrRecruiter]
+    permission_classes = [IsAuthenticated, IsAdminOrRecruiter]
 
     def get(self, request, job_id):
         try:
@@ -73,9 +78,27 @@ class Jobapplicantapi(APIView):
             return Response({"error": "Job not found"}, status=status.HTTP_404_NOT_FOUND)
 
         applications = JobApplication.objects.filter(job=job)
-        serializer = JobapplicationSerializer(applications, many=True)
 
-        return Response(serializer.data)
+        data = []
+        for app in applications:
+            item = {
+                "id": app.id,
+                "username": app.user.user.username,
+                "email": app.user.user.email,
+                "status": app.status,
+                "resume": app.resume.url if app.resume else None,
+                "cover_letter": app.cover_letter,
+            }
+
+          
+            if request.user.role in ["HR", "recruiter"]:
+                if app.ats_score and app.ats_score > 80:
+                    item["ats_score"] = app.ats_score
+                    item["ats_feedback"] = app.ats_feedback
+
+            data.append(item)
+
+        return Response(data)
 
 
 
@@ -95,9 +118,24 @@ class Updateapplicationstatusapi(APIView):
     
         if new_status not in ['accepted', 'rejected', 'reviewed']:
             return Response({"error": "Invalid status"}, status=400)
+        
     
         application.status = new_status
         application.save()
+        send_notitfication(
+            receiver=application.user,
+            sender=request.user.profile,
+            message=f"Your application for {application.job.title} was {new_status}",
+
+
+          
+
+
+        )
+    
+
+
+
     
         return Response({"message": "Status updated"})
     
@@ -156,3 +194,70 @@ class UserApplicationsAPI(APIView):
         applications = JobApplication.objects.filter(user=user_profile)
         serializer = UserJobApplicationSerializer(applications, many=True)
         return Response(serializer.data)
+    
+class interviewschedule(APIView):
+    permission_classes = [IsAuthenticated, IsAdminOrRecruiter]
+
+    def get(self, request):
+        applicant = JobApplication.objects.filter(
+            job__posted_by=request.user.profile,
+            status='accepted'
+        )
+
+        serializer = JobapplicationSerializer(applicant, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, application_id):
+
+     
+        interview_date = request.data.get('interview_date')
+        interview_link = request.data.get('interview_link')
+
+        interview_date = parse_datetime(interview_date)
+
+        if not interview_date:
+            return Response({"error": "Invalid interview date format"}, status=400)
+        if is_naive(interview_date):
+            interview_date = make_aware(interview_date)
+
+        if not interview_link:
+            return Response({"error": "Interview link is required"}, status=400)
+        
+
+        try:
+            applicant = JobApplication.objects.get(
+                id=application_id,
+                job__posted_by=request.user.profile
+            )
+        except JobApplication.DoesNotExist:
+            return Response({"error": "Application not found"}, status=404)
+
+        if applicant.status != 'accepted':
+            return Response(
+                {"error": "Only accepted candidates can be scheduled"},
+                status=400
+            )
+
+        applicant.interview_date = interview_date
+        applicant.interview_link = interview_link
+        applicant.scheduler = request.user.profile
+        applicant.save()
+        send_notitfication(
+            receiver=applicant.user,
+            sender=request.user.profile,
+            message='Interview scheduled successfully'
+        )
+
+        send_email.delay(applicant.id)
+
+        reminder = interview_date - timedelta(days=1)
+        if reminder > timezone.now():
+             send_remainder.apply_async(
+                args=[applicant.id],
+                eta=reminder
+            )
+
+        return Response(
+            {"message": "Interview scheduled successfully"},
+            status=201
+        )                                       

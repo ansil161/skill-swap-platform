@@ -1,0 +1,41 @@
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  celery:
+    build: .
+    env_file:
+      - .env
+    
+    command: ["celery", "-A", "skillswap", "worker", "-l", "info", "-P", "solo", "--uid=nobody"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_PORT=5432
+      - DJANGO_SETTINGS_MODULE=skillswap.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - HF_HOME=/tmp/huggingface
+      - TRANSFORMERS_CACHE=/tmp/huggingface
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: .
+    env_file:
+      - .env
+    command: ["celery", "-A", "skillswap", "beat", "-l", "info"]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - DJANGO_SETTINGS_MODULE=skillswap.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0
+    volumes:
+      - .:/app
+    depends_on:
+      - redis

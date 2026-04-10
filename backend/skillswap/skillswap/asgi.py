@@ -9,8 +9,8 @@ from django.core.asgi import get_asgi_application
 
 from chatapp.routing import websocket_urlpatterns as chat_routes
 from videochat.routing import websocket_urlpatterns as video_routes   
-from chatapp.middleware import JWTAuthMiddleware
-
+from chatapp.middleware import JWTAuthMiddleware 
+from notification.routing import websocket_urlpatterns as notification
 django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
@@ -18,7 +18,8 @@ application = ProtocolTypeRouter({
 
     "websocket": JWTAuthMiddleware(
         URLRouter(
-            chat_routes + video_routes  
+            chat_routes + video_routes + notification
+
         )
     ),
 })

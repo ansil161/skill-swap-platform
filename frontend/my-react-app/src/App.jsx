@@ -38,6 +38,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import RoleProtectedRoute from './routes/protectedroute'
 import Unauthorized from './routes/unauthorised'
 import MyApplications from './jobplatform/pages/myapplylist'
+import NotificationBell from './user/component/notification'
+
+import InterviewSchedule from './jobplatform/pages/interviewsch'
 
 function App(){
 
@@ -69,6 +72,12 @@ function App(){
           <Route path='/nav' element={
   <RoleProtectedRoute allowedRoles={["user"]}>
    <Navbar/>
+  </RoleProtectedRoute>
+} />
+
+          <Route path='/notifi' element={
+  <RoleProtectedRoute allowedRoles={["user"]}>
+   <NotificationBell/>
   </RoleProtectedRoute>
 } />
           
@@ -144,6 +153,14 @@ function App(){
 <Route path="/my-jobs" element={
   <RoleProtectedRoute allowedRoles={["recruiter"]}>
     <MyJobs />
+  </RoleProtectedRoute>
+} />
+
+
+
+<Route path="/interviewsch" element={
+  <RoleProtectedRoute allowedRoles={["recruiter"]}>
+   <InterviewSchedule/>
   </RoleProtectedRoute>
 } />
 <Route path="/jobs/:id/applicants" element={<Applicants />} />

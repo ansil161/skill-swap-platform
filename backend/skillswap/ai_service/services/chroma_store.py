@@ -2,12 +2,13 @@ import chromadb
 from chromadb.config import Settings
 from .embedding import resume_embedding
 
-client = chromadb.Client(Settings(
-    persist_directory='./chromadb',
-    is_persistent=True
-))
 
-collection = client.get_or_create_collection(name='resume')
+client = chromadb.Client(
+    Settings(persist_directory="./chromadb")
+)
+
+collection = client.get_or_create_collection(name="resume")
+
 
 
 def add_vector(chunks, application_id):
@@ -26,17 +27,15 @@ def add_vector(chunks, application_id):
 
     collection.add(
         ids=ids,
-        embeddings=embeddings.tolist(),
+        embeddings=embeddings,
         documents=documents,
         metadatas=metadatas,
     )
 
 
 def searchs(job_desc, k=5):
-    """
-    Search relevant chunks globally (better RAG)
-    """
-    query_embedding = resume_embedding([job_desc])[0].tolist()
+   
+    query_embedding = resume_embedding([job_desc])[0]
 
     result = collection.query(
         query_embeddings=[query_embedding],

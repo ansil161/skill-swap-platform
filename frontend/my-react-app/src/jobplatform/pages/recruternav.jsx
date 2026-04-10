@@ -34,11 +34,11 @@ export default function RecruiterNavbar() {
     </span>
   </li>
 
-  {/* <li className={isActive("/applications") ? "active" : ""}>
-    <span onClick={() => navigate("/recruiter/applications")}>
+  <li className={isActive("/applications") ? "active" : ""}>
+    <span onClick={() => navigate("/interviewsch" )}>
       Applicants
     </span>
-  </li> */}
+  </li>
 
   <li className={isActive("/profile") ? "active" : ""}>
     <span onClick={() => navigate("/recriterprofile")}>

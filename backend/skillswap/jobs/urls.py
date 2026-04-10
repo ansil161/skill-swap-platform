@@ -12,4 +12,6 @@ urlpatterns = [
      path('recruiter/profile/', RecruiterProfileAPI.as_view()),
      path('job/<int:job_id>/delete/', JobDeleteAPI.as_view(), ),
       path("my-application/", UserApplicationsAPI.as_view(),),
+      path("interview/", interviewschedule.as_view()),
+    path("interview/<int:application_id>/",interviewschedule.as_view(),name="interview-schedule" ),
 ]
