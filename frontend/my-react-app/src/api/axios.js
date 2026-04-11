@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000/skill/",
+  baseURL: "http://13.51.237.129:8000/skill/",
   withCredentials: true,
 });
 
