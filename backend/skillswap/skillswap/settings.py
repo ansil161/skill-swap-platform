@@ -240,7 +240,7 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
-    "AUTH_COOKIE": "access_token", 
+    "AUTH_COOKIE": "access_token",  # Tells the system to look for this cookie
 }
 
 
