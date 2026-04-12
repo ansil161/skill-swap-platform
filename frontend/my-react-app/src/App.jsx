@@ -8,7 +8,7 @@ import Match from './user/pages/match'
 import ProfilePage from './user/pages/profil'
 import Requests from './user/pages/request'
 import Navbar from './user/component/navbar'
-import Dashboard from './adminpanel/pages/dashboard.jsx'
+import Dashboard from './adminpanel/pages/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
@@ -20,8 +20,6 @@ import ChatButton from './user/pages/chatbutton'
 
 import AdminLayout from './adminpanel/pages/adminlayout'
 // import Dashboardad from './adminpanel/pages/dashboard'
-
-
 import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
