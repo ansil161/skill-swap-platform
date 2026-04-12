@@ -110,6 +110,7 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://skill-swap-platform-ten.vercel.app",
 
 ]
 CORS_ALLOW_HEADERS = [
@@ -121,6 +122,7 @@ CSRF_TRUSTED_ORIGINS = [
    "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://13.51.237.129",
+    
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -130,6 +132,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
