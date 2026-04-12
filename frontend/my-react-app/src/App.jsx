@@ -121,11 +121,11 @@ function App(){
              
              
             
-<Route path="/admin" element={
+{/* <Route path="/admin" element={
   <RoleProtectedRoute allowedRoles={["admin"]}>
     <AdminLayout><Dashboardad /></AdminLayout>
   </RoleProtectedRoute>
-} />
+} /> */}
 <Route path="/admin/users" element={
   <RoleProtectedRoute allowedRoles={["admin"]}>
     <AdminLayout><Users /></AdminLayout>
