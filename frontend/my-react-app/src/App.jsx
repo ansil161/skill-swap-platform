@@ -19,7 +19,9 @@ import VideoCallPage from './user/pages/videohome'
 import ChatButton from './user/pages/chatbutton'
 
 import AdminLayout from './adminpanel/pages/adminlayout'
-import Dashboardad from './adminpanel/pages/dashboard'
+// import Dashboardad from './adminpanel/pages/dashboard'
+
+
 import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
