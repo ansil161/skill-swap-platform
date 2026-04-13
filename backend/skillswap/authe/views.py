@@ -134,39 +134,26 @@ class Currentuserapi(APIView):
 
 
 
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 class RefreshAccessToken(APIView):
-
     def post(self, request):
-        refresh_token = request.COOKIES.get("refresh")
+        refresh_token = request.data.get("refresh")
 
         if not refresh_token:
-            return Response({"error": "No refresh token"}, status=401)
+            return Response({"error": "Refresh token required"}, status=401)
 
         try:
             refresh = RefreshToken(refresh_token)
             access_token = str(refresh.access_token)
 
-            response = Response({"message": "token refreshed"})
-
-            response.set_cookie(
-                key="access_token",
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite="None"
-            )
-
-            return response
+            return Response({
+                "access": access_token
+            }, status=200)
 
         except TokenError:
             return Response({"error": "Invalid refresh token"}, status=401)
-        
-
-
-
-
-
 
 class GoogleLogin(APIView):
 
