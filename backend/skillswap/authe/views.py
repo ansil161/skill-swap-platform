@@ -86,16 +86,16 @@ class Login(APIView):
                 key='access_token',
                 value=access_token,
                 httponly=True,
-                secure=False,
-                samesite="Lax"
+                secure=True,
+                samesite="None"
             )
             
             response.set_cookie(
                 key='refresh',
                 value=str(refresh),
                 httponly=True,
-                secure=False,
-                samesite="Lax"
+                secure=True,
+                samesite="None"
             )
             return response
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
