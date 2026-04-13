@@ -132,8 +132,7 @@ from corsheaders.defaults import default_headers
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "authorization",
 ]
-SESSION_COOKIE_DOMAIN = ".duckdns.org"
-CSRF_COOKIE_DOMAIN = ".duckdns.org"
+
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 
 
