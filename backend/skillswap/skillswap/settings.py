@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 
 
 ASGI_APPLICATION = "skillswap.asgi.application"
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = False
 
 
 CELERY_BROKER_URL = "redis://redis:6379/0"
