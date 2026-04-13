@@ -89,6 +89,7 @@ class Login(APIView):
                 secure=True,
                 samesite="None",
                 domain=".duckdns.org",
+                 path='/',
                 
 
 
@@ -102,6 +103,7 @@ class Login(APIView):
                 secure=True,
                 samesite="None",
                 domain=".duckdns.org",
+                 path='/',
             )
         
 
@@ -121,6 +123,8 @@ class Currentuserapi(APIView):
         return Response({
             "username": request.user.username,
             'role':request.user.role,
+            "email": request.user.email,
+            "role": request.user.role,
         })
     
 
