@@ -75,6 +75,9 @@ class Login(APIView):
             access_token=str(refresh.access_token)
 
             response=Response({'message':'Login succesfull',
+                                   "access": access_token,
+    "refresh": str(refresh),
+
                                'user':{'user_id':user.id,
                                        'username':user.username,
                                        'email': user.email,
@@ -82,29 +85,29 @@ class Login(APIView):
 
                                        }
                                },status=status.HTTP_200_OK)
-            response.set_cookie(
-                key='access_token',
-                value=access_token,
-                httponly=True,
-                secure=True,
-                samesite="None",
-                domain=".duckdns.org",
-                 path='/',
+            # response.set_cookie(
+            #     key='access_token',
+            #     value=access_token,
+            #     httponly=True,
+            #     secure=True,
+            #     samesite="None",
+            #     domain=".duckdns.org",
+            #      path='/',
                 
 
 
-            )
+            # )
             
             
-            response.set_cookie(
-                key='refresh',
-                value=str(refresh),
-                httponly=True,
-                secure=True,
-                samesite="None",
-                domain=".duckdns.org",
-                 path='/',
-            )
+            # response.set_cookie(
+            #     key='refresh',
+            #     value=str(refresh),
+            #     httponly=True,
+            #     secure=True,
+            #     samesite="None",
+            #     domain=".duckdns.org",
+            #      path='/',
+            # )
         
 
             return response
