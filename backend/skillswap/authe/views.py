@@ -135,8 +135,8 @@ class RefreshAccessToken(APIView):
                 key="access_token",
                 value=access_token,
                 httponly=True,
-                secure=False,
-                samesite="Lax"
+                secure=True,
+                samesite="None"
             )
 
             return response
@@ -183,16 +183,16 @@ class GoogleLogin(APIView):
             key="access_token",
             value=str(refresh.access_token),
             httponly=True,
-            secure=False,  
-            samesite="Lax"
+            secure=True,  
+            samesite="None"
         )
 
         res.set_cookie(
             key="refresh_token",
             value=str(refresh),
             httponly=True,
-            secure=False,
-            samesite="Lax"
+            secure=True,
+            samesite="None"
         )
 
         return res
