@@ -69,7 +69,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
-ALLOWED_HOSTS = ['13.51.237.129', 'localhost', '127.0.0.1', '0.0.0.0']
+ALLOWED_HOSTS = ['skillexchange.duckdns.org', '13.51.237.129', 'localhost', '127.0.0.1']
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
