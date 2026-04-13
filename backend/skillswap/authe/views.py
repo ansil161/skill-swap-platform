@@ -108,7 +108,6 @@ class Login(APIView):
 
 
 
-#hai iam ansil
         
 
 
@@ -291,3 +290,10 @@ class passwordreset(APIView):
             return Response({"message": "Password reset successfully"}, status=200)
         else:
             return Response({"error": "Invalid or expired token"}, status=400)
+        
+
+
+
+class ank(APIView):
+    def get(self):
+        return 'hai aim ansil'
