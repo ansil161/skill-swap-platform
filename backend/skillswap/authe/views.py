@@ -87,8 +87,12 @@ class Login(APIView):
                 value=access_token,
                 httponly=True,
                 secure=True,
-                samesite="None"
+                samesite="None",
+                
+
+
             )
+            response.cookies['access_token']['Partitioned'] = True
             
             response.set_cookie(
                 key='refresh',
@@ -97,6 +101,8 @@ class Login(APIView):
                 secure=True,
                 samesite="None"
             )
+            response.cookies['refresh']['Partitioned'] = True
+
             return response
         return Response({'error':serializer.errors},status=status.HTTP_400_BAD_REQUEST)
         
