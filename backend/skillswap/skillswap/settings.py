@@ -112,7 +112,10 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
    
    
-    "https://skill-swap-platform-ten.vercel.app",
+   
+    'https://skill-swap-platform-ansil161s-projects.vercel.app'
+    "https://skillexchange.duckdns.org",
+    
 
 ]
 from corsheaders.defaults import default_headers

@@ -88,7 +88,6 @@ class Login(APIView):
                 httponly=True,
                 secure=True,
                 samesite="None",
-                domain=".duckdns.org"
                 
 
 
@@ -100,8 +99,7 @@ class Login(APIView):
                 value=str(refresh),
                 httponly=True,
                 secure=True,
-                samesite="None",
-                domain=".duckdns.org"
+                samesite="None"
             )
         
 
