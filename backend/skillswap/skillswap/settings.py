@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = []
+
 
 
 ASGI_APPLICATION = "skillswap.asgi.application"
@@ -109,11 +109,20 @@ INSTALLED_APPS = [
     'corsheaders'
 
 ]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
 CORS_ALLOWED_ORIGINS = [
    
    
    
-    'https://skill-swap-platform-ansil161s-projects.vercel.app'
+    'https://skill-swap-platform-ansil161s-projects.vercel.app',
     "https://skillexchange.duckdns.org",
     
 
@@ -130,7 +139,7 @@ CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://skillexchange.duckdns.org",
-    "https://skill-swap-platform-ten.vercel.app"
+    "https://skill-swap-platform-ansil161s-projects.vercel.app",
     
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
