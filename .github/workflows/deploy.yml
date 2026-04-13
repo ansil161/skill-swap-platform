@@ -19,7 +19,6 @@ jobs:
           script: |
             cd /home/ubuntu/skill-swap-platform
             git pull origin main
-            docker build -t skillswap .
-            docker stop skillswap-container || true
-            docker rm skillswap-container || true
-            docker run -d -p 8000:8000 --name skillswap-container skillswap
+            docker compose down
+            docker compose up -d --build
+       
