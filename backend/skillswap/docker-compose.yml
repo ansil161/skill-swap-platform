@@ -19,7 +19,8 @@ services:
 
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    # command: python manage.py runserver 0.0.0.0:8000 # Good for dev
+    command: gunicorn skillswap.wsgi:application --bind 0.0.0.0:8000 # Better for production
     volumes:
       - .:/app
     ports:
@@ -44,8 +45,6 @@ services:
       - DJANGO_SETTINGS_MODULE=skillswap.settings
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/2
-      - HF_HOME=/tmp/huggingface
-      - TRANSFORMERS_CACHE=/tmp/huggingface
     volumes:
       - .:/app
     depends_on:
@@ -66,6 +65,19 @@ services:
     depends_on:
       - db
       - redis
+
+  nginx-proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: always
+    ports:
+      - '80:80'   
+      - '443:443' 
+      - '81:81'   
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    depends_on:
+      - web
 
 volumes:
   postgres_data:
