@@ -37,7 +37,7 @@ from django.utils.encoding import force_str
 
 
 User = get_user_model()
-# Create your views here.
+
 activation_token=PasswordResetTokenGenerator()
    
 class Register(APIView):
@@ -49,7 +49,7 @@ class Register(APIView):
         if user.is_valid():
             user=user.save()
             token=activation_token.make_token(user)
-            activation_link=f"http://127.0.0.1:8000/skill/activate/{user.id}/{token}/" 
+            activation_link = f"https://skillexchange.duckdns.org/skill/activate/{user.id}/{token}/"
             print('hai iama ',user.email)
             send_mail(
                 "activate/"
