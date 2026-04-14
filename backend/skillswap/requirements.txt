@@ -43,3 +43,6 @@ google-auth>=2.0.0
 
 torch
 sentence-transformers==2.6.1
+daphne
+channels
+channels-redis

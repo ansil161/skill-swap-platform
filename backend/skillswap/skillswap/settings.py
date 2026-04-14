@@ -73,6 +73,7 @@ REST_FRAMEWORK = {
 }
 ALLOWED_HOSTS = ['skillexchange.duckdns.org', '13.51.237.129', 'localhost', '127.0.0.1']
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -119,9 +120,6 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 CORS_ALLOWED_ORIGINS = [
-   
-   
-   
     'https://skill-swap-platform-ansil161s-projects.vercel.app',
     "https://skillexchange.duckdns.org",
     
@@ -247,7 +245,7 @@ STATIC_URL = 'static/'
 
 import os
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://skillexchange.duckdns.org/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 from datetime import timedelta
