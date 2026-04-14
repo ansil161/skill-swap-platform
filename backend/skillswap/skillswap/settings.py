@@ -71,7 +71,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
-ALLOWED_HOSTS = ['skillexchange.duckdns.org', '13.51.237.129', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['skillexchange.duckdns.org', '13.51.237.129', 'localhost', '127.0.0.1','skill-swap-platform-ansil161s-projects.vercel.app']
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
