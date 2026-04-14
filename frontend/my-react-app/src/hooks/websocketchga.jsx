@@ -13,8 +13,10 @@ export const useChatWebSocket = (conversationId) => {
     if (socketRef.current) {
       socketRef.current.close();
     }
-
-    const socket = new WebSocket(`wss://skillexchange.duckdns.org/ws/chat/${conversationId}/`);
+     const token = localStorage.getItem("access");
+    const socket = new WebSocket(
+      `wss://skillexchange.duckdns.org/ws/chat/${conversationId}/?token=${token}`
+    );
     socketRef.current = socket;
 
     socket.onopen = () => {
