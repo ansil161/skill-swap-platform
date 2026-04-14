@@ -22,7 +22,7 @@ export default function RoleProtectedRoute({ children, allowedRoles }) {
     api.get("auth/user/me/")
       .then((res) => {
         setAuth(true);
-        setRole(res.data.role);
+        setRole(res.data.role)
         console.log('role:', res.data.role);
       })
       .catch(() => {

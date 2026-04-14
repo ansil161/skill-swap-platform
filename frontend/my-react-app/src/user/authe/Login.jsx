@@ -62,8 +62,7 @@ const googleLogin = useGoogleLogin({
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
-            // IMPORTANT: You must save the tokens here too!
-            // Note: Make sure your backend GoogleLogin view returns 'access' and 'refresh' in the JSON body
+
             if (response.data.access) {
                 localStorage.setItem("access", response.data.access);
                 localStorage.setItem("refresh", response.data.refresh);
