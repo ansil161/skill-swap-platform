@@ -155,7 +155,7 @@ class SwaprRequestApi(APIView):
         swap_req.save()
         send_notitfication(
             sender=request.user.profile,
-            receiver=swap_req.requester.user.id,
+            receiver=swap_req.requester,
             message=f"{request.user.username} accepted your swap request"
         )
         if new_status == "Accepted":
