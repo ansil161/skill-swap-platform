@@ -8,7 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Userprofile
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated
-
+from django.shortcuts import redirect
 
 
 from google.oauth2 import id_token
@@ -37,6 +37,7 @@ from django.utils.encoding import force_str
 
 
 User = get_user_model()
+FRONTEND_URL = "https://skill-swap-platform-ansil161s-projects.vercel.app"
 
 activation_token=PasswordResetTokenGenerator()
    
@@ -204,19 +205,16 @@ class GoogleLogin(APIView):
 
 
 class Activationapi(APIView):
+    
     def get(self,request,user_id,token):
         try:
             user=Userprofile.objects.get(id=user_id)
         except Userprofile.DoesNotExist:
-            return Response(
-                {"error": "User not found"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            redirect(f"{FRONTEND_URL}/error?type=user_not_found")
+
         if user.is_active:
-            return Response(
-                {"message": "Account already activated"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return redirect('https://skill-swap-platform-ansil161s-projects.vercel.app/login')
+           
         if not activation_token.check_token(user,token):
             return Response(
                 {"error": "Invalid or expired activation link"},
@@ -224,10 +222,8 @@ class Activationapi(APIView):
             )
         user.is_active=True
         user.save()
-        return Response(
-            {"message": "Account activated successfully"},
-            status=status.HTTP_200_OK
-        )
+        return redirect('https://skill-swap-platform-ansil161s-projects.vercel.app/login')
+        
 
 
 
