@@ -14,7 +14,7 @@ export const useChatWebSocket = (conversationId) => {
       socketRef.current.close();
     }
 
-    const socket = new WebSocket(`ws://localhost:8000/ws/chat/${conversationId}/`);
+    const socket = new WebSocket(`wss://skillexchange.duckdns.org/ws/chat/${conversationId}/`);
     socketRef.current = socket;
 
     socket.onopen = () => {
