@@ -10,7 +10,7 @@ export default function RoleProtectedRoute({ children, allowedRoles }) {
   const [role, setRole] = useState(null);
 
  useEffect(() => {
-    const token = localStorage.getItem("access"); // ← check token first
+    const token = localStorage.getItem("access");
 
     if (!token) {
       setAuth(false);

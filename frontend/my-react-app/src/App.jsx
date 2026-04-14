@@ -19,7 +19,7 @@ import VideoCallPage from './user/pages/videohome'
 import ChatButton from './user/pages/chatbutton'
 
 import AdminLayout from './adminpanel/pages/adminlayout'
-// import Dashboardad from './adminpanel/pages/dashboard'
+import Dashboardad from './adminpanel/pages/dashboard'
 import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
@@ -120,11 +120,11 @@ function App(){
              
              
             
-{/* <Route path="/admin" element={
+<Route path="/admin" element={
   <RoleProtectedRoute allowedRoles={["admin"]}>
     <AdminLayout><Dashboardad /></AdminLayout>
   </RoleProtectedRoute>
-} /> */}
+} />
 <Route path="/admin/users" element={
   <RoleProtectedRoute allowedRoles={["admin"]}>
     <AdminLayout><Users /></AdminLayout>
