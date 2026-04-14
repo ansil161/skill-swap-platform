@@ -9,19 +9,26 @@ export default function RoleProtectedRoute({ children, allowedRoles }) {
   const [auth, setAuth] = useState(false);
   const [role, setRole] = useState(null);
 
-  useEffect(() => {
+ useEffect(() => {
+    const token = localStorage.getItem("access"); // ← check token first
+
+    if (!token) {
+      setAuth(false);
+      setLoading(false);
+      return; 
+    }
+
     api.get("auth/user/me/")
       .then((res) => {
         setAuth(true);
         setRole(res.data.role);
-        console.log('hai the role',res.data.role)
+        console.log('role:', res.data.role);
       })
       .catch(() => {
         setAuth(false);
       })
       .finally(() => setLoading(false));
   }, []);
-
   if (loading) return <p>Loading...</p>;
 
   if (!auth) return <Navigate to="/login" />;
