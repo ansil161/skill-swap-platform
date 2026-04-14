@@ -59,19 +59,21 @@ const handleLogin = (e) => {
 
 const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
-
-            console.log(response.data);
-            nav("/dash");
-
+            // IMPORTANT: You must save the tokens here too!
+            // Note: Make sure your backend GoogleLogin view returns 'access' and 'refresh' in the JSON body
+            if (response.data.access) {
+                localStorage.setItem("access", response.data.access);
+                localStorage.setItem("refresh", response.data.refresh);
+                nav("/dash");
+            }
+        }).catch(err => {
+            console.error("Google Login Failed", err);
         });
-
     }
 });
-
 
     return (
         <div className="login-container">
