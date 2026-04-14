@@ -49,7 +49,7 @@ class Register(APIView):
         if user.is_valid():
             user=user.save()
             token=activation_token.make_token(user)
-            activation_link = f"https://skillexchange.duckdns.org/skill/activate/{user.id}/{token}/"
+            activation_link = f"https://skillexchange.duckdns.org/skill/auth/activate/{user.id}/{token}/"
             print('hai iama ',user.email)
             send_mail(
                 "activate/"
