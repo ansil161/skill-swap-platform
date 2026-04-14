@@ -22,7 +22,9 @@ export default function NotificationBell() {
   };
 
   const connectWebSocket = () => {
-    const ws = new WebSocket("wss://skillexchange.duckdns.org/ws/notifications/");
+    access
+    const token = localStorage.getItem("access");
+   const ws = new WebSocket(`wss://skillexchange.duckdns.org/ws/notifications/?token=${token}`)
 
     ws.onopen = () => console.log("WebSocket connected");
 

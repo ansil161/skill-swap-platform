@@ -148,6 +148,7 @@ CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CORS_ALLOW_ALL_ORIGINS = False
+CHANNEL_LAYERS['default']['CONFIG']['symmetric_encryption_keys'] = [SECRET_KEY]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
