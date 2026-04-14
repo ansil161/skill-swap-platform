@@ -29,6 +29,9 @@ const handleLogin = (e) => {
     api.post('auth/Login/', state)
     .then((res)=>{
 
+            localStorage.setItem("access", res.data.access);
+    localStorage.setItem("refresh", res.data.refresh);
+    console.log('refrs',res.data.refresh)
         console.log('haiuser',res.data)
         const role = res.data.user.role
         console.log('iwa',role)
