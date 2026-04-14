@@ -8,7 +8,6 @@ import Match from './user/pages/match'
 import ProfilePage from './user/pages/profil'
 import Requests from './user/pages/request'
 import Navbar from './user/component/navbar'
-import Dashboard from './adminpanel/pages/dashboard'
 import Hai from './user/pages/new'
 import ForgotPassword from './user/authe/forgot'
 import ResetPassword from './user/authe/resetpassword'
@@ -23,6 +22,7 @@ import Dashboardad from './adminpanel/pages/dashboard'
 import Users from './adminpanel/pages/userpage'
 import Swaps from './adminpanel/pages/swappage'
 import Sessions from './adminpanel/pages/sessionpage'
+import Dashboard from './user/pages/dashboard/dashboard.jsx'
 
 import UserDetail from './adminpanel/pages/userdeatailpage'
 
@@ -124,6 +124,7 @@ function App(){
   <RoleProtectedRoute allowedRoles={["admin"]}>
     <AdminLayout><Dashboardad /></AdminLayout>
   </RoleProtectedRoute>
+
 } />
 <Route path="/admin/users" element={
   <RoleProtectedRoute allowedRoles={["admin"]}>
