@@ -28,8 +28,7 @@ export default function NotificationBell() {
         console.error("No token found in LocalStorage");
         return;
     }
-
-const ws = new WebSocket(`wss://skillexchange.duckdns.org/ws/notifications/?token=${token}`);
+const ws = new WebSocket(`wss://skillexchange.duckdns.org/ws/notifications/?token=${token}`)
 
     ws.onopen = () => console.log("WebSocket connected");
 
