@@ -4,7 +4,7 @@ current_file = os.path.abspath(__file__)
 services_dir = os.path.dirname(current_file)
 ai_service_dir = os.path.dirname(services_dir)
 
-model_path = os.path.join(ai_service_dir, 'model_weights')
+model_path = "/app/skillswap/ai_service/model_weights"
 
 
 
