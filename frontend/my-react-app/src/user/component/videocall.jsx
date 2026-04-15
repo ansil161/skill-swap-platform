@@ -31,10 +31,12 @@ export default function VideoCall({ roomId, sessionid }) {
     const start = async () => {
       try {
         if (localStreamRef.current) return;
-        
+
         const token = localStorage.getItem("access");
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-       `${wsProtocol}://skillexchange.duckdns.org/ws/video/${roomId}/?token=${token}`
+        ws = new WebSocket( `${wsProtocol}://skillexchange.duckdns.org/ws/video/${roomId}/?token=${token}`);
+        
+
 
         ws.onopen = async () => {
           setStatus("connected");
