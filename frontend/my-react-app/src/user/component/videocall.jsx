@@ -89,12 +89,16 @@ useEffect(() => {
           }
         }
 
-        if (data.type === "offer") {
-          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.offer));
-          const answer = await pcRef.current.createAnswer();
-          await pcRef.current.setLocalDescription(answer);
-          ws.send(JSON.stringify({ type: "answer", answer }));
-        }
+        if (data.type === "candidate") {
+            try {
+
+              if (pcRef.current.remoteDescription) {
+                 await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+              }
+            } catch (err) {
+              console.error("ICE error:", err);
+            }
+          }
 
         if (data.type === "answer") {
           await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
