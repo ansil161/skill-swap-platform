@@ -251,9 +251,12 @@ class passwordrequest(APIView):
             return Response({'error':"user email is not found"},status=status.HTTP_404_NOT_FOUND)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
+
+       
+        
         
    
-        frontend_url = f"http://localhost:5173/reset-password/{uid}/{token}/"
+        frontend_url = f"https://skill-swap-platform-ansil161s-projects.vercel.app/reset-password/{uid}/{token}/ "
         send_mail(
             'SkillSwap Password Reset',
             f'Click the link to reset your password: {frontend_url}',
