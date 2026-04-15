@@ -17,6 +17,7 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
     
         self.room_name = self.scope["url_route"]["kwargs"]["room_id"]
         self.room_group_name = f"video_{self.room_name}"
+        
     
         if not await self.is_user_allowed():
             await self.close()

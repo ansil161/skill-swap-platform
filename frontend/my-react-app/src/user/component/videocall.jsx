@@ -77,41 +77,44 @@ useEffect(() => {
       };
 
       ws.onmessage = async (event) => {
-        const data = JSON.parse(event.data);
-        if (!pcRef.current) return;
+  const data = JSON.parse(event.data);
+  if (!pcRef.current) return;
 
-        if (data.type === "role") {
-          isInitiator = data.initiator;
-          if (isInitiator && pcRef.current.signalingState === "stable") {
-            const offer = await pcRef.current.createOffer();
-            await pcRef.current.setLocalDescription(offer);
-            ws.send(JSON.stringify({ type: "offer", offer }));
-          }
-        }
+  if (data.type === "role") {
+    isInitiator = data.initiator;
+    if (isInitiator && pcRef.current.signalingState === "stable") {
+      const offer = await pcRef.current.createOffer();
+      await pcRef.current.setLocalDescription(offer);
+      ws.send(JSON.stringify({ type: "offer", offer }));
+    }
+  }
 
-        if (data.type === "candidate") {
-            try {
+ 
+  if (data.type === "offer") {
+    await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.offer));
+    const answer = await pcRef.current.createAnswer();
+    await pcRef.current.setLocalDescription(answer);
+    ws.send(JSON.stringify({ type: "answer", answer }));
+  }
 
-              if (pcRef.current.remoteDescription) {
-                 await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
-              }
-            } catch (err) {
-              console.error("ICE error:", err);
-            }
-          }
+  if (data.type === "answer") {
+    await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
+  }
 
-        if (data.type === "answer") {
-          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
-        }
+  if (data.type === "candidate") {
+    try {
+  
+      if (pcRef.current.remoteDescription) {
+        await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } else {
 
-        if (data.type === "candidate") {
-          try {
-            await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
-          } catch (err) {
-            console.error("ICE error:", err);
-          }
-        }
-      };
+        console.warn("Candidate arrived before remote description");
+      }
+    } catch (err) {
+      console.error("ICE error:", err);
+    }
+  }
+};
 
       ws.onerror = () => setStatus("error");
       ws.onclose = () => setStatus("disconnected");
