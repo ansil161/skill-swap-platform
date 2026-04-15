@@ -76,9 +76,11 @@ useEffect(() => {
         }, 1000);
       };
 
-      ws.onmessage = async (event) => {
+ ws.onmessage = async (event) => {
   const data = JSON.parse(event.data);
   if (!pcRef.current) return;
+
+  console.log("WebRTC Message Received:", data.type); 
 
   if (data.type === "role") {
     isInitiator = data.initiator;
@@ -89,8 +91,8 @@ useEffect(() => {
     }
   }
 
- 
   if (data.type === "offer") {
+ 
     await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.offer));
     const answer = await pcRef.current.createAnswer();
     await pcRef.current.setLocalDescription(answer);
@@ -98,20 +100,20 @@ useEffect(() => {
   }
 
   if (data.type === "answer") {
+
     await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
 
   if (data.type === "candidate") {
     try {
-  
+      
       if (pcRef.current.remoteDescription) {
         await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
       } else {
-
-        console.warn("Candidate arrived before remote description");
+        console.warn("Candidate ignored: Remote description not yet set.");
       }
     } catch (err) {
-      console.error("ICE error:", err);
+      console.error("ICE Candidate Error:", err);
     }
   }
 };
