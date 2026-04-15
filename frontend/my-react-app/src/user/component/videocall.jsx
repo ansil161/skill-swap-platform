@@ -31,9 +31,10 @@ export default function VideoCall({ roomId, sessionid }) {
     const start = async () => {
       try {
         if (localStreamRef.current) return;
-
+        
+        const token = localStorage.getItem("access");
         const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-        ws = new WebSocket(`${wsProtocol}://localhost:8000/ws/video/${roomId}/`);
+       `${wsProtocol}://skillexchange.duckdns.org/ws/video/${roomId}/?token=${token}`
 
         ws.onopen = async () => {
           setStatus("connected");
