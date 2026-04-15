@@ -13,8 +13,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         print(user)
         if user.is_anonymous:
             print(f"Chat rejection: Anonymous user tried to connect to room {self.conversation_id}")
-        await self.close()
-        return
+            await self.close()
+            return
       
 
         await self.channel_layer.group_add(
