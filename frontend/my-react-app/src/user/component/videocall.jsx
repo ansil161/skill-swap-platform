@@ -23,120 +23,117 @@ export default function VideoCall({ roomId, sessionid }) {
   let timerRef = useRef(null);
   const navigate=useNavigate()
 
-  useEffect(() => {
-    let ws;
-    
-    let isInitiator = false;
+useEffect(() => {
+  let ws;
+  let isInitiator = false;
 
-    const start = async () => {
-      try {
-        if (localStreamRef.current) return;
-
-        const token = localStorage.getItem("access");
-        const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
-        ws = new WebSocket( `${wsProtocol}://skillexchange.duckdns.org/ws/video/${roomId}/?token=${token}`);
-        
-
-
-        ws.onopen = async () => {
-          setStatus("connected");
-
-          timerRef.current = setInterval(() => {
-            setCallDuration((prev) => prev + 1);
-          }, 1000);
-
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-          });
-
-          localStreamRef.current = stream;
-          localVideoRef.current.srcObject = stream;
-
-         pcRef.current = new RTCPeerConnection({
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-});
-
-        stream.getTracks().forEach((track) => pcRef.current.addTrack(track, stream));
-
-          pcRef.current.ontrack = (event) => {
-  remoteVideoRef.current.srcObject = event.streams[0];
-};
-
-          pcRef.current.onicecandidate = (event) => {
-            if (event.candidate) {
-              ws.send(JSON.stringify({ type: "candidate", candidate: event.candidate }));
-            }
-          };
-
-          pcRef.current.onconnectionstatechange = () => {
-  setStatus(pcRef.current.connectionState);
-};
-        };
-
-ws.onmessage = async (event) => {
-  const data = JSON.parse(event.data);
-  if (!pcRef.current) return;
-
-  
-  if (data.type === "role") {
-    isInitiator = data.initiator;
-
-    if (
-      isInitiator &&
-      pcRef.current.signalingState === "stable"
-    ) {
-      const offer = await pcRef.current.createOffer();
-      await pcRef.current.setLocalDescription(offer);
-
-      ws.send(JSON.stringify({ type: "offer", offer }));
-    }
-  }
-
-  if (data.type === "offer") {
-    await pcRef.current.setRemoteDescription(data.offer);
-
-    const answer = await pcRef.current.createAnswer();
-    await pcRef.current.setLocalDescription(answer);
-
-    ws.send(JSON.stringify({ type: "answer", answer }));
-  }
-
-  
-  if (data.type === "answer") {
-    await pcRef.current.setRemoteDescription(data.answer);
-  }
-
-  if (data.type === "candidate") {
+  const start = async () => {
     try {
-      await pcRef.current.addIceCandidate(data.candidate);
+      if (localStreamRef.current) return;
+
+  
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+      localStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+
+      
+      pcRef.current = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+      });
+
+
+      stream.getTracks().forEach((track) => pcRef.current.addTrack(track, stream));
+
+
+      pcRef.current.ontrack = (event) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = event.streams[0];
+        }
+      };
+
+      pcRef.current.onicecandidate = (event) => {
+        if (event.candidate && ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "candidate", candidate: event.candidate }));
+        }
+      };
+
+      pcRef.current.onconnectionstatechange = () => {
+        setStatus(pcRef.current.connectionState);
+      };
+
+      
+      const token = localStorage.getItem("access");
+      const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+      ws = new WebSocket(`${wsProtocol}://skillexchange.duckdns.org/ws/video/${roomId}/?token=${token}`);
+
+      ws.onopen = () => {
+        setStatus("connected");
+        timerRef.current = setInterval(() => {
+          setCallDuration((prev) => prev + 1);
+        }, 1000);
+      };
+
+      ws.onmessage = async (event) => {
+        const data = JSON.parse(event.data);
+        if (!pcRef.current) return;
+
+        if (data.type === "role") {
+          isInitiator = data.initiator;
+          if (isInitiator && pcRef.current.signalingState === "stable") {
+            const offer = await pcRef.current.createOffer();
+            await pcRef.current.setLocalDescription(offer);
+            ws.send(JSON.stringify({ type: "offer", offer }));
+          }
+        }
+
+        if (data.type === "offer") {
+          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.offer));
+          const answer = await pcRef.current.createAnswer();
+          await pcRef.current.setLocalDescription(answer);
+          ws.send(JSON.stringify({ type: "answer", answer }));
+        }
+
+        if (data.type === "answer") {
+          await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
+        }
+
+        if (data.type === "candidate") {
+          try {
+            await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
+          } catch (err) {
+            console.error("ICE error:", err);
+          }
+        }
+      };
+
+      ws.onerror = () => setStatus("error");
+      ws.onclose = () => setStatus("disconnected");
+
     } catch (err) {
-      console.error("ICE error:", err);
+      console.error("Video Call Start Error:", err);
+      setStatus("failed");
+      toast.error("Camera/Mic access denied or connection failed.");
     }
-  }
-};
+  };
 
-        ws.onerror = () => setStatus("error");
-        ws.onclose = () => setStatus("disconnected");
-      } catch (err) {
-        console.error(err);
-        setStatus("failed");
-      }
-    };
+  start();
 
-    start();
-
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (ws) ws.close();
-      if (pcRef.current) pcRef.current.close();
-
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach((t) => t.stop());
-        localStreamRef.current = null;
-      }
-    };
-  }, [roomId]);
+  return () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (ws) ws.close();
+    if (pcRef.current) {
+        pcRef.current.close();
+        pcRef.current = null;
+    }
+    if (localStreamRef.current) {
+      localStreamRef.current.getTracks().forEach((t) => t.stop());
+      localStreamRef.current = null;
+    }
+  };
+}, [roomId]);
 
   const toggleMic = () => {
     const stream = localStreamRef.current;

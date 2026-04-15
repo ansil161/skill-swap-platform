@@ -24,7 +24,8 @@ class VideoCallConsumer(AsyncWebsocketConsumer):
     
       
         if cache.get(self.room_group_name) is None:
-            cache.set(self.room_group_name, 0)
+    
+            cache.set(self.room_group_name, 0, timeout=7200)
     
         count = cache.incr(self.room_group_name)
     
