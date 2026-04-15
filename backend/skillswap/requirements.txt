@@ -46,3 +46,6 @@ sentence-transformers==2.6.1
 daphne
 channels
 channels-redis
+
+django-storages
+boto3
