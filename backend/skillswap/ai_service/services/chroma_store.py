@@ -3,11 +3,11 @@ from chromadb.config import Settings
 from .embedding import resume_embedding
 
 
-client = chromadb.Client(
-    Settings(persist_directory="./chromadb")
-)
+client = chromadb.HttpClient(host='chromadb', port=8000)
 
 collection = client.get_or_create_collection(name="resume")
+
+
 
 
 
