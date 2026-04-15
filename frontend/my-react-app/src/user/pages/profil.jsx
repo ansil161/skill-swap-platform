@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 const ProfilePage = () => {
 
-  const BASE_URL = "https://skillexchange.duckdns.org";
   
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState("schedule");
@@ -285,7 +284,7 @@ const deleteWantedSkill = (skillId) => {
           <div className="profile-avatar-container">
            {data.profile_picture && (
   <img 
-    src={`${BASE_URL}${data.profile_picture}`}
+    src={data.profile_picture}
     alt={data.username} 
     className="profile-avatar-edu" 
   />
@@ -710,7 +709,7 @@ const deleteWantedSkill = (skillId) => {
                 <div key={review.id} className="feedback-card-edu">
                   <div className="feedback-header-edu">
                     <img
-  src={review.photo ? `${BASE_URL}${review.photo}` : '/default-avatar.png'}
+  src={review.photo ? review.photo : '/default-avatar.png'}
   alt={review.name}
   className="feedback-avatar-edu"
 />

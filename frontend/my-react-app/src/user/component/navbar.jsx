@@ -141,10 +141,10 @@ const Navbar = () => {
     <div className="user-dropdown-wrapper" ref={dropdownRef}>
       <div className="user-trigger" onClick={toggleDropdown}>
         <img 
-          src={`http://127.0.0.1:8000${user?.profile_picture || '/media/default-avatar.png'}`}
-          alt={user?.username} 
-          className="user-avatar" 
-        />
+  src={user?.profile_picture || '/media/default-avatar.png'}
+  alt={user?.username} 
+  className="user-avatar" 
+/>
         <span className="user-name">{user?.username}</span>
         <FontAwesomeIcon 
           icon={faChevronDown} 

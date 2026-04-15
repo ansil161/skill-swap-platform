@@ -6,7 +6,7 @@ import '../styles/applicant.css'
 export default function Applicants() {
   const { id } = useParams();
   const [apps, setApps] = useState([]);
-  const BASE_URL = "http://127.0.0.1:8000";
+ 
 
   useEffect(() => {
     api.get(`jobs/job/${id}/applicants/`)
@@ -63,13 +63,13 @@ if (app.ats_feedback && app.ats_score) {
               {app.resume && (
                 <p>
                   <a
-                    href={`${BASE_URL}${app.resume}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="ss-resume-link"
-                  >
-                    📄 View Resume
-                  </a>
+  href={app.resume} 
+  target="_blank"
+  rel="noopener noreferrer"
+  className="ss-resume-link"
+>
+  📄 View Resume
+</a>
                 </p>
               )}
 

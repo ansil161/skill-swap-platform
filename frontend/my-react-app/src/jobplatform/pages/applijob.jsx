@@ -41,7 +41,7 @@ const navigate=useNavigate()
       setCoverLetter("");
     } catch (err) {
       console.error(err); 
-      toast.success(err.response?.data?.error || "Failed to apply");
+      toast.error(err.response?.data?.error || "Failed to apply");
     } finally {
       setLoading(false);
     }
