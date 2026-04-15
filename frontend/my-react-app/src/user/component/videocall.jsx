@@ -78,21 +78,22 @@ useEffect(() => {
 
  ws.onmessage = async (event) => {
   const data = JSON.parse(event.data);
-  if (!pcRef.current) return;
-
   console.log("WebRTC Message Received:", data.type); 
 
   if (data.type === "role") {
     isInitiator = data.initiator;
-    if (isInitiator && pcRef.current.signalingState === "stable") {
+    console.log("I am initiator:", isInitiator);
+    if (isInitiator) {
+      // Small delay to ensure tracks are added
       const offer = await pcRef.current.createOffer();
       await pcRef.current.setLocalDescription(offer);
       ws.send(JSON.stringify({ type: "offer", offer }));
+      console.log("Offer Sent");
     }
   }
 
   if (data.type === "offer") {
- 
+    console.log("Offer Received, creating answer...");
     await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.offer));
     const answer = await pcRef.current.createAnswer();
     await pcRef.current.setLocalDescription(answer);
@@ -100,20 +101,17 @@ useEffect(() => {
   }
 
   if (data.type === "answer") {
-
+    console.log("Answer Received, setting remote description...");
     await pcRef.current.setRemoteDescription(new RTCSessionDescription(data.answer));
   }
 
   if (data.type === "candidate") {
     try {
-      
       if (pcRef.current.remoteDescription) {
         await pcRef.current.addIceCandidate(new RTCIceCandidate(data.candidate));
-      } else {
-        console.warn("Candidate ignored: Remote description not yet set.");
       }
     } catch (err) {
-      console.error("ICE Candidate Error:", err);
+      console.error("Error adding ICE candidate", err);
     }
   }
 };
