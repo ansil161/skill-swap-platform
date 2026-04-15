@@ -56,6 +56,7 @@ useEffect(() => {
 
       pcRef.current.onicecandidate = (event) => {
         if (event.candidate && ws && ws.readyState === WebSocket.OPEN) {
+          console.log("Sending ICE candidate");
           ws.send(JSON.stringify({ type: "candidate", candidate: event.candidate }));
         }
       };
@@ -84,7 +85,7 @@ useEffect(() => {
     isInitiator = data.initiator;
     console.log("I am initiator:", isInitiator);
     if (isInitiator) {
-      // Small delay to ensure tracks are added
+  
       const offer = await pcRef.current.createOffer();
       await pcRef.current.setLocalDescription(offer);
       ws.send(JSON.stringify({ type: "offer", offer }));
