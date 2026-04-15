@@ -10,6 +10,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"chat_{self.conversation_id}"
         user = self.scope["user"] 
         print(self.room_group_name)
+        print(user)
         if user.is_anonymous:
             print(f"Chat rejection: Anonymous user tried to connect to room {self.conversation_id}")
         await self.close()
