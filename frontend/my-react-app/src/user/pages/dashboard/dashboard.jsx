@@ -48,6 +48,7 @@ const Dashboard = () => {
        api.get('user/profile/')
     .then((res)=>{
       setuser(res.data)
+      console.log('profile of user',res.data)
       
 
     })
