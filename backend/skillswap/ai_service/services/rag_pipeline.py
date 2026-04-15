@@ -31,7 +31,8 @@ def resume_process(application):
     if application.processed and application.ats_feedback:
         return json.loads(application.ats_feedback)
 
-    resume_text = resume_parse(application.resume.path)
+    with application.resume.open('rb') as f:
+        resume_text = resume_parse(f)
     chunks = chunk_text(resume_text)
 
     job_des = application.job.description
