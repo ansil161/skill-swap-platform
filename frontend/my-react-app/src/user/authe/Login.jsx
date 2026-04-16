@@ -56,12 +56,12 @@ const handleLogin = (e) => {
     })
 }
 
-
 const googleLogin = useGoogleLogin({
-   
-    ux_mode: 'redirect', 
-    
+    ux_mode: 'redirect',
+
+    redirect_uri: 'https://skill-swap-platform-ansil161s-projects.vercel.app', 
     onSuccess: (tokenResponse) => {
+     
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
@@ -70,11 +70,8 @@ const googleLogin = useGoogleLogin({
                 localStorage.setItem("refresh", response.data.refresh);
                 nav("/dash");
             }
-        }).catch(err => {
-            console.error("Google Login Failed", err);
         });
     },
-    onError: (error) => console.log('Login Failed:', error)
 });
 
     return (
