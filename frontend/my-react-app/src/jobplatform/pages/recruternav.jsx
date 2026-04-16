@@ -6,14 +6,20 @@ export default function RecruiterNavbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      await api.post("logout/", {}, { withCredentials: true }); 
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
+const handleLogout = () => {
+  // remove JWT tokens
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+
+
+  delete api.defaults.headers.common["Authorization"];
+
+
+  toast.success("User logged out");
+
+
+  navigate("/login");
+};
 
   const isActive = (path) => location.pathname.includes(path);
 

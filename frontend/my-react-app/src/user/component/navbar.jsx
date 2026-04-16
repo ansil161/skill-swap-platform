@@ -62,19 +62,20 @@ const Navbar = () => {
   };
 
   
-  const handleLogout = () => {
-    api.post('auth/logout/')
-    .then((res)=>{
-      toast.success('user is log out')
-      navigate('/login')
-    })
-    .catch(err=>{
-      toast.error(err.response?.data?.message);
-      console.log(err?.response?.message?.data)
-    })
-    
-    
-  };
+const handleLogout = () => {
+ 
+  localStorage.removeItem("access");
+  localStorage.removeItem("refresh");
+
+
+  delete api.defaults.headers.common["Authorization"];
+
+ 
+  toast.success("User logged out");
+
+  
+  navigate("/login");
+};
 
   return (
     <nav className="navbar-container">
