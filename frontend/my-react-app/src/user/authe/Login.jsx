@@ -64,6 +64,7 @@ const googleLogin = useGoogleLogin({
     
     onSuccess: (tokenResponse) => {
         console.log('inside of onsucces')
+        console.log(tokenResponse)
      
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
