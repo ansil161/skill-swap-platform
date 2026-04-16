@@ -161,6 +161,8 @@ class GoogleLogin(APIView):
     def post(self, request):
 
         access_token = request.data.get("token")
+        if not access_token:
+            return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         response = requests.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -178,28 +180,32 @@ class GoogleLogin(APIView):
 
         user, created = User.objects.get_or_create(
             email=email,
-            defaults={"username": name}
+            defaults={"username": name,
+                      "is_active": True}
         )
 
         refresh = RefreshToken.for_user(user)
+        access=str(refresh.access_token)
 
-        res = Response({"message": "Login successful"})
+        res = Response({"message": "Login successful",
+                        "access": access,
+                        "refresh": str(refresh)})
 
-        res.set_cookie(
-            key="access_token",
-            value=str(refresh.access_token),
-            httponly=True,
-            secure=True,  
-            samesite="None"
-        )
+        # res.set_cookie(
+        #     key="access_token",
+        #     value=str(refresh.access_token),
+        #     httponly=True,
+        #     secure=True,  
+        #     samesite="None"
+        # )
 
-        res.set_cookie(
-            key="refresh_token",
-            value=str(refresh),
-            httponly=True,
-            secure=True,
-            samesite="None"
-        )
+        # res.set_cookie(
+        #     key="refresh_token",
+        #     value=str(refresh),
+        #     httponly=True,
+        #     secure=True,
+        #     samesite="None"
+        # )
 
         return res
 
