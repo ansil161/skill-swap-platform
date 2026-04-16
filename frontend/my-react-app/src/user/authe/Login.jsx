@@ -73,8 +73,9 @@ const googleLogin = useGoogleLogin({
                 console.log('inside of then')
                 localStorage.setItem("access", response.data.access);
                 localStorage.setItem("refresh", response.data.refresh);
-                nav("/dash");
-            }
+                nav("/dash")
+                console.log('inside the then')
+            } 
         });
     },
 });
