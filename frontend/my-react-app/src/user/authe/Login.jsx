@@ -58,11 +58,13 @@ const handleLogin = (e) => {
 
 
 const googleLogin = useGoogleLogin({
+   
+    ux_mode: 'redirect', 
+    
     onSuccess: (tokenResponse) => {
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
         }).then((response) => {
-
             if (response.data.access) {
                 localStorage.setItem("access", response.data.access);
                 localStorage.setItem("refresh", response.data.refresh);
@@ -71,7 +73,8 @@ const googleLogin = useGoogleLogin({
         }).catch(err => {
             console.error("Google Login Failed", err);
         });
-    }
+    },
+    onError: (error) => console.log('Login Failed:', error)
 });
 
     return (
