@@ -61,6 +61,7 @@ const googleLogin = useGoogleLogin({
     ux_mode: 'redirect',
 
     redirect_uri: 'https://skill-swap-platform-ansil161s-projects.vercel.app', 
+
     
     onSuccess: (tokenResponse) => {
         console.log('inside of onsucces')
