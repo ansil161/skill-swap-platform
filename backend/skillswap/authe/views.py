@@ -192,7 +192,7 @@ class GoogleLogin(APIView):
         refresh = RefreshToken.for_user(user)
         
         return Response({
-            "message": "Login successful",
+            "message": "Login success",
             "access": str(refresh.access_token),
             "refresh": str(refresh),
             "user": {
