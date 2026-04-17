@@ -159,8 +159,10 @@ class RefreshAccessToken(APIView):
 class GoogleLogin(APIView):
     def post(self, request):
         access_token = request.data.get("token")
+        print(access_token,'i get the token')
         if not access_token:
             return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
 
         response = requests.get(
             "https://www.googleapis.com/oauth2/v3/userinfo",
