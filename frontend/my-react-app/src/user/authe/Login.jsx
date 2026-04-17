@@ -66,22 +66,24 @@ const googleLogin = useGoogleLogin({
             token: tokenResponse.access_token
         })
         .then((response) => {
-            console.log('Backend Response:', response.data);
+            console.log('Full Backend Response:', response.data); 
             
             
-            if (response.data.access) {
+            if (response.data && response.data.access) {
                 localStorage.setItem("access", response.data.access);
                 localStorage.setItem("refresh", response.data.refresh);
                 
-                toast.success("Login successful!");
-                nav("/dash"); 
+                console.log('Tokens stored. Redirecting...');
+                toast.success("Login successful");
+                nav("/dash");
             } else {
-                console.error("Access token missing in backend response", response.data);
+                console.error("Backend did not return 'access' token. Data received:", response.data);
+                toast.error("Backend error: Missing access token");
             }
         })
         .catch(err => {
-            console.error("Backend Error:", err.response?.data);
-            toast.error("Failed to sync with backend");
+            console.error("Axios Error:", err.response?.data || err.message);
+            toast.error("Network error: Could not connect to backend");
         });
     },
 });
