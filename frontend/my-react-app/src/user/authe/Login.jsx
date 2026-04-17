@@ -57,27 +57,31 @@ const handleLogin = (e) => {
 }
 
 const googleLogin = useGoogleLogin({
-    flow: 'implicit', 
     ux_mode: 'redirect',
-    redirect_uri: 'https://skill-swap-platform-ansil161s-projects.vercel.app/login', 
+    redirect_uri: 'https://skill-swap-platform-ansil161s-projects.vercel.app', 
     onSuccess: (tokenResponse) => {
         console.log('Token Received:', tokenResponse.access_token);
         
-       
         api.post("auth/google-login/", {
             token: tokenResponse.access_token
         })
         .then((response) => {
             console.log('Backend Response:', response.data);
+            
+            
             if (response.data.access) {
                 localStorage.setItem("access", response.data.access);
                 localStorage.setItem("refresh", response.data.refresh);
-                nav("/dash");
+                
+                toast.success("Login successful!");
+                nav("/dash"); 
+            } else {
+                console.error("Access token missing in backend response", response.data);
             }
         })
         .catch(err => {
-            console.error("Backend Error Details:", err.response?.data || err.message);
-            toast.error("Backend connection failed");
+            console.error("Backend Error:", err.response?.data);
+            toast.error("Failed to sync with backend");
         });
     },
 });
