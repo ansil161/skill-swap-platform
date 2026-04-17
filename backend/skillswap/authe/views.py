@@ -157,9 +157,7 @@ class RefreshAccessToken(APIView):
             return Response({"error": "Invalid refresh token"}, status=401)
 
 class GoogleLogin(APIView):
-
     def post(self, request):
-
         access_token = request.data.get("token")
         if not access_token:
             return Response({"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -168,46 +166,38 @@ class GoogleLogin(APIView):
             "https://www.googleapis.com/oauth2/v3/userinfo",
             headers={"Authorization": f"Bearer {access_token}"}
         )
-
         data = response.json()
-
         email = data.get("email")
 
         if not email:
             return Response({"error": "Invalid Google token"}, status=400)
 
-        name = email.split("@")[0]
-
-        user, created = User.objects.get_or_create(
-            email=email,
-            defaults={"username": name,
-                      "is_active": True}
-        )
+        user = User.objects.filter(email=email).first()
+        
+        if not user:
+            
+            username = email.split("@")[0]
+      
+            if User.objects.filter(username=username).exists():
+                username = f"{username}_{User.objects.count()}"
+            
+            user = User.objects.create_user(
+                email=email,
+                username=username,
+                is_active=True
+            )
 
         refresh = RefreshToken.for_user(user)
-        access=str(refresh.access_token)
-
-        res = Response({"message": "Login successful",
-                        "access": access,
-                        "refresh": str(refresh)})
-
-        # res.set_cookie(
-        #     key="access_token",
-        #     value=str(refresh.access_token),
-        #     httponly=True,
-        #     secure=True,  
-        #     samesite="None"
-        # )
-
-        # res.set_cookie(
-        #     key="refresh_token",
-        #     value=str(refresh),
-        #     httponly=True,
-        #     secure=True,
-        #     samesite="None"
-        # )
-
-        return res
+        
+        return Response({
+            "message": "Login successful",
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "user": {
+                "user_id": user.id,
+                "role": user.role 
+            }
+        }, status=status.HTTP_200_OK)
 
 
 class Activationapi(APIView):
