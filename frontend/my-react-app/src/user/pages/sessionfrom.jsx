@@ -3,6 +3,7 @@ import api from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import '../styles/sessionform.css'
+import Navbar from '../component/navbar'
 
 export default function SessionScheduler() {
   const { swapRequestId } = useParams();
@@ -34,6 +35,7 @@ export default function SessionScheduler() {
 
   return (
     <div className="session-scheduler">
+      <Navbar/>
       <h2 className="scheduler-title">Schedule Skill Swap Session</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
