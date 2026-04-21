@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import api from "../../api/axios"
 import '../styles/match.css'
+import Navbar from "../component/navbar"
 
 function Match() {
   const [matches, setMatches] = useState([])
@@ -103,6 +104,7 @@ function Match() {
 
   return (
     <div className="explore-container">
+      <Navbar/>
       <div className="explore-header">
         <h1 className="explore-title">Explore</h1>
         <p className="explore-subtitle">Find skilled people to swap knowledge with</p>
