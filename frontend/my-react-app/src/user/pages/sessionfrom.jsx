@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../../api/axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./SessionScheduler.css";
+import '../styles/sessionform.css'
 
 export default function SessionScheduler() {
   const { swapRequestId } = useParams();
