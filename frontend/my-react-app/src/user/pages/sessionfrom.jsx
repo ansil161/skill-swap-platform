@@ -34,8 +34,10 @@ export default function SessionScheduler() {
   };
 
   return (
-    <div className="session-scheduler">
+    <div>
       <Navbar/>
+    <div className="session-scheduler">
+   
       <h2 className="scheduler-title">Schedule Skill Swap Session</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -83,5 +85,6 @@ export default function SessionScheduler() {
         </button>
       </form>
     </div>
+      </div>
   );
 }
