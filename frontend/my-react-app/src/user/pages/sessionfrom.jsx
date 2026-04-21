@@ -1,22 +1,20 @@
-
 import { useState } from "react";
 import api from "../../api/axios";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import "./SessionScheduler.css";
 
 export default function SessionScheduler() {
-   const { swapRequestId } = useParams()
+  const { swapRequestId } = useParams();
+  const navigate = useNavigate();
 
-  console.log('hello',swapRequestId)
   const [scheduledTime, setScheduledTime] = useState("");
-  const [videoType, setVideoType] = useState("internal"); 
+  const [videoType, setVideoType] = useState("internal");
   const [googleLink, setGoogleLink] = useState("");
-  const navigate=useNavigate()
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const data = {
       swap_request: swapRequestId,
       scheduled_time: scheduledTime,
@@ -26,42 +24,62 @@ export default function SessionScheduler() {
 
     try {
       const res = await api.post("session/sessions/", data);
-      
-      toast.success(res.response?.data?.message ||"Session scheduled!");
-      navigate("/sessions")
-
-      console.log(res.data);
+      toast.success(res.data?.message || "Session scheduled successfully!");
+      navigate("/sessions");
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message ||"Error scheduling session");
+      toast.error(err.response?.data?.message || "Failed to schedule session");
     }
   };
- 
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Schedule Session</h2>
-      <label>
-        Scheduled Time:
-        <input type="datetime-local" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} required />
-      </label>
-      <br />
-      <label>
-        Video Call Type:
-        <select value={videoType} onChange={(e) => setVideoType(e.target.value)}>
-          <option value="internal">Internal</option>
-          <option value="google">Google Meet</option>
-        </select>
-      </label>
-      <br />
-      {videoType === "google" && (
-        <label>
-          Google Meet Link:
-          <input type="url" value={googleLink} onChange={(e) => setGoogleLink(e.target.value)} required />
-        </label>
-      )}
-      <br />
-      <button type="submit">Schedule</button>
-    </form>
+    <div className="session-scheduler">
+      <h2 className="scheduler-title">Schedule Skill Swap Session</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="scheduledTime">Scheduled Time</label>
+          <input
+            id="scheduledTime"
+            type="datetime-local"
+            className="form-control"
+            value={scheduledTime}
+            onChange={(e) => setScheduledTime(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="videoType">Video Call Platform</label>
+          <select
+            id="videoType"
+            className="form-control"
+            value={videoType}
+            onChange={(e) => setVideoType(e.target.value)}
+          >
+            <option value="internal">Built-in Session</option>
+            <option value="google">Google Meet</option>
+          </select>
+        </div>
+
+        {videoType === "google" && (
+          <div className="form-group fade-in">
+            <label htmlFor="googleLink">Google Meet Link</label>
+            <input
+              id="googleLink"
+              type="url"
+              className="form-control"
+              value={googleLink}
+              onChange={(e) => setGoogleLink(e.target.value)}
+              placeholder="https://meet.google.com/xxx-xxxx-xxx"
+              required
+            />
+          </div>
+        )}
+
+        <button type="submit" className="btn-submit">
+          Confirm Schedule
+        </button>
+      </form>
+    </div>
   );
 }
