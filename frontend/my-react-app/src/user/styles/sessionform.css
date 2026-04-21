@@ -1,0 +1,102 @@
+/* 🎨 Theme Variables (easy to adjust to your SkillSwap brand) */
+:root {
+  --ss-primary: #4f46e5;
+  --ss-primary-hover: #4338ca;
+  --ss-bg: #ffffff;
+  --ss-border: #d1d5db;
+  --ss-text: #1f2937;
+  --ss-text-muted: #6b7280;
+  --ss-radius: 12px;
+  --ss-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.session-scheduler {
+  max-width: 520px;
+  margin: 2.5rem auto;
+  padding: 2rem;
+  background: var(--ss-bg);
+  border-radius: var(--ss-radius);
+  box-shadow: var(--ss-shadow);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.scheduler-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ss-text);
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--ss-text);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid var(--ss-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fafafa;
+  color: var(--ss-text);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--ss-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 0.5rem;
+  background: var(--ss-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-submit:hover {
+  background: var(--ss-primary-hover);
+}
+
+.btn-submit:active {
+  transform: scale(0.98);
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .session-scheduler {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  .scheduler-title {
+    font-size: 1.3rem;
+  }
+}
