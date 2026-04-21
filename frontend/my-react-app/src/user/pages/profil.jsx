@@ -684,7 +684,7 @@ const deleteWantedSkill = (skillId) => {
             </>
           )}
 
-          {activeTab === "skills" && (
+          { /* {activeTab === "skills" && (
             <div className="tab-content-edu">
               <h3>My Skills Portfolio</h3>
               <div className="skills-detail-grid">
@@ -700,7 +700,7 @@ const deleteWantedSkill = (skillId) => {
                 ))}
               </div>
             </div>
-          )}
+          )} */}
 
           {activeTab === "feedback" && (
             <div className="feedback-section-edu">
