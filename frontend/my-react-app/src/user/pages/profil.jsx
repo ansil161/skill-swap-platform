@@ -572,12 +572,12 @@ const deleteWantedSkill = (skillId) => {
             className={`tab-btn ${activeTab === "skills" ? "active" : ""}`}
             onClick={() => setActiveTab("skills")}
           >
-            My Skills (34)
+            {/* My Skills (34)
           </button>
           <button 
             className={`tab-btn ${activeTab === "feedback" ? "active" : ""}`}
             onClick={() => setActiveTab("feedback")}
-          >
+          > */}
             Feedback
           </button>
           <button 
